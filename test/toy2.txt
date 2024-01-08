@@ -1,0 +1,62 @@
+func somma(a: real, b:real) -> real:
+
+    var risultato :real;\
+    risultato ^= a + b;
+	return risultato;
+
+endfunc
+
+func sottrazione(a: real, b:real) -> real:
+
+    var risultato :real;\
+	risultato ^= a - b;
+    return risultato;
+
+endfunc
+
+proc moltiplicazione(a: real, b:real, out risultato: real):
+
+	risultato  ^=  a * b;
+
+endproc
+
+proc divisione(a: real, b:real, out risultato: real):
+
+	risultato  ^=  a / b;
+
+endproc
+
+
+% programma principale %
+proc main():
+      var
+		a, b, risultato: real;\
+	  var ans ^= 1;\
+
+	<-- "scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)" $(ans) ;
+	while ans <> 0 && ans <> 1  do
+
+		<-- "inserisci il primo numero: " $(a);
+		<-- "inserisci il secondo numero: " $(b);
+
+		if ans = 2 then
+			risultato ^= somma(a,b);
+		elseif ans = 3 then
+			risultato ^= sottrazione(a,b);
+		elseif ans = 4 then
+			divisione(a,b, @risultato);
+		elseif ans = 5 then
+			moltiplicazione(a,b, @risultato);
+		else
+		    -->!"Seleziona un comando valido";
+		endif;
+
+		-->!"il risultato è¨: "$(risultato);
+
+	    <-- "scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)" $(ans);
+
+    endwhile;
+
+    -->! "ciao";
+
+endproc

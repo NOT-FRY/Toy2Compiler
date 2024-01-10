@@ -5,31 +5,44 @@
         </Identifier>
         <BodyOp>
             <VarDeclOp>
-                <Identifier>
-                    a
-                </Identifier>
-                <Identifier>
-                    b
-                </Identifier>
-                <Identifier>
-                    risultato
-                </Identifier>
+                <IdentifierExpression>
+                    <Identifier>
+                        a
+                    </Identifier>
+                </IdentifierExpression>
+                <IdentifierExpression>
+                    <Identifier>
+                        b
+                    </Identifier>
+                </IdentifierExpression>
+                <IdentifierExpression>
+                    <Identifier>
+                        risultato
+                    </Identifier>
+                </IdentifierExpression>
                 <Type>
-                REAL
+                    REAL
                 </Type>
+                <DeclarationType>
+                    DECLARATION
+                </DeclarationType>
             </VarDeclOp>
-            <AssignStatement>
-                <Identifier>
-                    ans
-                </Identifier>
-                <Integer_const>
-                    1
-                </Integer_const>
-            </AssignStatement>
+            <VarDeclOp>
+                <IdentifierExpression>
+                    <Identifier>
+                        ans
+                    </Identifier>
+                    <Integer_const>
+                        1
+                    </Integer_const>
+                </IdentifierExpression>
+                <DeclarationType>
+                    INITIALIZATION
+                </DeclarationType>
+            </VarDeclOp>
             <ReadStatement>
                 <IOArg>
-                    <DollarSign>
-                    </DollarSign>
+                    <DollarSign/>
                     <Identifier>
                         ans
                     </Identifier>
@@ -43,39 +56,38 @@
             <WhileStatement>
                 <AndOp>
                     <leftVal>
-                    <NEOp>
-                        <leftVal>
-                        <Identifier>
-                            ans
-                        </Identifier>
-                        </leftVal>
-                        <rightVal>
-                        <Integer_const>
-                            0
-                        </Integer_const>
-                        </rightVal>
-                    </NEOp>
+                        <NEOp>
+                            <leftVal>
+                                <Identifier>
+                                    ans
+                                </Identifier>
+                            </leftVal>
+                            <rightVal>
+                                <Integer_const>
+                                    0
+                                </Integer_const>
+                            </rightVal>
+                        </NEOp>
                     </leftVal>
                     <rightVal>
-                    <NEOp>
-                        <leftVal>
-                        <Identifier>
-                            ans
-                        </Identifier>
-                        </leftVal>
-                        <rightVal>
-                        <Integer_const>
-                            1
-                        </Integer_const>
-                        </rightVal>
-                    </NEOp>
+                        <NEOp>
+                            <leftVal>
+                                <Identifier>
+                                    ans
+                                </Identifier>
+                            </leftVal>
+                            <rightVal>
+                                <Integer_const>
+                                    1
+                                </Integer_const>
+                            </rightVal>
+                        </NEOp>
                     </rightVal>
                 </AndOp>
                 <BodyOp>
                     <ReadStatement>
                         <IOArg>
-                            <DollarSign>
-                            </DollarSign>
+                            <DollarSign/>
                             <Identifier>
                                 a
                             </Identifier>
@@ -88,8 +100,7 @@
                     </ReadStatement>
                     <ReadStatement>
                         <IOArg>
-                            <DollarSign>
-                            </DollarSign>
+                            <DollarSign/>
                             <Identifier>
                                 b
                             </Identifier>
@@ -103,14 +114,14 @@
                     <IfStatement>
                         <EQOp>
                             <leftVal>
-                            <Identifier>
-                                ans
-                            </Identifier>
+                                <Identifier>
+                                    ans
+                                </Identifier>
                             </leftVal>
                             <rightVal>
-                            <Integer_const>
-                                2
-                            </Integer_const>
+                                <Integer_const>
+                                    2
+                                </Integer_const>
                             </rightVal>
                         </EQOp>
                         <BodyOp>
@@ -122,26 +133,28 @@
                                     <Identifier>
                                         somma
                                     </Identifier>
-                                    <Identifier>
-                                        a
-                                    </Identifier>
-                                    <Identifier>
-                                        b
-                                    </Identifier>
+                                        <Parameters>
+                                        <Identifier>
+                                            a
+                                        </Identifier>
+                                        <Identifier>
+                                            b
+                                        </Identifier>
+                                    </Parameters>
                                 </FunCallOp>
                             </AssignStatement>
                         </BodyOp>
                         <ElifOp>
                             <EQOp>
                                 <leftVal>
-                                <Identifier>
-                                    ans
-                                </Identifier>
+                                    <Identifier>
+                                        ans
+                                    </Identifier>
                                 </leftVal>
                                 <rightVal>
-                                <Integer_const>
-                                    3
-                                </Integer_const>
+                                    <Integer_const>
+                                        3
+                                    </Integer_const>
                                 </rightVal>
                             </EQOp>
                             <BodyOp>
@@ -153,12 +166,14 @@
                                         <Identifier>
                                             sottrazione
                                         </Identifier>
-                                        <Identifier>
-                                            a
-                                        </Identifier>
-                                        <Identifier>
-                                            b
-                                        </Identifier>
+                                            <Parameters>
+                                            <Identifier>
+                                                a
+                                            </Identifier>
+                                            <Identifier>
+                                                b
+                                            </Identifier>
+                                        </Parameters>
                                     </FunCallOp>
                                 </AssignStatement>
                             </BodyOp>
@@ -166,18 +181,21 @@
                         <ElifOp>
                             <EQOp>
                                 <leftVal>
-                                <Identifier>
-                                    ans
-                                </Identifier>
+                                    <Identifier>
+                                        ans
+                                    </Identifier>
                                 </leftVal>
                                 <rightVal>
-                                <Integer_const>
-                                    4
-                                </Integer_const>
+                                    <Integer_const>
+                                        4
+                                    </Integer_const>
                                 </rightVal>
                             </EQOp>
                             <BodyOp>
                                 <ProcCallOp>
+                                    <Identifier>
+                                        divisione
+                                    </Identifier>
                                     <ProcedureExpression>
                                         <Identifier>
                                             a
@@ -193,27 +211,27 @@
                                             risultato
                                         </Identifier>
                                     </ProcedureExpression>
-                                    <Identifier>
-                                        divisione
-                                    </Identifier>
                                 </ProcCallOp>
                             </BodyOp>
                         </ElifOp>
                         <ElifOp>
                             <EQOp>
                                 <leftVal>
-                                <Identifier>
-                                    ans
-                                </Identifier>
+                                    <Identifier>
+                                        ans
+                                    </Identifier>
                                 </leftVal>
                                 <rightVal>
-                                <Integer_const>
-                                    5
-                                </Integer_const>
+                                    <Integer_const>
+                                        5
+                                    </Integer_const>
                                 </rightVal>
                             </EQOp>
                             <BodyOp>
                                 <ProcCallOp>
+                                    <Identifier>
+                                        moltiplicazione
+                                    </Identifier>
                                     <ProcedureExpression>
                                         <Identifier>
                                             a
@@ -229,9 +247,6 @@
                                             risultato
                                         </Identifier>
                                     </ProcedureExpression>
-                                    <Identifier>
-                                        moltiplicazione
-                                    </Identifier>
                                 </ProcCallOp>
                             </BodyOp>
                         </ElifOp>
@@ -239,7 +254,7 @@
                             <BodyOp>
                                 <WriteStatement>
                                     <WritingType>
-                                    WRITE
+                                        WRITE_RETURN
                                     </WritingType>
                                     <IOArg>
                                         <String_const>
@@ -252,11 +267,10 @@
                     </IfStatement>
                     <WriteStatement>
                         <WritingType>
-                        WRITE
+                            WRITE_RETURN
                         </WritingType>
                         <IOArg>
-                            <DollarSign>
-                            </DollarSign>
+                            <DollarSign/>
                             <Identifier>
                                 risultato
                             </Identifier>
@@ -269,8 +283,7 @@
                     </WriteStatement>
                     <ReadStatement>
                         <IOArg>
-                            <DollarSign>
-                            </DollarSign>
+                            <DollarSign/>
                             <Identifier>
                                 ans
                             </Identifier>
@@ -285,7 +298,7 @@
             </WhileStatement>
             <WriteStatement>
                 <WritingType>
-                WRITE
+                    WRITE_RETURN
                 </WritingType>
                 <IOArg>
                     <String_const>
@@ -300,19 +313,19 @@
             divisione
         </Identifier>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='INOUT'>
                 a
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='INOUT'>
                 b
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
@@ -320,26 +333,47 @@
                 risultato
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <BodyOp>
+            <VarDeclOp>
+                <IdentifierExpression>
+                    <Identifier>
+                        c
+                    </Identifier>
+                    <Integer_const>
+                        2
+                    </Integer_const>
+                </IdentifierExpression>
+                <DeclarationType>
+                    INITIALIZATION
+                </DeclarationType>
+            </VarDeclOp>
             <AssignStatement>
                 <Identifier>
                     risultato
                 </Identifier>
                 <DivOp>
                     <leftVal>
-                    <Identifier>
-                        a
-                    </Identifier>
+                        <Identifier>
+                            a
+                        </Identifier>
                     </leftVal>
                     <rightVal>
-                    <Identifier>
-                        b
-                    </Identifier>
+                        <Identifier>
+                            b
+                        </Identifier>
                     </rightVal>
                 </DivOp>
+            </AssignStatement>
+            <AssignStatement>
+                <Identifier>
+                    risultato
+                </Identifier>
+                <Identifier>
+                    c
+                </Identifier>
             </AssignStatement>
         </BodyOp>
     </ProcedureOp>
@@ -348,19 +382,19 @@
             moltiplicazione
         </Identifier>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='INOUT'>
                 a
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='INOUT'>
                 b
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
@@ -368,7 +402,7 @@
                 risultato
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <BodyOp>
@@ -378,14 +412,14 @@
                 </Identifier>
                 <MulOp>
                     <leftVal>
-                    <Identifier>
-                        a
-                    </Identifier>
+                        <Identifier>
+                            a
+                        </Identifier>
                     </leftVal>
                     <rightVal>
-                    <Identifier>
-                        b
-                    </Identifier>
+                        <Identifier>
+                            b
+                        </Identifier>
                     </rightVal>
                 </MulOp>
             </AssignStatement>
@@ -396,32 +430,37 @@
             somma
         </Identifier>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='IN'>
                 a
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='IN'>
                 b
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ReturnTypes>
-        REAL
+            REAL
         </ReturnTypes>
         <BodyOp>
             <VarDeclOp>
-                <Identifier>
-                    risultato
-                </Identifier>
+                <IdentifierExpression>
+                    <Identifier>
+                        risultato
+                    </Identifier>
+                </IdentifierExpression>
                 <Type>
-                REAL
+                    REAL
                 </Type>
+                <DeclarationType>
+                    DECLARATION
+                </DeclarationType>
             </VarDeclOp>
             <AssignStatement>
                 <Identifier>
@@ -429,23 +468,21 @@
                 </Identifier>
                 <AddOp>
                     <leftVal>
-                    <Identifier>
-                        a
-                    </Identifier>
+                        <Identifier>
+                            a
+                        </Identifier>
                     </leftVal>
                     <rightVal>
-                    <Identifier>
-                        b
-                    </Identifier>
+                        <Identifier>
+                            b
+                        </Identifier>
                     </rightVal>
                 </AddOp>
             </AssignStatement>
             <ReturnStatement>
-                <Values>
                 <Identifier>
                     risultato
                 </Identifier>
-                </Values>
             </ReturnStatement>
         </BodyOp>
     </FunctionOp>
@@ -454,32 +491,37 @@
             sottrazione
         </Identifier>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='IN'>
                 a
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ProcFunParamOp>
-            <Identifier>
+            <Identifier qualifier='IN'>
                 b
             </Identifier>
             <Type>
-            REAL
+                REAL
             </Type>
         </ProcFunParamOp>
         <ReturnTypes>
-        REAL
+            REAL
         </ReturnTypes>
         <BodyOp>
             <VarDeclOp>
-                <Identifier>
-                    risultato
-                </Identifier>
+                <IdentifierExpression>
+                    <Identifier>
+                        risultato
+                    </Identifier>
+                </IdentifierExpression>
                 <Type>
-                REAL
+                    REAL
                 </Type>
+                <DeclarationType>
+                    DECLARATION
+                </DeclarationType>
             </VarDeclOp>
             <AssignStatement>
                 <Identifier>
@@ -487,23 +529,21 @@
                 </Identifier>
                 <DiffOp>
                     <leftVal>
-                    <Identifier>
-                        a
-                    </Identifier>
+                        <Identifier>
+                            a
+                        </Identifier>
                     </leftVal>
                     <rightVal>
-                    <Identifier>
-                        b
-                    </Identifier>
+                        <Identifier>
+                            b
+                        </Identifier>
                     </rightVal>
                 </DiffOp>
             </AssignStatement>
             <ReturnStatement>
-                <Values>
                 <Identifier>
                     risultato
                 </Identifier>
-                </Values>
             </ReturnStatement>
         </BodyOp>
     </FunctionOp>

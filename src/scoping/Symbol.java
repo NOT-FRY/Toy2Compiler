@@ -12,14 +12,13 @@ public class Symbol {
     private Object value; // Valore per variabili o costanti
     private List<Symbol> parameters; // Lista di parametri per funzioni o procedure
 
-    // Costruttore per variabili e costanti
+
     public Symbol(String id, Kind kind, Type type) {
         this.id = id;
         this.kind = kind;
         this.type = type;
     }
 
-    // Costruttore per funzioni e procedure
     public Symbol(String id, Kind kind, Type type, List<Symbol> parameters) {
         this.id = id;
         this.kind = kind;
@@ -27,10 +26,12 @@ public class Symbol {
         this.parameters = parameters;
     }
 
-    public Symbol(String name, Kind kind) {
+    public Symbol(String id, Kind kind) {
+        this.id = id;
+        this.kind = kind;
     }
 
-    // Metodi getter e setter per tutti i campi
+
     public String getId() {
         return id;
     }

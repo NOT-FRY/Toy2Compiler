@@ -5,5 +5,5 @@ import visitors.Visitor;
 public interface Expression {
     Object accept(Visitor v);
 
-    Type getType();
+    //Type getType();
 }

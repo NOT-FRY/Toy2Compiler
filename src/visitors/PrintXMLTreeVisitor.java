@@ -16,7 +16,7 @@ public class PrintXMLTreeVisitor implements Visitor {
     private int indentLevel = 0;
 
     public PrintXMLTreeVisitor(String filename) throws FileNotFoundException {
-        out = new PrintWriter(filename+".xml");
+        out = new PrintWriter(filename);
     }
 
     public void dispose(){

@@ -19,7 +19,7 @@ public class SymbolTable {
         this.name = name;
         this.map = new HashMap<String, Symbol>();
         this.father = null;
-        scopeType = null;
+        this.scopeType = null;
     }
 
 
@@ -27,16 +27,20 @@ public class SymbolTable {
         this.name = name;
         this.map = new HashMap<String, Symbol>();
         this.father = father;
+        this.scopeType = null;
     }
 
     public SymbolTable(String name, SymbolTable father, ScopeType scopeType) {
         this.name = name;
+        this.map = new HashMap<String, Symbol>();
         this.father = father;
         this.scopeType = scopeType;
     }
 
     public SymbolTable(String name, ScopeType scopeType) {
         this.name = name;
+        this.map = new HashMap<String, Symbol>();
+        this.father = null;
         this.scopeType = scopeType;
     }
 
@@ -53,6 +57,7 @@ public class SymbolTable {
         }
     }
 
+    //Cerca in questa e nelle tabelle padre
     public Symbol lookup(String symbolId){
         if(map.get(symbolId) == null){
             if(this.father!=null){ //non l'ho trovato in questa tabella, vado a fare lookup nel padre
@@ -65,6 +70,10 @@ public class SymbolTable {
         }
     }
 
+    //Cerca solo in questa tabella
+    public Symbol findSymbolInside(String symbolId){
+        return map.get(symbolId);
+    }
 
     public String getName() {
         return name;

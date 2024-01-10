@@ -1,4 +1,5 @@
 package visitors;
+import scoping.Checks;
 import scoping.Kind;
 import scoping.Symbol;
 import scoping.SymbolTable;
@@ -172,7 +173,25 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(FunctionOp f) {
-        f.getIdentifier().accept(this);
+
+        SymbolTable father = scopes.peek();
+
+        /*
+        * se la tabella corrente contiene già la dichiarazione dell’identificatore coinvolto allora
+          restituisci “errore di dichiarazione multipla”
+        *
+        * */
+        if(father.lookup(f.getIdentifier().getName())!=null){
+            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
+            System.exit(1);
+        }
+        else {
+            SymbolTable function = new SymbolTable(f.getIdentifier().getName(), father, ScopeType.FUNCTION);
+            scopes.push(function);
+
+            f.getIdentifier().accept(this);
+        }
+
         ArrayList<ProcFunParamOp> paramOps = f.getProcFunParamOpList();
         for(ProcFunParamOp p : paramOps){
             p.accept(this);
@@ -183,23 +202,8 @@ public class SemanticVisitor implements Visitor {
         //}
 
 
-        SymbolTable father = scopes.peek();
+        f.getBody().accept(this);
 
-        /*
-        * se la tabella corrente contiene già la dichiarazione dell’identificatore coinvolto allora
-          restituisci “errore di dichiarazione multipla”
-        *
-        * */
-        if(father.lookup(f.getIdentifier().getName())!=null){
-            System.err.println("Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
-            System.exit(1);
-        }
-        else {
-            SymbolTable function = new SymbolTable(f.getIdentifier().getName(), father, ScopeType.FUNCTION);
-            scopes.push(function);
-
-            f.getBody().accept(this);
-        }
         return null;
     }
 
@@ -373,7 +377,7 @@ public class SemanticVisitor implements Visitor {
 
         SymbolTable currentTable = scopes.peek();
         if(currentTable.lookup(p.getIdentifier().getName())!=null){
-            System.err.println("Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
+            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else{
             Symbol s = new Symbol(p.getIdentifier().getName(), Kind.VAR);
@@ -390,22 +394,25 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ProcedureOp p) {
-        p.getIdentifier().accept(this);
+
+        SymbolTable father = scopes.peek();
+
+        if(father.lookup(p.getIdentifier().getName())!=null){
+            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
+            System.exit(1);
+        }else {
+            SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
+            scopes.push(function);
+            p.getIdentifier().accept(this);
+        }
+
         ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
         for (ProcFunParamOp pr : paramOps) {
             pr.accept(this);
         }
 
-        SymbolTable father = scopes.peek();
 
-        if(father.lookup(p.getIdentifier().getName())!=null){
-            System.err.println("Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
-            System.exit(1);
-        }else {
-            SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
-            scopes.push(function);
-            p.getBody().accept(this);
-        }
+        p.getBody().accept(this);
 
         return null;
     }
@@ -499,28 +506,58 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(VarDeclOp v) {
-        out.println(getIndent() + "<VarDeclOp>");
-        increaseIndent();
+
+        if(!Checks.checkDeclaration(v)){
+            System.err.println("Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
+            System.exit(1);
+        }
+
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         for(IdentifierExpression ie : identifierExpressionList) {
-            ie.accept(this);
+            SymbolTable currentTable = scopes.peek();
+
+            if(currentTable.lookup(ie.getIdentifier().getName())!=null){
+                System.err.println("Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
+                System.exit(1);
+            }
+            else {
+
+                Symbol s = new Symbol(ie.getIdentifier().getName(), Kind.VAR);
+
+                if(v.getDeclarationType() == DeclarationType.INITIALIZATION){
+                    //Inferisco il tipo
+
+                    Expression e = ie.getExpression();
+                    if(e instanceof False_const){
+                        s.setType(Type.BOOL);
+                    }else if(e instanceof  True_const){
+                        s.setType(Type.BOOL);
+                    }else if(e instanceof  String_const){
+                        s.setType(Type.STRING);
+                    }else if(e instanceof  Integer_const){
+                        s.setType(Type.INTEGER);
+                    }else if(e instanceof  Real_const){
+                        s.setType(Type.REAL);
+                    }else{
+                        System.err.println("Semantic error: Errore di inferenza di tipo, il tipo non può essere dedotto: "+ ie.getIdentifier().getName());
+                        System.exit(1);
+                    }
+
+                }else{//dichiarazione, il tipo mi viene dato
+                    s.setType(v.getType());
+                }
+
+                try {
+                    currentTable.addEntry(s);
+                }catch(Exception e){
+                    System.err.println(e.getMessage());
+                }
+
+                ie.accept(this);
+            }
+
         }
-        Type type = v.getType();
-        if(type!=null) {
-            out.println(getIndent() + "<Type>");
-            increaseIndent();
-            out.println(getIndent() + type);
-            decreaseIndent();
-            out.println(getIndent() + "</Type>");
-        }
-        DeclarationType dt = v.getDeclarationType();
-        out.println(getIndent() + "<DeclarationType>");
-        increaseIndent();
-        out.println(getIndent() + dt);
-        decreaseIndent();
-        out.println(getIndent() + "</DeclarationType>");
-        decreaseIndent();
-        out.println(getIndent() + "</VarDeclOp>");
+
         return null;
     }
 

@@ -4,5 +4,6 @@ public enum Type {
     INTEGER,
     BOOL,
     REAL,
-    STRING
+    STRING,
+    ERROR
 }

@@ -1,23 +1,26 @@
 package scoping;
 
+import tree_structure.Type;
+
 import java.util.List;
+
 
 public class Symbol {
     private String id;
     private Kind kind; // var, method, etc.
-    private String type; // Tipo del simbolo (Int, String, ecc.)
+    private Type type; // Tipo del simbolo (Int, String, ecc.)
     private Object value; // Valore per variabili o costanti
     private List<Symbol> parameters; // Lista di parametri per funzioni o procedure
 
     // Costruttore per variabili e costanti
-    public Symbol(String id, Kind kind, String type) {
+    public Symbol(String id, Kind kind, Type type) {
         this.id = id;
         this.kind = kind;
         this.type = type;
     }
 
     // Costruttore per funzioni e procedure
-    public Symbol(String id, Kind kind, String type, List<Symbol> parameters) {
+    public Symbol(String id, Kind kind, Type type, List<Symbol> parameters) {
         this.id = id;
         this.kind = kind;
         this.type = type;
@@ -44,11 +47,11 @@ public class Symbol {
         this.kind = kind;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

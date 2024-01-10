@@ -1,10 +1,11 @@
 package tree_structure;
 
 import tree_structure.Expression.Expression;
+import visitors.Visitor;
 
 import java.util.Objects;
 
-public class IdentifierExpression {
+public class IdentifierExpression extends Node{
     private Identifier identifier;
     private Expression exp;
 
@@ -25,7 +26,7 @@ public class IdentifierExpression {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof IdentifierExpression that)) return false;
-        return Objects.equals(getIdentifier(), that.getIdentifier()) && Objects.equals(getExp(), that.getExp());
+        return Objects.equals(getIdentifier(), that.getIdentifier()) && Objects.equals(getExpression(), that.getExpression());
     }
 
     public Identifier getIdentifier() {
@@ -36,13 +37,17 @@ public class IdentifierExpression {
         this.identifier = identifier;
     }
 
-    public Expression getExp() {
+    public Expression getExpression() {
         return exp;
     }
 
-    public void setExp(Expression exp) {
+    public void setExpression(Expression exp) {
         this.exp = exp;
     }
 
 
+    @Override
+    public Object accept(Visitor v) {
+        return v.visit(this);
+    }
 }

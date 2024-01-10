@@ -78,12 +78,9 @@ public class SemanticVisitor implements Visitor {
             scopes.push(newBodyScope);
         }
 
-        ArrayList<VarDeclInterface> varDeclList = b.getVarDeclList();
-        for(VarDeclInterface v : varDeclList){
-            if(v instanceof VarDeclOp)
-                visit((VarDeclOp) v);
-            else if(v instanceof AssignStatement)
-                visit((AssignStatement) v);
+        ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
+        for(VarDeclOp v : varDeclList){
+            v.accept(this);
         }
         ArrayList<Statement> statements = b.getStatementList();
         for(Statement s : statements){
@@ -418,12 +415,9 @@ public class SemanticVisitor implements Visitor {
         SymbolTable global = new SymbolTable("global",ScopeType.GLOBAL);
         scopes.push(global);
 
-        ArrayList<VarDeclInterface> varDeclList = p.getVarDeclList();
-        for (VarDeclInterface v : varDeclList) {
-            if (v instanceof VarDeclOp)
-                visit((VarDeclOp) v);
-            else if (v instanceof AssignStatement)
-                visit((AssignStatement) v);
+        ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();
+        for (VarDeclOp v : varDeclList) {
+            v.accept(this);
         }
         ArrayList<? extends FunctionOrProcedure> paramOps = p.getFunProcList();
         for (FunctionOrProcedure n : paramOps) {
@@ -507,14 +501,24 @@ public class SemanticVisitor implements Visitor {
     public Object visit(VarDeclOp v) {
         out.println(getIndent() + "<VarDeclOp>");
         increaseIndent();
-        ArrayList<Expression> Expressions = v.getExpressionList();
-        for(Expression i : Expressions) {
-            i.accept(this);
+        ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
+        for(IdentifierExpression ie : identifierExpressionList) {
+            ie.accept(this);
         }
         Type type = v.getType();
-        out.println(getIndent() + "<Type>");
-        out.println(getIndent() + type);
-        out.println(getIndent() + "</Type>");
+        if(type!=null) {
+            out.println(getIndent() + "<Type>");
+            increaseIndent();
+            out.println(getIndent() + type);
+            decreaseIndent();
+            out.println(getIndent() + "</Type>");
+        }
+        DeclarationType dt = v.getDeclarationType();
+        out.println(getIndent() + "<DeclarationType>");
+        increaseIndent();
+        out.println(getIndent() + dt);
+        decreaseIndent();
+        out.println(getIndent() + "</DeclarationType>");
         decreaseIndent();
         out.println(getIndent() + "</VarDeclOp>");
         return null;
@@ -566,12 +570,9 @@ public class SemanticVisitor implements Visitor {
     public Object visit(IterOp i) {
         out.println(getIndent() + "<IterOp>");
         increaseIndent();
-        ArrayList<VarDeclInterface> varDeclList = i.getVarDeclList();
-        for(VarDeclInterface v : varDeclList) {
-            if(v instanceof VarDeclOp)
-                visit((VarDeclOp) v);
-            else if(v instanceof AssignStatement)
-                visit((AssignStatement) v);
+        ArrayList<VarDeclOp> varDeclList = i.getVarDeclList();
+        for(VarDeclOp v : varDeclList) {
+            v.accept(this);
         }
         ArrayList<? extends FunctionOrProcedure> paramOps = i.getFunProcList();
         for(FunctionOrProcedure n : paramOps) {
@@ -579,6 +580,22 @@ public class SemanticVisitor implements Visitor {
         }
         decreaseIndent();
         out.println(getIndent() + "</IterOp>");
+        return null;
+    }
+
+    @Override
+    public Object visit(IdentifierExpression ie) {
+        out.println(getIndent() + "<IdentifierExpression>");
+        increaseIndent();
+        if(ie.getIdentifier()!=null){
+            ie.getIdentifier().accept(this);
+        }
+        if(ie.getExpression()!=null){
+            ie.getExpression().accept(this);
+        }
+
+        decreaseIndent();
+        out.println(getIndent() + "</IdentifierExpression>");
         return null;
     }
 
@@ -615,11 +632,11 @@ public class SemanticVisitor implements Visitor {
     public Object visit(ProcCallOp p) {
         out.println(getIndent() + "<ProcCallOp>");
         increaseIndent();
+        p.getIdentifier().accept(this);
         ArrayList<ProcedureExpression> Expressions = p.getProcedureExpressions();
         for(ProcedureExpression i : Expressions) {
             i.accept(this);
         }
-        p.getIdentifier().accept(this);
         decreaseIndent();
         out.println(getIndent() + "</ProcCallOp>");
         return null;

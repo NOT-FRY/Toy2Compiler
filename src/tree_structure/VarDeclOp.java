@@ -6,39 +6,46 @@ import visitors.Visitor;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class VarDeclOp extends Node implements VarDeclInterface {
+public class VarDeclOp extends Node {
 
 
-    private ArrayList<Expression> expressionList;
+    private ArrayList<IdentifierExpression> identifierExpressionsList;
     private Type type;
 
-    public VarDeclOp(ArrayList<Expression> expressionList, Type type) {
-        this.expressionList = expressionList;
+    private DeclarationType declarationType;
+
+
+
+    public VarDeclOp(ArrayList<IdentifierExpression> identifierExpressionsList, Type type,DeclarationType declarationType) {
+        this.identifierExpressionsList = identifierExpressionsList;
         this.type = type;
+        this.declarationType=declarationType;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VarDeclOp varDeclOp = (VarDeclOp) o;
+        return Objects.equals(identifierExpressionsList, varDeclOp.identifierExpressionsList) && type == varDeclOp.type && declarationType == varDeclOp.declarationType;
     }
 
     @Override
     public String toString() {
         return "VarDeclOp{" +
-                "identifierExpressionList=" + expressionList +
+                "identifierExpressionsList=" + identifierExpressionsList +
                 ", type=" + type +
+                ", declarationType=" + declarationType +
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof VarDeclOp varDeclOp)) return false;
-        return Objects.equals(getExpressionList(), varDeclOp.getExpressionList()) && getType() == varDeclOp.getType();
+    public ArrayList<IdentifierExpression> getIdentifierExpressionsList() {
+        return identifierExpressionsList;
     }
 
-
-    public ArrayList<Expression> getExpressionList() {
-        return expressionList;
-    }
-
-    public void setExpressionList(ArrayList<Expression> expressionList) {
-        this.expressionList = expressionList;
+    public void setIdentifierExpressionsList(ArrayList<IdentifierExpression> identifierExpressionsList) {
+        this.identifierExpressionsList = identifierExpressionsList;
     }
 
     public Type getType() {
@@ -51,5 +58,13 @@ public class VarDeclOp extends Node implements VarDeclInterface {
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public DeclarationType getDeclarationType() {
+        return declarationType;
+    }
+
+    public void setDeclarationType(DeclarationType declarationType) {
+        this.declarationType = declarationType;
     }
 }

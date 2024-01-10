@@ -50,16 +50,16 @@ start with Program;
 
   Program ::= Iter1:listIter1 Procedure:mainProcedure Iter2:listIter2
                                         {:
-                                            ArrayList<VarDeclInterface> varDeclOpListIter1 = ((IterOp)listIter1).getVarDeclList();
+                                            ArrayList<VarDeclOp> varDeclOpListIter1 = ((IterOp)listIter1).getVarDeclList();
                                             ArrayList<FunctionOrProcedure> functionOrProcedureListIter1 = ((IterOp)listIter1).getFunProcList();
 
                                             ProgramOp program = new ProgramOp(varDeclOpListIter1,functionOrProcedureListIter1);
                                             program.addFunctionOrProcedure((FunctionOrProcedure)mainProcedure);//abbiamo deciso di inserire la procedura nella lista, senza creare un nuovo campo
 
-                                            ArrayList<VarDeclInterface> varDeclOpListIter2 = ((IterOp)listIter2).getVarDeclList();
+                                            ArrayList<VarDeclOp> varDeclOpListIter2 = ((IterOp)listIter2).getVarDeclList();
                                             ArrayList<FunctionOrProcedure> functionOrProcedureListIter2 = ((IterOp)listIter2).getFunProcList();
-                                            for(VarDeclInterface v : varDeclOpListIter2 ){
-                                                program.addVarDecl((VarDeclInterface)v);
+                                            for(VarDeclOp v : varDeclOpListIter2 ){
+                                                program.addVarDecl((VarDeclOp)v);
                                             }
                                             for(FunctionOrProcedure f : functionOrProcedureListIter2){
                                                 program.addFunctionOrProcedure((FunctionOrProcedure)f);
@@ -68,8 +68,8 @@ start with Program;
                                         :};
 
   Iter1 ::= VarDecl:varDecls Iter1:iter {:
-                                        for(VarDeclInterface v : (ArrayList<VarDeclInterface>) varDecls)
-                                            ((IterOp)iter).addVarDecl((VarDeclInterface)v);
+                                        for(VarDeclOp v : (ArrayList<VarDeclOp>) varDecls)
+                                            ((IterOp)iter).addVarDecl((VarDeclOp)v);
                                         RESULT = iter;
                                       :}
         | Function:function Iter1:iter {: ((IterOp)iter).addFunctionOrProcedure((FunctionOrProcedure)function); RESULT = iter;:}
@@ -78,8 +78,8 @@ start with Program;
 
 
   Iter2 ::= VarDecl:varDecls Iter2:iter {:
-                                        for(VarDeclInterface v : (ArrayList<VarDeclInterface>) varDecls)
-                                            ((IterOp)iter).addVarDecl((VarDeclInterface)v);
+                                        for(VarDeclOp v : (ArrayList<VarDeclOp>) varDecls)
+                                            ((IterOp)iter).addVarDecl((VarDeclOp)v);
                                         RESULT = iter;
                                       :}
         | Function:function Iter2:iter {: ((IterOp)iter).addFunctionOrProcedure((FunctionOrProcedure)function); RESULT = iter;:}
@@ -90,26 +90,83 @@ start with Program;
 
   Decls ::= Ids:idList COLON Type:type SEMI Decls:declsList
                                       {:
-                                        VarDeclOp decl = new VarDeclOp((ArrayList<Expression>)idList,(Type)type);
-                                       ((ArrayList<VarDeclInterface>)declsList).add(0,(VarDeclOp)decl);
+                                        ArrayList<IdentifierExpression> idExpList = new ArrayList<IdentifierExpression>();
+                                        for(Identifier id : (ArrayList<Identifier>)idList){
+                                            idExpList.add(new IdentifierExpression(id,null));
+                                        }
+                                        VarDeclOp decl = new VarDeclOp(idExpList,(Type)type,DeclarationType.DECLARATION);
+                                       ((ArrayList<VarDeclOp>)declsList).add(0,(VarDeclOp)decl);
                                         RESULT = declsList;
                                       :}
   	| Ids:idList ASSIGN Consts:constList SEMI Decls:declsList
   	                                                   {:
-                                                            AssignStatement assignStatement = new AssignStatement((ArrayList<Identifier>)idList,(ArrayList<Expression>)constList);
-                                                            ((ArrayList<VarDeclInterface>)declsList).add(0,(VarDeclInterface)assignStatement);
+  	                                                        int i=0;
+  	                                                        int j=0;
+  	                                                        ArrayList<IdentifierExpression> idExpList = new ArrayList<IdentifierExpression>();
+  	                                                        for(i=0,j=0;i<((ArrayList<Identifier>)idList).size() && j<((ArrayList<Expression>)constList).size(); i++,j++){
+  	                                                            Identifier id = ((ArrayList<Identifier>)idList).get(i);
+  	                                                            Expression e = ((ArrayList<Expression>)constList).get(j);
+  	                                                            //devo fondere le due liste in un' unica lista di IdentifierExpression, nell'ordine in cui mi sono state date
+  	                                                            IdentifierExpression ie = new IdentifierExpression(id,e);
+  	                                                            idExpList.add(ie);
+  	                                                        }
+  	                                                        //finisco di svuotare le liste
+  	                                                        if(i<((ArrayList<Identifier>)idList).size() || j<((ArrayList<Expression>)constList).size()){
+  	                                                            if(i<((ArrayList<Identifier>)idList).size()){
+  	                                                                for(;i<((ArrayList<Identifier>)idList).size();i++){
+  	                                                                    idExpList.add(new IdentifierExpression(((ArrayList<Identifier>)idList).get(i),null));
+  	                                                                }
+  	                                                            }
+  	                                                            if(j<((ArrayList<Expression>)constList).size()){
+  	                                                                for(; j<((ArrayList<Expression>)constList).size();j++){
+  	                                                                    idExpList.add(new IdentifierExpression(null,((ArrayList<Expression>)constList).get(j)));
+  	                                                                }
+  	                                                            }
+  	                                                        }
+                                                            VarDeclOp decl = new VarDeclOp(idExpList,null,DeclarationType.INITIALIZATION);
+
+                                                            ((ArrayList<VarDeclOp>)declsList).add(0,decl);
                                                             RESULT = declsList;
                                                         :}
   	| Ids:idList COLON Type:type SEMI ENDVAR
   	                                {:
-  	                                    ArrayList<VarDeclInterface> decls = new ArrayList<VarDeclInterface>();
-                                        decls.add(new VarDeclOp((ArrayList<Expression>)idList,(Type)type));
+                                        ArrayList<IdentifierExpression> idExpList = new ArrayList<IdentifierExpression>();
+                                        for(Identifier id : (ArrayList<Identifier>)idList){
+                                            idExpList.add(new IdentifierExpression(id,null));
+                                        }
+  	                                    ArrayList<VarDeclOp> decls = new ArrayList<VarDeclOp>();
+                                        decls.add(new VarDeclOp(idExpList,(Type)type,DeclarationType.DECLARATION));
                                         RESULT = decls;
   	                                :}
   	| Ids:idList ASSIGN Consts:constList SEMI ENDVAR
                                 {:
-                                    ArrayList<VarDeclInterface> decls = new ArrayList<VarDeclInterface>();
-                                    decls.add(new AssignStatement((ArrayList<Identifier>)idList,(ArrayList<Expression>)constList));
+                                    int i=0;
+                                    int j=0;
+                                    ArrayList<IdentifierExpression> idExpList = new ArrayList<IdentifierExpression>();
+                                    for(i=0,j=0;i<((ArrayList<Identifier>)idList).size() && j<((ArrayList<Expression>)constList).size(); i++,j++){
+                                        Identifier id = ((ArrayList<Identifier>)idList).get(i);
+                                        Expression e = ((ArrayList<Expression>)constList).get(j);
+                                        //devo fondere le due liste in un' unica lista di IdentifierExpression, nell'ordine in cui mi sono state date
+                                        IdentifierExpression ie = new IdentifierExpression(id,e);
+                                        idExpList.add(ie);
+                                    }
+                                    //finisco di svuotare le liste
+                                    if(i<((ArrayList<Identifier>)idList).size() || j<((ArrayList<Expression>)constList).size()){
+                                        if(i<((ArrayList<Identifier>)idList).size()){
+                                            for(;i<((ArrayList<Identifier>)idList).size();i++){
+                                                idExpList.add(new IdentifierExpression(((ArrayList<Identifier>)idList).get(i),null));
+                                            }
+                                        }
+                                        if(j<((ArrayList<Expression>)constList).size()){
+                                            for(; j<((ArrayList<Expression>)constList).size();j++){
+                                                idExpList.add(new IdentifierExpression(null,((ArrayList<Expression>)constList).get(j)));
+                                            }
+                                        }
+                                    }
+
+
+                                    ArrayList<VarDeclOp> decls = new ArrayList<VarDeclOp>();
+                                    decls.add(new VarDeclOp(idExpList,null,DeclarationType.INITIALIZATION));
                                     RESULT = decls;
                                 :}
   	;
@@ -190,8 +247,8 @@ start with Program;
   	    | OUT ID:id {:RESULT = new Identifier(id,Qualifier.OUT); :};
 
   Body ::= VarDecl:vardecls Body:body {:
-                                        for(VarDeclInterface v : (ArrayList<VarDeclInterface>)vardecls ){
-                                            ((BodyOp)body).addVarDecl((VarDeclInterface)v);
+                                        for(VarDeclOp v : (ArrayList<VarDeclOp>)vardecls ){
+                                            ((BodyOp)body).addVarDecl((VarDeclOp)v);
                                         }
                                       RESULT = body;
                                       :}
@@ -205,7 +262,7 @@ start with Program;
   	 | ProcCall:procCall  SEMI {:RESULT = (ProcCallOp) procCall;:}
   	 | RETURN Exprs:exprList SEMI {:RESULT = new ReturnStatement((ArrayList<Expression>)exprList);:}
   	 | WRITE IOArgs:IOArgsList SEMI {: RESULT = new WriteStatement(WritingType.WRITE, (ArrayList<Expression>)IOArgsList);:}
-  	 | WRITERETURN IOArgs:IOArgsList SEMI {: RESULT = new WriteStatement(WritingType.WRITE, (ArrayList<Expression>)IOArgsList);:}
+  	 | WRITERETURN IOArgs:IOArgsList SEMI {: RESULT = new WriteStatement(WritingType.WRITE_RETURN, (ArrayList<Expression>)IOArgsList);:}
   	 | READ IOArgs:IOArgsList SEMI {: RESULT = new ReadStatement((ArrayList<Expression>)IOArgsList);:}
   	 | IfStat:ifStat SEMI {:RESULT = (IfStatement) ifStat; :}
   	 | WhileStat:whileStat SEMI {:RESULT = (WhileStatement) whileStat; :} ;

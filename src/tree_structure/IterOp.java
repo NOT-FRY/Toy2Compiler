@@ -7,20 +7,20 @@ import java.util.Objects;
 
 public class IterOp extends Node{
 
-    private ArrayList<VarDeclInterface> varDeclList;
+    private ArrayList<VarDeclOp> varDeclList;
     private ArrayList<FunctionOrProcedure> funProcList;
 
     public IterOp() {
-        varDeclList = new ArrayList<VarDeclInterface>();
+        varDeclList = new ArrayList<VarDeclOp>();
         funProcList = new ArrayList<FunctionOrProcedure>();
     }
 
-    public IterOp(ArrayList<VarDeclInterface> varDeclList, ArrayList<FunctionOrProcedure> funProcList) {
+    public IterOp(ArrayList<VarDeclOp> varDeclList, ArrayList<FunctionOrProcedure> funProcList) {
         this.varDeclList = varDeclList;
         this.funProcList = funProcList;
     }
 
-    public void addVarDecl(VarDeclInterface v){
+    public void addVarDecl(VarDeclOp v){
         varDeclList.add(0,v);
     }
 
@@ -28,11 +28,11 @@ public class IterOp extends Node{
         funProcList.add(0,f);
     }
 
-    public ArrayList<VarDeclInterface> getVarDeclList() {
+    public ArrayList<VarDeclOp> getVarDeclList() {
         return varDeclList;
     }
 
-    public void setVarDeclList(ArrayList<VarDeclInterface> varDeclList) {
+    public void setVarDeclList(ArrayList<VarDeclOp> varDeclList) {
         this.varDeclList = varDeclList;
     }
 

@@ -3,13 +3,12 @@ package tree_structure.Statement;
 import tree_structure.Expression.Expression;
 import tree_structure.Identifier;
 import tree_structure.Node;
-import tree_structure.VarDeclInterface;
 import visitors.Visitor;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class AssignStatement extends Node implements Statement,Expression, VarDeclInterface {
+public class AssignStatement extends Node implements Statement,Expression {
     private ArrayList<Identifier> identifiers;
 
     private ArrayList<Expression> expressions;

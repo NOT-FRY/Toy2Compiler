@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class BodyOp extends Node{
-    private ArrayList<VarDeclInterface> varDeclList;
+    private ArrayList<VarDeclOp> varDeclList;
     private ArrayList<Statement> statementList;
 
 
     public BodyOp() {
-        varDeclList = new ArrayList<VarDeclInterface>();
+        varDeclList = new ArrayList<VarDeclOp>();
         statementList = new ArrayList<Statement>();
     }
 
-    public BodyOp(ArrayList<VarDeclInterface> varDeclList, ArrayList<Statement> statementList) {
+    public BodyOp(ArrayList<VarDeclOp> varDeclList, ArrayList<Statement> statementList) {
         this.varDeclList = varDeclList;
         this.statementList = statementList;
     }
@@ -25,7 +25,7 @@ public class BodyOp extends Node{
         statementList.add(0,s);
     }
 
-    public void addVarDecl(VarDeclInterface v){
+    public void addVarDecl(VarDeclOp v){
         varDeclList.add(0,v);
     }
 
@@ -45,11 +45,11 @@ public class BodyOp extends Node{
         return Objects.equals(varDeclList, bodyOp.varDeclList) && Objects.equals(statementList, bodyOp.statementList);
     }
 
-    public ArrayList<VarDeclInterface> getVarDeclList() {
+    public ArrayList<VarDeclOp> getVarDeclList() {
         return varDeclList;
     }
 
-    public void setVarDeclList(ArrayList<VarDeclInterface> varDeclList) {
+    public void setVarDeclList(ArrayList<VarDeclOp> varDeclList) {
         this.varDeclList = varDeclList;
     }
 

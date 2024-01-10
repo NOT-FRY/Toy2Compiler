@@ -71,7 +71,7 @@
                 <configuration>
                     <cupDefinition>srcjflexcup/toy2.cup</cupDefinition>
                     <outputDirectory>src</outputDirectory>
-                    <packageName>esercitazione4</packageName>
+                    <packageName>esercitazione5</packageName>
                     <dumpGrammar>${miaCondizione}</dumpGrammar>
                     <dumpStates>${miaCondizione}</dumpStates>
                     <dumpTables>${miaCondizione}</dumpTables>

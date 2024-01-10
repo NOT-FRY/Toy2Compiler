@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
@@ -8,6 +9,8 @@ import java.util.Objects;
 public class MulOp extends Node implements Expression {
     private Expression left;
     private Expression right;
+
+    private Type type;
 
     public MulOp(Expression left, Expression right) {
         this.left = left;
@@ -49,5 +52,13 @@ public class MulOp extends Node implements Expression {
     @Override
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

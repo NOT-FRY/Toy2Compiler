@@ -1,5 +1,6 @@
 package tree_structure;
 
+import tree_structure.Expression.Identifier;
 import visitors.Visitor;
 
 import java.util.ArrayList;

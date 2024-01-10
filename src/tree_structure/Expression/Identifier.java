@@ -1,6 +1,8 @@
-package tree_structure;
+package tree_structure.Expression;
 
-import tree_structure.Expression.Expression;
+import tree_structure.Node;
+import tree_structure.Qualifier;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
@@ -19,6 +21,8 @@ ProcParamId ::= ID
 public class Identifier extends Node implements Expression {
     private String name;
     private Qualifier qualifier;
+
+    private Type type;
 
     public Identifier(String name) {
         this.name = name;
@@ -65,4 +69,13 @@ public class Identifier extends Node implements Expression {
     public Object accept(Visitor v) {
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
 }

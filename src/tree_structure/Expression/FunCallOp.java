@@ -1,7 +1,7 @@
 package tree_structure.Expression;
 
-import tree_structure.Identifier;
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.ArrayList;
@@ -10,6 +10,8 @@ import java.util.Objects;
 public class FunCallOp extends Node implements Expression{
     private Identifier identifier;
     private ArrayList<Expression> expressions;
+
+    private Type type;
 
     public FunCallOp(Identifier identifier, ArrayList<Expression> expressions) {
         this.identifier = identifier;
@@ -52,8 +54,15 @@ public class FunCallOp extends Node implements Expression{
         return Objects.equals(identifier, funCallOp.identifier) && Objects.equals(expressions, funCallOp.expressions);
     }
 
-
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

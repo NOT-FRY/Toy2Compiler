@@ -1,12 +1,15 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
 
 public class String_const extends Node implements Expression {
     private String value;
+
+    private final Type type = Type.STRING;
 
     @Override
     public String toString() {
@@ -39,4 +42,9 @@ public class String_const extends Node implements Expression {
     public Object accept(Visitor v){
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
 }

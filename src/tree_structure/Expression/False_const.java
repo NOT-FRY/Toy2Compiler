@@ -1,10 +1,13 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 public class False_const extends Node implements Expression {
     private final boolean value;
+
+    private final Type type = Type.BOOL;
 
     @Override
     public String toString() {
@@ -34,4 +37,9 @@ public class False_const extends Node implements Expression {
     public Object accept(Visitor v){
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
 }

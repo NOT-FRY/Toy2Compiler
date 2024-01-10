@@ -1,6 +1,6 @@
-package tree_structure.Expression;
-import tree_structure.Identifier;
-import tree_structure.Node;
+package tree_structure;
+import tree_structure.Expression.Expression;
+import tree_structure.Expression.Identifier;
 import visitors.Visitor;
 
 import java.util.Objects;

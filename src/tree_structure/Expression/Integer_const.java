@@ -1,10 +1,13 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 public class Integer_const extends Node implements Expression {
     private int value;
+
+    private final Type type = Type.INTEGER;
 
     @Override
     public String toString() {
@@ -38,4 +41,9 @@ public class Integer_const extends Node implements Expression {
     public Object accept(Visitor v){
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
 }

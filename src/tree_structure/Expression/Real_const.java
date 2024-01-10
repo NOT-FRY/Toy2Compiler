@@ -1,10 +1,13 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 public class Real_const extends Node implements Expression {
     private double value;
+
+    private final Type type= Type.REAL;
 
     @Override
     public String toString() {
@@ -37,5 +40,10 @@ public class Real_const extends Node implements Expression {
     public Object accept(Visitor v){
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
 }
 

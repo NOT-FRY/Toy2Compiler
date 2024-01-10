@@ -5,10 +5,14 @@ import tree_structure.Node;
 import visitors.Visitor;
 
 import java.util.Objects;
+import tree_structure.Type;
 
 public class AddOp extends Node implements Expression {
     private Expression left;
     private Expression right;
+
+    private Type type;
+
 
     public AddOp(Expression left, Expression right) {
         this.left = left;
@@ -49,5 +53,13 @@ public class AddOp extends Node implements Expression {
     @Override
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

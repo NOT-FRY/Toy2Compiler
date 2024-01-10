@@ -15,6 +15,8 @@ import java.util.Stack;
 
 public class SemanticVisitor implements Visitor {
 
+    private boolean mainFound = false;
+
     private Stack<SymbolTable> scopes;
 
     public SemanticVisitor() {
@@ -23,7 +25,11 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(AddOp a) {
+
+        //Caso E: operatore di espressioni o istruzioni
+
         a.getLeft().accept(this);
+
         a.getRight().accept(this);
         return null;
     }
@@ -144,7 +150,7 @@ public class SemanticVisitor implements Visitor {
         *
         * */
         if(father.findSymbolInside(f.getIdentifier().getName())!=null){
-            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
+            System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
             System.exit(1);
         }
         else {
@@ -193,6 +199,15 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(Identifier i) {
         Qualifier q = i.getQualifier();
+
+        SymbolTable currentTable = scopes.peek();
+        Symbol s = currentTable.lookup(i.getName());
+        if(s==null){
+            System.err.println(">Semantic error: Identificatore non dichiarato : "+ i.getName());
+            System.exit(1);
+        }else{
+            i.setType(s.getType());
+        }
 
         return null;
     }
@@ -290,7 +305,7 @@ public class SemanticVisitor implements Visitor {
 
         SymbolTable currentTable = scopes.peek();
         if(currentTable.findSymbolInside(p.getIdentifier().getName())!=null){
-            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
+            System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else{
             Symbol s = new Symbol(p.getIdentifier().getName(), Kind.VAR,p.getType());
@@ -307,10 +322,13 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(ProcedureOp p) {
 
+        if(p.getIdentifier().getName().equals("main"))
+            mainFound=true;
+
         SymbolTable father = scopes.peek();
 
         if(father.findSymbolInside(p.getIdentifier().getName())!=null){
-            System.err.println("Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
+            System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else {
             SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
@@ -341,6 +359,10 @@ public class SemanticVisitor implements Visitor {
         ArrayList<? extends FunctionOrProcedure> paramOps = p.getFunProcList();
         for (FunctionOrProcedure n : paramOps) {
             n.accept(this);
+        }
+
+        if(!mainFound){
+            System.err.println(">Semantic error: main procedure not found");
         }
 
         return null;
@@ -401,7 +423,7 @@ public class SemanticVisitor implements Visitor {
     public Object visit(VarDeclOp v) {
 
         if(!Checks.checkDeclaration(v)){
-            System.err.println("Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
+            System.err.println(">>Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
             System.exit(1);
         }
 
@@ -410,7 +432,7 @@ public class SemanticVisitor implements Visitor {
             SymbolTable currentTable = scopes.peek();
 
             if(currentTable.findSymbolInside(ie.getIdentifier().getName())!=null){
-                System.err.println("Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
+                System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
                 System.exit(1);
             }
             else {
@@ -432,7 +454,7 @@ public class SemanticVisitor implements Visitor {
                     }else if(e instanceof  Real_const){
                         s.setType(Type.REAL);
                     }else{
-                        System.err.println("Semantic error: Errore di inferenza di tipo, il tipo non può essere dedotto: "+ ie.getIdentifier().getName());
+                        System.err.println(">Semantic error: Errore di inferenza di tipo, il tipo non può essere dedotto: "+ ie.getIdentifier().getName());
                         System.exit(1);
                     }
 

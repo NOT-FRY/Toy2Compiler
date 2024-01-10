@@ -1,12 +1,15 @@
 package tree_structure.Expression;
 
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
 
 public class UminusOp extends Node implements Expression {
     private Expression value;
+
+    private Type type;
 
     @Override
     public String toString() {
@@ -37,5 +40,13 @@ public class UminusOp extends Node implements Expression {
     @Override
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

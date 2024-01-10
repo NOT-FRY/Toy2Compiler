@@ -1,7 +1,7 @@
 package tree_structure.Statement;
 
-import tree_structure.Expression.ProcedureExpression;
-import tree_structure.Identifier;
+import tree_structure.ProcedureExpression;
+import tree_structure.Expression.Identifier;
 import tree_structure.Node;
 import visitors.Visitor;
 

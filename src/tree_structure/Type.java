@@ -5,5 +5,6 @@ public enum Type {
     BOOL,
     REAL,
     STRING,
+    NOTYPE,
     ERROR
 }

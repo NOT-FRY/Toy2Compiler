@@ -1,5 +1,6 @@
 package tree_structure.Expression;
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -12,6 +13,8 @@ public class FunCallOp extends Node implements Expression{
     private ArrayList<Expression> expressions;
 
     private Type type;
+
+    private ExpressionType expressionType = ExpressionType.FUNCALL;
 
     public FunCallOp(Identifier identifier, ArrayList<Expression> expressions) {
         this.identifier = identifier;
@@ -64,5 +67,9 @@ public class FunCallOp extends Node implements Expression{
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 }

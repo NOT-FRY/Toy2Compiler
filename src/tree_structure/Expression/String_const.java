@@ -1,5 +1,6 @@
 package tree_structure.Expression;
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -10,6 +11,8 @@ public class String_const extends Node implements Expression {
     private String value;
 
     private final Type type = Type.STRING;
+
+    private ExpressionType expressionType = ExpressionType.CONST;
 
     @Override
     public String toString() {
@@ -45,6 +48,10 @@ public class String_const extends Node implements Expression {
 
     public Type getType() {
         return type;
+    }
+
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
 }

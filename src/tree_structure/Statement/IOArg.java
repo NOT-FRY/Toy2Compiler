@@ -1,12 +1,13 @@
-package tree_structure.Expression;
+package tree_structure.Statement;
 
+import tree_structure.Expression.Expression;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
 
-public class IOArg extends Node implements Expression{
+public class IOArg extends Node{
 
     private Expression expression;
 

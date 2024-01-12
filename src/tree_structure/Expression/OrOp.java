@@ -1,5 +1,6 @@
 package tree_structure.Expression;
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -11,6 +12,8 @@ public class OrOp extends Node implements Expression {
     private Expression right;
 
     private Type type;
+
+    private ExpressionType expressionType = ExpressionType.OR;
 
     public OrOp(Expression left, Expression right) {
         this.left = left;
@@ -61,4 +64,9 @@ public class OrOp extends Node implements Expression {
     public void setType(Type type) {
         this.type = type;
     }
+
+    public ExpressionType getExpressionType() {
+        return expressionType;
+    }
+
 }

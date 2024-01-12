@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import visitors.Visitor;
 
@@ -12,6 +13,8 @@ public class AddOp extends Node implements Expression {
     private Expression right;
 
     private Type type;
+
+    private ExpressionType expressionType = ExpressionType.PLUS;
 
 
     public AddOp(Expression left, Expression right) {
@@ -57,6 +60,11 @@ public class AddOp extends Node implements Expression {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
     public void setType(Type type) {

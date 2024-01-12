@@ -1,5 +1,6 @@
 package tree_structure.Expression;
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import tree_structure.Qualifier;
 import tree_structure.Type;
@@ -23,6 +24,8 @@ public class Identifier extends Node implements Expression {
     private Qualifier qualifier;
 
     private Type type;
+
+    private ExpressionType expressionType = ExpressionType.ID;
 
     public Identifier(String name) {
         this.name = name;
@@ -76,6 +79,10 @@ public class Identifier extends Node implements Expression {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
 }

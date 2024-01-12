@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 
+import scoping.ExpressionType;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -12,6 +13,8 @@ public class AndOp extends Node implements Expression {
     private Expression right;
 
     private Type type;
+
+    private ExpressionType expressionType = ExpressionType.AND;
 
     public AndOp(Expression left, Expression right) {
         this.left = left;
@@ -55,6 +58,11 @@ public class AndOp extends Node implements Expression {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
     public void setType(Type type) {

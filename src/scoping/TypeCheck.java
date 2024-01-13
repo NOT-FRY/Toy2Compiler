@@ -120,25 +120,37 @@ public class TypeCheck {
         }
         if(identifierCount != expressionCount) {
             //TODO Lanciare eccezione o restituire ERROR ???
-            throw new Exception(">Semantic error: numero di identificatori diverso dal numero di espressioni nell'assegnamento -starting at:" + assignStatement.getIdentifiers().get(0).getName());
-            return Type.ERROR;
+            throw new Exception(">Semantic error: numero di identificatori diverso dal numero di espressioni nell'assegnazione -starting at:" + assignStatement.getIdentifiers().get(0).getName());
         }
 
         ArrayList<Identifier> identifier = assignStatement.getIdentifiers();
 
+        // il tipo dell’i-esimo identificatore è compatibile con il tipo dell’iesimo valore per i = 1, .., n
         for(int i=0; i< assignStatement.getIdentifiers().size();i++){
 
             Identifier id = assignStatement.getIdentifiers().get(i);
             Expression ex = assignStatement.getExpressions().get(i);
 
-            if(id.getType())
+            //se l'espressione destra dell'assegnamento è unaria
+            if(ex.getExpressionType()==ExpressionType.NOT || ex.getExpressionType()==ExpressionType.UMINUS){
+                Type idType = checkUnaryExprType(id,ex.getExpressionType());
+                Type expressionType = checkUnaryExprType(ex,ex.getExpressionType());
+
+                if(idType!=expressionType){
+                    throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());
+                }
+            }else //tipo binario
+            {
+                Type type = checkBinaryExprType(id,ex,ex.getExpressionType());
+                if(type==Type.ERROR){
+                    throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());
+                }
+            }
 
         }
 
+        return Type.NOTYPE;
 
-
-        //TODO
-        // il tipo dell’i-esimo identificatore è compatibile con il tipo dell’iesimo valore per i = 1, .., n
     }
 
     private static Type checkIfStatement(Type expressionType, Type bodyType, Type elseBodyType){
@@ -146,6 +158,10 @@ public class TypeCheck {
             return Type.NOTYPE;
         else
             return Type.ERROR;
+    }
+
+    private static Type checkFunCallExpr(){
+
     }
 
 

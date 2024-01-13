@@ -12,7 +12,7 @@ public class FunCallOp extends Node implements Expression{
     private Identifier identifier;
     private ArrayList<Expression> expressions;
 
-    private Type type;
+    private ArrayList<Type> returnTypes;
 
     private ExpressionType expressionType = ExpressionType.FUNCALL;
 
@@ -61,15 +61,28 @@ public class FunCallOp extends Node implements Expression{
         return v.visit(this);
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public ExpressionType getExpressionType() {
         return expressionType;
+    }
+
+    public void setExpressionType(ExpressionType expressionType) {
+        this.expressionType = expressionType;
+    }
+
+    public ArrayList<Type> getReturnTypes() {
+        return returnTypes;
+    }
+
+    public void setReturnTypes(ArrayList<Type> returnTypes) {
+        this.returnTypes = returnTypes;
+    }
+
+    public void addReturnType(Type returnType){
+        returnTypes.add(returnType);
+    }
+
+    @Override
+    public Type getType() {
+        return null;
     }
 }

@@ -131,6 +131,19 @@ public class SemanticVisitor implements Visitor {
     public Object visit(FunCallOp f) {
 
         f.getIdentifier().accept(this);
+
+        SymbolTable currentTable = scopes.peek();
+        Symbol s = currentTable.lookup(f.getIdentifier().getName());
+        if(s==null){
+            System.err.println(">Semantic error: Identificatore non dichiarato : "+ s.getId());
+            System.exit(1);
+        }else{
+            //I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
+            for(Type t : s.getReturnTypes()){
+                f.addReturnType(t);
+            }
+        }
+
         ArrayList<Expression> expressions = f.getExpressions();
         for(Expression e : expressions){
             e.accept(this);
@@ -160,15 +173,24 @@ public class SemanticVisitor implements Visitor {
             f.getIdentifier().accept(this);
         }
 
+        //aggiungo la definizione della funzione alla symbol table corrente
+        Symbol s = new Symbol(f.getIdentifier().getName(),Kind.METHOD);
+
         ArrayList<ProcFunParamOp> paramOps = f.getProcFunParamOpList();
         for(ProcFunParamOp p : paramOps){
+            s.addParamType(p.getType());
             p.accept(this);
         }
         ArrayList<Type> types = f.getReturnTypes();
-        //for(Type t : types){
-        //    out.println(getIndent() + t);
-        //}
+        for(Type t : types){
+            s.addReturnType(t);
+        }
 
+        try {
+            father.addEntry(s);
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
 
         f.getBody().accept(this);
 
@@ -423,7 +445,7 @@ public class SemanticVisitor implements Visitor {
     public Object visit(VarDeclOp v) {
 
         if(!Checks.checkDeclaration(v)){
-            System.err.println(">>Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
+            System.err.println(">Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
             System.exit(1);
         }
 

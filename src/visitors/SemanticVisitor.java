@@ -1,8 +1,5 @@
 package visitors;
-import scoping.Checks;
-import scoping.Kind;
-import scoping.Symbol;
-import scoping.SymbolTable;
+import scoping.*;
 import tree_structure.*;
 import tree_structure.Expression.*;
 import tree_structure.Expression.Expression;
@@ -26,11 +23,17 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(AddOp a) {
 
-        //Caso E: operatore di espressioni o istruzioni
-
         a.getLeft().accept(this);
 
         a.getRight().accept(this);
+
+        Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.PLUS);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
+            System.exit(1);
+        }else{
+            a.setType(t);
+        }
         return null;
     }
 
@@ -40,11 +43,30 @@ public class SemanticVisitor implements Visitor {
 
         a.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.AND);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
+            System.exit(1);
+        }else{
+            a.setType(t);
+        }
         return null;
     }
 
     @Override
     public Object visit(AssignStatement a) {
+
+        Type t=Type.ERROR;
+        try{
+            t = TypeCheck.checkAssignStatement(a);
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }finally {
+            a.setType(t);
+        }
+
+
         ArrayList<Identifier> identifiers = a.getIdentifiers();
         for(Identifier i : identifiers){
             i.accept(this);
@@ -86,6 +108,13 @@ public class SemanticVisitor implements Visitor {
 
         d.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.MINUS);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
+            System.exit(1);
+        }else{
+            d.setType(t);
+        }
         return null;
     }
 
@@ -96,6 +125,13 @@ public class SemanticVisitor implements Visitor {
 
         d.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.DIV);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
+            System.exit(1);
+        }else{
+            d.setType(t);
+        }
         return null;
     }
 
@@ -111,10 +147,17 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(EQOp e) {
 
-
         e.getLeft().accept(this);
 
         e.getRight().accept(this);
+
+        Type t = TypeCheck.checkBinaryExprType(e.getLeft(),e.getRight(),ExpressionType.EQ);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +e.getLeft().toString());
+            System.exit(1);
+        }else{
+            e.setType(t);
+        }
 
         return null;
     }
@@ -205,6 +248,14 @@ public class SemanticVisitor implements Visitor {
 
         g.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GE);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
+            System.exit(1);
+        }else{
+            g.setType(t);
+        }
+
         return null;
     }
 
@@ -214,6 +265,14 @@ public class SemanticVisitor implements Visitor {
         g.getLeft().accept(this);
 
         g.getRight().accept(this);
+
+        Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GT);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
+            System.exit(1);
+        }else{
+            g.setType(t);
+        }
 
         return null;
     }
@@ -250,6 +309,30 @@ public class SemanticVisitor implements Visitor {
         }
         i.getElseBody().accept(this);
 
+        Type ifType;
+        Type expressionType = i.getExpression().getType();
+        Type bodyType = i.getBody().getType();
+        Type elseBodyType = i.getElseBody().getBody().getType();
+
+        //if con elif completo (i controlli su null vengono fatti da checkIfElsifStatement )
+        if(!elifOps.isEmpty()){
+            ifType = TypeCheck.checkIfElsifStatement(expressionType,bodyType,i.getElifList(),elseBodyType);
+        }
+        else if(i.getElseBody()!=null){//caso if else
+            ifType = TypeCheck.checkIfElseStatement(expressionType,bodyType,elseBodyType);
+        }//caso semplice if
+        else{
+            ifType = TypeCheck.checkIfStatement(expressionType,bodyType);
+        }
+
+        if(ifType==Type.ERROR){
+            System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo dell if");
+            System.exit(1);
+        }else{
+            i.setType(ifType);
+        }
+
+
         return null;
     }
 
@@ -268,6 +351,14 @@ public class SemanticVisitor implements Visitor {
 
         l.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LE);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
+            System.exit(1);
+        }else{
+            l.setType(t);
+        }
+
         return null;
     }
 
@@ -277,6 +368,14 @@ public class SemanticVisitor implements Visitor {
         l.getLeft().accept(this);
 
         l.getRight().accept(this);
+
+        Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LT);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
+            System.exit(1);
+        }else{
+            l.setType(t);
+        }
 
         return null;
     }
@@ -289,6 +388,14 @@ public class SemanticVisitor implements Visitor {
 
         m.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(m.getLeft(),m.getRight(),ExpressionType.TIMES);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +m.getLeft().toString());
+            System.exit(1);
+        }else{
+            m.setType(t);
+        }
+
         return null;
     }
 
@@ -299,6 +406,14 @@ public class SemanticVisitor implements Visitor {
 
         n.getRight().accept(this);
 
+        Type t = TypeCheck.checkBinaryExprType(n.getLeft(),n.getRight(),ExpressionType.NE);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getLeft().toString());
+            System.exit(1);
+        }else{
+            n.setType(t);
+        }
+
         return null;
     }
 
@@ -306,6 +421,14 @@ public class SemanticVisitor implements Visitor {
     public Object visit(NotOp n) {
 
         n.getValue().accept(this);
+
+        Type t = TypeCheck.checkUnaryExprType(n.getValue(),ExpressionType.NOT);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getValue().toString());
+            System.exit(1);
+        }else{
+            n.setType(t);
+        }
 
         return null;
     }
@@ -316,6 +439,14 @@ public class SemanticVisitor implements Visitor {
         o.getLeft().accept(this);
 
         o.getRight().accept(this);
+
+        Type t = TypeCheck.checkBinaryExprType(o.getLeft(),o.getRight(),ExpressionType.OR);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +o.getLeft().toString());
+            System.exit(1);
+        }else{
+            o.setType(t);
+        }
 
         return null;
     }
@@ -385,6 +516,7 @@ public class SemanticVisitor implements Visitor {
 
         if(!mainFound){
             System.err.println(">Semantic error: main procedure not found");
+            System.exit(1);
         }
 
         return null;
@@ -437,6 +569,14 @@ public class SemanticVisitor implements Visitor {
     public Object visit(UminusOp u) {
 
         u.getValue().accept(this);
+
+        Type t = TypeCheck.checkUnaryExprType(u.getValue(),ExpressionType.NOT);
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +u.getValue().toString());
+            System.exit(1);
+        }else{
+            u.setType(t);
+        }
 
         return null;
     }
@@ -509,6 +649,14 @@ public class SemanticVisitor implements Visitor {
         w.getExpression().accept(this);
         w.getBody().accept(this);
 
+        Type t = TypeCheck.checkWhileStatement(w.getExpression().getType(), w.getBody().getType());
+        if(t==Type.ERROR){
+            System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo del while");
+            System.exit(1);
+        }else{
+            w.setType(t);
+        }
+
         return null;
     }
 
@@ -564,10 +712,10 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(IOArg i) {
-
         i.isDollarSign();
-
         i.getExpression().accept(this);
+
+
 
         return null;
     }

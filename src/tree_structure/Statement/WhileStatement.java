@@ -3,6 +3,7 @@ package tree_structure.Statement;
 import tree_structure.BodyOp;
 import tree_structure.Expression.Expression;
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.Objects;
@@ -11,6 +12,8 @@ public class WhileStatement extends Node implements Statement {
     private Expression expression;
 
     private BodyOp body;
+
+    private Type type;
 
     public WhileStatement(Expression expression, BodyOp body) {
         this.expression = expression;
@@ -50,5 +53,13 @@ public class WhileStatement extends Node implements Statement {
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

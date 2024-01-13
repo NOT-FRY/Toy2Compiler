@@ -10,6 +10,7 @@ public class BodyOp extends Node{
     private ArrayList<VarDeclOp> varDeclList;
     private ArrayList<Statement> statementList;
 
+    private Type type;
 
     public BodyOp() {
         varDeclList = new ArrayList<VarDeclOp>();
@@ -63,5 +64,13 @@ public class BodyOp extends Node{
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

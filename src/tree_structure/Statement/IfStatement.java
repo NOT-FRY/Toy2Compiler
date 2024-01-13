@@ -13,6 +13,8 @@ public class IfStatement extends Node implements Statement {
     private ArrayList<ElifOp> elifList;
     private ElseOp elseBody;
 
+    private Type type;
+
     public IfStatement(Expression expression, BodyOp body, ArrayList<ElifOp> elifList, ElseOp elseBody) {
         this.expression = expression;
         this.body = body;
@@ -72,5 +74,13 @@ public class IfStatement extends Node implements Statement {
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

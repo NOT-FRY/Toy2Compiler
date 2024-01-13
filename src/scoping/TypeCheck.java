@@ -1,9 +1,12 @@
 package scoping;
 
 
+import tree_structure.ElifOp;
 import tree_structure.Expression.Expression;
+import tree_structure.Expression.FunCallOp;
 import tree_structure.Expression.Identifier;
 import tree_structure.Statement.AssignStatement;
+import tree_structure.Statement.IOArg;
 import tree_structure.Type;
 
 import java.util.ArrayList;
@@ -48,7 +51,7 @@ public class TypeCheck {
     }
 
     //caso concatenazione stringhe
-    private static Type checkStringConcatenation(Type type1, Type type2) {
+    public static Type checkStringConcatenation(Type type1, Type type2) {
         if (type1 == Type.STRING && type2 == Type.STRING)
             return Type.STRING;
         else
@@ -72,7 +75,7 @@ public class TypeCheck {
     }
 
     // Metodo per controllare le operazioni aritmetiche
-    private static Type checkArithmeticExpr(Type type1, Type type2) {
+    public static Type checkArithmeticExpr(Type type1, Type type2) {
         if (type1 == Type.INTEGER && type2 == Type.INTEGER)
             return Type.INTEGER;
         if ((type1 == Type.REAL && type2 == Type.REAL) ||
@@ -84,12 +87,12 @@ public class TypeCheck {
     }
 
     // Metodo per controllare le operazioni logiche
-    private static Type checkLogicalExpr(Type type1, Type type2) {
+    public static Type checkLogicalExpr(Type type1, Type type2) {
         return (type1 == Type.BOOL && type2 == Type.BOOL) ? Type.BOOL : Type.ERROR;
     }
 
     // Metodo per controllare le operazioni di confronto
-    private static Type checkRelationalExpr(Type type1, Type type2) {
+    public static Type checkRelationalExpr(Type type1, Type type2) {
         if (type1 == type2 ||
                 (type1 == Type.REAL && type2 == Type.INTEGER) ||
                 (type1 == Type.INTEGER && type2 == Type.REAL)
@@ -99,14 +102,14 @@ public class TypeCheck {
         return Type.ERROR;
     }
 
-    private static Type checkWhileStatement(Type expressionType, Type bodyType){
+    public static Type checkWhileStatement(Type expressionType, Type bodyType){
         if(expressionType==Type.BOOL && bodyType==Type.NOTYPE)
             return Type.NOTYPE;
         else
             return Type.ERROR;
     }
 
-    private static Type checkAssignStatement(AssignStatement assignStatement)throws Exception{
+    public static Type checkAssignStatement(AssignStatement assignStatement)throws Exception{
         int identifierCount = 0;
         int expressionCount = 0;
 
@@ -153,14 +156,54 @@ public class TypeCheck {
 
     }
 
-    private static Type checkIfStatement(Type expressionType, Type bodyType, Type elseBodyType){
+    public static Type checkIfStatement(Type expressionType, Type bodyType){
+        if(expressionType==Type.BOOL && bodyType==Type.NOTYPE)
+            return Type.NOTYPE;
+        else
+            return Type.ERROR;
+    }
+
+    public static Type checkIfElseStatement(Type expressionType, Type bodyType, Type elseBodyType){
         if(expressionType==Type.BOOL && bodyType==Type.NOTYPE && elseBodyType==Type.NOTYPE)
             return Type.NOTYPE;
         else
             return Type.ERROR;
     }
 
-    private static Type checkFunCallExpr(){
+    public static Type checkIfElsifStatement(Type expressionType, Type bodyType, ArrayList<ElifOp> elifList, Type elseBodyType){
+
+        for(ElifOp elif : elifList){
+            Type t = checkIfStatement(elif.getExpression().getType(), elif.getBody().getType());
+            if(t==Type.ERROR)
+                return Type.ERROR;
+        }
+
+        if(elseBodyType!=null){
+            Type t = checkIfElseStatement(expressionType,bodyType,elseBodyType);
+            if(t==Type.ERROR)
+                return Type.ERROR;
+        }else{
+            Type t = checkIfStatement(expressionType,bodyType);
+            if(t==Type.ERROR)
+                return Type.ERROR;
+        }
+
+        return Type.NOTYPE;
+
+    }
+
+    public static Type checkIOArg(IOArg arg)throws Exception{
+        if(!arg.isDollarSign()){
+            //concatenazione di stringhe o singola stringa
+            if(arg.getExpression().getType() != Type.STRING){
+                throw new Exception(">Semantic error: solo stringhe consentite in IOargs");
+            }
+        }
+        //TODO altri controlli?
+        return Type.NOTYPE;
+    }
+
+    public static Type checkFunCallExpr(ArrayList<Expression> parameters, ArrayList<Type> returnTypes, FunCallOp functionCalled){
 
     }
 

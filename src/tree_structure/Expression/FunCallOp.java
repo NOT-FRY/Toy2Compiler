@@ -19,11 +19,13 @@ public class FunCallOp extends Node implements Expression{
     public FunCallOp(Identifier identifier, ArrayList<Expression> expressions) {
         this.identifier = identifier;
         this.expressions = expressions;
+        returnTypes = new ArrayList<Type>();
     }
 
     public FunCallOp(Identifier identifier) {
         this.identifier = identifier;
         this.expressions = new ArrayList<Expression>();
+        returnTypes = new ArrayList<Type>();
     }
 
     public Identifier getIdentifier() {

@@ -209,10 +209,8 @@ public class SemanticVisitor implements Visitor {
             /* Assegnazione dei tipi di ritorno alla chiamata della funzione
             I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
             */
-            if(!s.getReturnTypes().isEmpty()) {
-                for (Type t : s.getReturnTypes()) {
-                    f.addReturnType(t);
-                }
+            for(Type t : s.getReturnTypes()){
+                f.addReturnType(t);
             }
         }
 

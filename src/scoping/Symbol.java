@@ -23,6 +23,7 @@ public class Symbol {
         this.kind = kind;
         this.type = type;
         returnTypes = new ArrayList<Type>();
+        paramTypes = new ArrayList<Type>();
     }
 
     public Symbol(String id, Kind kind, Type type, ArrayList<Type> returnTypes) {
@@ -30,11 +31,15 @@ public class Symbol {
         this.kind = kind;
         this.type = type;
         this.returnTypes = returnTypes;
+        paramTypes = new ArrayList<Type>();
     }
 
     public Symbol(String id, Kind kind) {
         this.id = id;
         this.kind = kind;
+        returnTypes = new ArrayList<Type>();
+        paramTypes = new ArrayList<Type>();
+
     }
 
 

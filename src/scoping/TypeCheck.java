@@ -119,10 +119,15 @@ public class TypeCheck {
             identifierCount++;
         }
         for(Expression e : assignStatement.getExpressions()){
-            expressionCount++;
+            if(e instanceof FunCallOp){ //ExpressionType.FUNCALL
+                for(Type t :((FunCallOp) e).getReturnTypes()){
+                    expressionCount++;
+                }
+            }else {
+                expressionCount++;
+            }
         }
         if(identifierCount != expressionCount) {
-            //TODO Lanciare eccezione o restituire ERROR ???
             throw new Exception(">Semantic error: numero di identificatori diverso dal numero di espressioni nell'assegnazione -starting at:" + assignStatement.getIdentifiers().get(0).getName());
         }
 
@@ -142,8 +147,18 @@ public class TypeCheck {
                 if(idType!=expressionType){
                     throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());
                 }
-            }else //tipo binario
-            {
+            }else if(ex.getExpressionType() == ExpressionType.FUNCALL) {
+                //gli id dovrebbero essere ordinati...
+                FunCallOp funCall = (FunCallOp) ex;
+                for(Type t: funCall.getReturnTypes()){
+                    if(id.getType() != t){
+                        throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName()+" mismatch con la funzione: "+funCall.getIdentifier().getName());
+                    }
+                    i++;
+                    id = assignStatement.getIdentifiers().get(i);//L'overflow dovrebbe essere stato controllato prima (numero identificatori)
+                }
+
+            }else{//tipo binario
                 Type type = checkBinaryExprType(id,ex,ex.getExpressionType());
                 if(type==Type.ERROR){
                     throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());
@@ -191,21 +206,5 @@ public class TypeCheck {
         return Type.NOTYPE;
 
     }
-
-    public static Type checkIOArg(IOArg arg)throws Exception{
-        if(!arg.isDollarSign()){
-            //concatenazione di stringhe o singola stringa
-            if(arg.getExpression().getType() != Type.STRING){
-                throw new Exception(">Semantic error: solo stringhe consentite in IOargs");
-            }
-        }
-        //TODO altri controlli?
-        return Type.NOTYPE;
-    }
-
-    public static Type checkFunCallExpr(ArrayList<Expression> parameters, ArrayList<Type> returnTypes, FunCallOp functionCalled){
-
-    }
-
 
 }

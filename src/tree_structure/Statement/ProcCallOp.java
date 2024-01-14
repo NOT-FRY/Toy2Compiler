@@ -3,6 +3,7 @@ package tree_structure.Statement;
 import tree_structure.ProcedureExpression;
 import tree_structure.Expression.Identifier;
 import tree_structure.Node;
+import tree_structure.Type;
 import visitors.Visitor;
 
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ public class ProcCallOp extends Node implements Statement {
 
     private Identifier identifier;
     private ArrayList<ProcedureExpression> procedureExpressions;
+
+    private Type type;
+
 
     public ProcCallOp(Identifier identifier) {
         this.identifier = identifier;
@@ -60,4 +64,13 @@ public class ProcCallOp extends Node implements Statement {
     public Object accept(Visitor v) {
         return v.visit(this);
     }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
 }

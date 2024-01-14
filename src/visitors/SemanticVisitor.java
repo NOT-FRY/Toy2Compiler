@@ -175,21 +175,45 @@ public class SemanticVisitor implements Visitor {
 
         f.getIdentifier().accept(this);
 
+        ArrayList<Expression> arguments = f.getExpressions();
+        for(Expression e : arguments){
+            e.accept(this);
+        }
+
         SymbolTable currentTable = scopes.peek();
         Symbol s = currentTable.lookup(f.getIdentifier().getName());
+
         if(s==null){
             System.err.println(">Semantic error: chiamata ad una funzione non definita : "+ f.getIdentifier().getName());
             System.exit(1);
         }else{
-            //I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
-            for(Type t : s.getReturnTypes()){
-                f.addReturnType(t);
-            }
-        }
+            /*
+            * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
+            * */
+            ArrayList<Type> definitionParameterTypes = s.getParamTypes();
+            int i=0;
 
-        ArrayList<Expression> expressions = f.getExpressions();
-        for(Expression e : expressions){
-            e.accept(this);
+            for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
+                if(definitionParameterTypes.get(i) != arguments.get(i).getType()){
+                    System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName() + " argomento: " +arguments.get(i).getType());
+                    System.exit(1);
+                }
+            }
+
+            if(i < definitionParameterTypes.size() || i < arguments.size()){
+                System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName());
+                System.exit(1);
+            }
+
+
+            /* Assegnazione dei tipi di ritorno alla chiamata della funzione
+            I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
+            */
+            if(!s.getReturnTypes().isEmpty()) {
+                for (Type t : s.getReturnTypes()) {
+                    f.addReturnType(t);
+                }
+            }
         }
 
         return null;
@@ -226,8 +250,8 @@ public class SemanticVisitor implements Visitor {
             s.addParamType(p.getType());
             p.accept(this);
         }
-        ArrayList<Type> types = f.getReturnTypes();
-        for(Type t : types){
+        ArrayList<Type> returnTypes = f.getReturnTypes();
+        for(Type t : returnTypes){
             s.addReturnType(t);
         }
 
@@ -476,6 +500,7 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ProcedureOp p) {
+
         try {
             Checks.checkProcedureOp(p);
         }catch (Exception e){
@@ -494,15 +519,24 @@ public class SemanticVisitor implements Visitor {
         }else {
             SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
             scopes.push(function);
-            p.getIdentifier().accept(this);
         }
+
+        //aggiungo la definizione della funzione alla symbol table corrente
+        Symbol s = new Symbol(p.getIdentifier().getName(),Kind.METHOD);
 
         ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
         for (ProcFunParamOp pr : paramOps) {
+            s.addParamType(pr.getType());
             pr.accept(this);
         }
 
+        try {
+            father.addEntry(s);
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+        }
 
+        p.getIdentifier().accept(this);
         p.getBody().accept(this);
 
         return null;
@@ -545,6 +579,8 @@ public class SemanticVisitor implements Visitor {
             v.accept(this);
         }
 
+        r.setType(Type.NOTYPE);
+
         return null;
     }
 
@@ -563,6 +599,8 @@ public class SemanticVisitor implements Visitor {
         for(Expression e : expressions) {
             e.accept(this);
         }
+
+        r.setType(Type.NOTYPE);
 
         return null;
     }
@@ -685,6 +723,8 @@ public class SemanticVisitor implements Visitor {
             e.accept(this);
         }
 
+        w.setType(Type.NOTYPE);
+
         return null;
     }
 
@@ -727,10 +767,14 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(IOArg i) {
-        i.isDollarSign();
+        try {
+            Checks.checkIOArg(i);
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
         i.getExpression().accept(this);
-
-
 
         return null;
     }
@@ -748,11 +792,51 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ProcCallOp p) {
+
         p.getIdentifier().accept(this);
-        ArrayList<ProcedureExpression> Expressions = p.getProcedureExpressions();
-        for(ProcedureExpression i : Expressions) {
-            i.accept(this);
+
+        ArrayList<ProcedureExpression> arguments = p.getProcedureExpressions();
+        for(ProcedureExpression e : arguments){
+            e.accept(this);
         }
+
+        SymbolTable currentTable = scopes.peek();
+        Symbol s = currentTable.lookup(p.getIdentifier().getName());
+
+        if(s==null){
+            System.err.println(">Semantic error: chiamata ad una procedura non definita : "+ p.getIdentifier().getName());
+            System.exit(1);
+        }else{
+            /*
+             * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
+             * */
+            ArrayList<Type> definitionParameterTypes = s.getParamTypes();
+            int i=0;
+
+            for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
+
+                if(arguments.get(i).isReference()) {//se è per riferimento, questo argomento è per forza un identificatore
+                    if(definitionParameterTypes.get(i) != arguments.get(i).getIdentifier().getType()){
+                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getIdentifier().getType());
+                        System.exit(1);
+                    }
+                }
+                else{ //è un espressione qualsiasi, senza il riferimento
+                    if(definitionParameterTypes.get(i) != arguments.get(i).getExpression().getType()){
+                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression().getType());
+                        System.exit(1);
+                    }
+                }
+            }
+
+            if(i < definitionParameterTypes.size() || i < arguments.size()){
+                System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName());
+                System.exit(1);
+            }
+
+        }
+
+        p.setType(Type.NOTYPE);
 
         return null;
     }

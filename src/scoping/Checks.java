@@ -66,9 +66,7 @@ public class Checks {
                 ArrayList<Identifier> identifiersAssigned = ((AssignStatement) s).getIdentifiers();
                 for(Identifier i : identifiersAssigned){
                     for(ProcFunParamOp p : parameters) {
-                        if (i.getName().equals(p.getIdentifier().getName()) &&
-                            i.getType() == p.getType()
-                        ){
+                        if (i.getName().equals(p.getIdentifier().getName())){
                             throw new Exception(">Semantic error: I parametri di una funzione possono essere in sola lettura - at: "+i.getName()+" inside : "+f.getIdentifier().getName());
                         }
                     }
@@ -117,6 +115,15 @@ public class Checks {
             }
         }
 
+    }
+
+    public static void checkIOArg(IOArg arg)throws Exception{
+        if(!arg.isDollarSign()){
+            //Consentite solo concatenazione di stringhe o singola stringa
+            if(arg.getExpression().getType() != Type.STRING){
+                throw new Exception(">Semantic error: solo stringhe consentite in IOargs");
+            }
+        }
     }
 
 }

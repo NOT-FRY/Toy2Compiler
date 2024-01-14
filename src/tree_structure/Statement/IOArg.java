@@ -1,5 +1,6 @@
 package tree_structure.Statement;
 
+import scoping.ExpressionType;
 import tree_structure.Expression.Expression;
 import tree_structure.Node;
 import tree_structure.Type;
@@ -7,7 +8,7 @@ import visitors.Visitor;
 
 import java.util.Objects;
 
-public class IOArg extends Node{
+public class IOArg extends Node implements Expression{
 
     private Expression expression;
 
@@ -59,6 +60,11 @@ public class IOArg extends Node{
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public ExpressionType getExpressionType() {
+        return null;
     }
 
     public void setType(Type type) {

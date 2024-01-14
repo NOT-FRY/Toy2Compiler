@@ -21,6 +21,12 @@ ProcParamId ::= ID
  */
 public class Identifier extends Node implements Expression {
     private String name;
+
+    /*
+    * i valori out (riferimento) e inout (non riferimento)  qualificano i parametri di procedura
+    *    mentre in (solo lettura) qualifica i parametri di funzione
+    * */
+
     private Qualifier qualifier;
 
     private Type type;

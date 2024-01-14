@@ -178,7 +178,7 @@ public class SemanticVisitor implements Visitor {
         SymbolTable currentTable = scopes.peek();
         Symbol s = currentTable.lookup(f.getIdentifier().getName());
         if(s==null){
-            System.err.println(">Semantic error: Identificatore non dichiarato : "+ s.getId());
+            System.err.println(">Semantic error: chiamata ad una funzione non definita : "+ f.getIdentifier().getName());
             System.exit(1);
         }else{
             //I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
@@ -198,13 +198,15 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(FunctionOp f) {
 
+        try{
+            Checks.checkFunctionOp(f);
+        }catch(Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
         SymbolTable father = scopes.peek();
 
-        /*
-        * se la tabella corrente contiene già la dichiarazione dell’identificatore coinvolto allora
-          restituisci “errore di dichiarazione multipla”
-        *
-        * */
         if(father.findSymbolInside(f.getIdentifier().getName())!=null){
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
             System.exit(1);
@@ -474,6 +476,12 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ProcedureOp p) {
+        try {
+            Checks.checkProcedureOp(p);
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
 
         if(p.getIdentifier().getName().equals("main"))
             mainFound=true;
@@ -524,6 +532,13 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ReadStatement r) {
+        try {
+            Checks.checkReadStatement(r);
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
 
         ArrayList<Expression> expressions = r.getExpressions();
         for (Expression v : expressions) {

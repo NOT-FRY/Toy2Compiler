@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 import scoping.ExpressionType;
+import scoping.SymbolTable;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -14,6 +15,8 @@ public class LTOp extends Node implements Expression {
     private Type type;
 
     private ExpressionType expressionType = ExpressionType.LT;
+
+    private SymbolTable symbolTable;
 
     public LTOp(Expression left, Expression right) {
         this.left = left;
@@ -70,4 +73,11 @@ public class LTOp extends Node implements Expression {
         return expressionType;
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 }

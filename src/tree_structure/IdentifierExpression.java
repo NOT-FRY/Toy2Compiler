@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import tree_structure.Expression.Identifier;
 import visitors.Visitor;
@@ -9,6 +10,8 @@ import java.util.Objects;
 public class IdentifierExpression extends Node{
     private Identifier identifier;
     private Expression exp;
+
+    private SymbolTable symbolTable;
 
     public IdentifierExpression(Identifier identifier, Expression exp) {
         this.identifier = identifier;
@@ -46,9 +49,16 @@ public class IdentifierExpression extends Node{
         this.exp = exp;
     }
 
-
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

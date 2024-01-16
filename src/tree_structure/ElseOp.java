@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import visitors.Visitor;
 
 import java.util.Objects;
@@ -20,6 +21,8 @@ public class ElseOp extends Node{
         this.body = body;
     }
 
+    private SymbolTable symbolTable;
+
     @Override
     public String toString() {
         return "ElseOp{" +
@@ -38,5 +41,13 @@ public class ElseOp extends Node{
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

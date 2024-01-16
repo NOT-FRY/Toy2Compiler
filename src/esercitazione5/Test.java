@@ -1,9 +1,8 @@
 package esercitazione5;
 
 import tree_structure.ProgramOp;
-import visitors.FirstTableVisitor;
+import visitors.ScopeVisitor;
 import visitors.PrintXMLTreeVisitor;
-import visitors.SemanticVisitor;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,9 +18,8 @@ public class Test {
         treeVisitor.visit(program);
         treeVisitor.dispose();
 
-        FirstTableVisitor firstTableVisitor = new FirstTableVisitor();
-        firstTableVisitor.visit(program);
-
+        ScopeVisitor scopeVisitor = new ScopeVisitor();
+        scopeVisitor.visit(program);
         //SemanticVisitor semanticVisitor = new SemanticVisitor();
         //semanticVisitor.visit(program);
 

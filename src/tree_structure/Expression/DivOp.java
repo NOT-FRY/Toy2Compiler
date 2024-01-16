@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 import scoping.ExpressionType;
+import scoping.SymbolTable;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -14,6 +15,8 @@ public class DivOp extends Node implements Expression {
     private Type type;
 
     private ExpressionType expressionType = ExpressionType.DIV;
+
+    private SymbolTable symbolTable;
 
     public DivOp(Expression left, Expression right) {
         this.left = left;
@@ -66,5 +69,17 @@ public class DivOp extends Node implements Expression {
 
     public ExpressionType getExpressionType() {
         return expressionType;
+    }
+
+    public void setExpressionType(ExpressionType expressionType) {
+        this.expressionType = expressionType;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Statement.Statement;
 import visitors.Visitor;
 
@@ -11,6 +12,8 @@ public class BodyOp extends Node{
     private ArrayList<Statement> statementList;
 
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public BodyOp() {
         varDeclList = new ArrayList<VarDeclOp>();
@@ -72,5 +75,13 @@ public class BodyOp extends Node{
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

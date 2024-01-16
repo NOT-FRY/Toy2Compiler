@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import visitors.Visitor;
 
@@ -8,6 +9,8 @@ import java.util.Objects;
 public class ElifOp extends Node{
     private Expression expression;
     private BodyOp body;
+
+    private SymbolTable symbolTable;
 
     public ElifOp(Expression expression, BodyOp body) {
         this.expression = expression;
@@ -48,5 +51,13 @@ public class ElifOp extends Node{
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

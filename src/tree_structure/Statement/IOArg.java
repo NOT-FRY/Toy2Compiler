@@ -1,6 +1,7 @@
 package tree_structure.Statement;
 
 import scoping.ExpressionType;
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import tree_structure.Node;
 import tree_structure.Type;
@@ -15,6 +16,8 @@ public class IOArg extends Node implements Expression{
     private boolean dollarSign;
 
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public IOArg(Expression expression, boolean dollarSign) {
         this.expression = expression;
@@ -71,4 +74,11 @@ public class IOArg extends Node implements Expression{
         this.type = type;
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 }

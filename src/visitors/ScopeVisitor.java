@@ -14,13 +14,13 @@ import java.util.Stack;
 /*Prima visita dell'albero che serve ad aggiungere informazioni ai nodi, come valori di ritorno delle funzioni
  e tipi dei parametri
          */
-public class FirstTableVisitor implements Visitor {
+public class ScopeVisitor implements Visitor {
 
     private boolean mainFound = false;
 
     private Stack<SymbolTable> scopes;
 
-    public FirstTableVisitor() {
+    public ScopeVisitor() {
         scopes = new Stack<SymbolTable>();
     }
 
@@ -28,13 +28,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(AddOp a) {
         a.getLeft().accept(this);
         a.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.PLUS);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
-            System.exit(1);
-        }else{
-            a.setType(t);
-        }
         return null;
     }
 
@@ -42,28 +35,11 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(AndOp a) {
         a.getLeft().accept(this);
         a.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.AND);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
-            System.exit(1);
-        }else{
-            a.setType(t);
-        }
         return null;
     }
 
     @Override
     public Object visit(AssignStatement a) {
-
-        Type t=Type.ERROR;
-        try{
-            t = TypeCheck.checkAssignStatement(a);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }finally {
-            a.setType(t);
-        }
 
         ArrayList<Identifier> identifiers = a.getIdentifiers();
         for(Identifier i : identifiers){
@@ -84,6 +60,8 @@ public class FirstTableVisitor implements Visitor {
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
             SymbolTable fatherScope = scopes.peek();
             SymbolTable newBodyScope = new SymbolTable("body_scope",fatherScope,ScopeType.BODY);
+
+            b.setSymbolTable(newBodyScope);
             scopes.push(newBodyScope);
         }
 
@@ -105,18 +83,8 @@ public class FirstTableVisitor implements Visitor {
 
     @Override
     public Object visit(DiffOp d) {
-
         d.getLeft().accept(this);
-
         d.getRight().accept(this);
-
-        Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.MINUS);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
-            System.exit(1);
-        }else{
-            d.setType(t);
-        }
         return null;
     }
 
@@ -124,13 +92,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(DivOp d) {
         d.getLeft().accept(this);
         d.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.DIV);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
-            System.exit(1);
-        }else{
-            d.setType(t);
-        }
         return null;
     }
 
@@ -145,13 +106,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(EQOp e) {
         e.getLeft().accept(this);
         e.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(e.getLeft(),e.getRight(),ExpressionType.EQ);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +e.getLeft().toString());
-            System.exit(1);
-        }else{
-            e.setType(t);
-        }
         return null;
     }
 
@@ -169,39 +123,6 @@ public class FirstTableVisitor implements Visitor {
         ArrayList<Expression> arguments = f.getExpressions();
         for(Expression e : arguments){
             e.accept(this);
-        }
-
-        SymbolTable currentTable = scopes.peek();
-        Symbol s = currentTable.lookup(f.getIdentifier().getName());
-
-        if(s==null){
-            System.err.println(">Semantic error: chiamata ad una funzione non definita : "+ f.getIdentifier().getName());
-            System.exit(1);
-        }else{
-            /*
-             * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
-             * */
-            ArrayList<Type> definitionParameterTypes = s.getParamTypes();
-            int i=0;
-
-            for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
-                if(definitionParameterTypes.get(i) != arguments.get(i).getType()){
-                    System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName() + " argomento: " +arguments.get(i).getType());
-                    System.exit(1);
-                }
-            }
-
-            if(i < definitionParameterTypes.size() || i < arguments.size()){
-                System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName());
-                System.exit(1);
-            }
-
-            /* Assegnazione dei tipi di ritorno alla chiamata della funzione
-            I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
-            */
-            for(Type t : s.getReturnTypes()){
-                f.addReturnType(t);
-            }
         }
 
         return null;
@@ -226,6 +147,7 @@ public class FirstTableVisitor implements Visitor {
         else {
             SymbolTable function = new SymbolTable(f.getIdentifier().getName(), father, ScopeType.FUNCTION);
             scopes.push(function);
+            f.setSymbolTable(function);
 
             f.getIdentifier().accept(this);
         }
@@ -235,8 +157,8 @@ public class FirstTableVisitor implements Visitor {
 
         ArrayList<ProcFunParamOp> paramOps = f.getProcFunParamOpList();
         for(ProcFunParamOp p : paramOps){
-            s.addParamType(p.getType());
             p.accept(this);
+            s.addParamType(p.getType());
         }
         ArrayList<Type> returnTypes = f.getReturnTypes();
         for(Type t : returnTypes){
@@ -261,13 +183,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(GEOp g) {
         g.getLeft().accept(this);
         g.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GE);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
-            System.exit(1);
-        }else{
-            g.setType(t);
-        }
         return null;
     }
 
@@ -275,13 +190,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(GTOp g) {
         g.getLeft().accept(this);
         g.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GT);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
-            System.exit(1);
-        }else{
-            g.setType(t);
-        }
         return null;
     }
 
@@ -289,12 +197,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(Identifier i) {
         SymbolTable currentTable = scopes.peek();
         Symbol s = currentTable.lookup(i.getName());
-        if(s==null){
-            System.err.println(">Semantic error: Identificatore non dichiarato : "+ i.getName());
-            System.exit(1);
-        }else{
-            i.setType(s.getType());
-        }
         return null;
     }
 
@@ -306,6 +208,8 @@ public class FirstTableVisitor implements Visitor {
         SymbolTable ifScope = new SymbolTable("if_scope",father,ScopeType.IF);
         scopes.push(ifScope);
 
+        i.setSymbolTable(ifScope);
+
         i.getExpression().accept(this);
         i.getBody().accept(this);
         ArrayList<ElifOp> elifOps = i.getElifList();
@@ -314,31 +218,6 @@ public class FirstTableVisitor implements Visitor {
         }
         if(i.getElseBody() != null)
             i.getElseBody().accept(this);
-
-        Type ifType;
-        Type expressionType = i.getExpression().getType();
-        Type bodyType = i.getBody().getType();
-        Type elseBodyType = Type.NOTYPE;
-        if(i.getElseBody()!=null)
-            elseBodyType = i.getElseBody().getBody().getType();
-
-        //if con elif completo (i controlli su null vengono fatti da checkIfElsifStatement )
-        if(!elifOps.isEmpty()){
-            ifType = TypeCheck.checkIfElsifStatement(expressionType,bodyType,i.getElifList(),elseBodyType);
-        }
-        else if(i.getElseBody()!=null){//caso if else
-            ifType = TypeCheck.checkIfElseStatement(expressionType,bodyType,elseBodyType);
-        }//caso semplice if
-        else{
-            ifType = TypeCheck.checkIfStatement(expressionType,bodyType);
-        }
-
-        if(ifType==Type.ERROR){
-            System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo dell if");
-            System.exit(1);
-        }else{
-            i.setType(ifType);
-        }
 
         scopes.pop();
 
@@ -354,13 +233,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(LEOp l) {
         l.getLeft().accept(this);
         l.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LE);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
-            System.exit(1);
-        }else{
-            l.setType(t);
-        }
         return null;
     }
 
@@ -368,13 +240,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(LTOp l) {
         l.getLeft().accept(this);
         l.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LT);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
-            System.exit(1);
-        }else{
-            l.setType(t);
-        }
         return null;
     }
 
@@ -383,13 +248,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(MulOp m) {
         m.getLeft().accept(this);
         m.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(m.getLeft(),m.getRight(),ExpressionType.TIMES);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +m.getLeft().toString());
-            System.exit(1);
-        }else{
-            m.setType(t);
-        }
         return null;
     }
 
@@ -397,26 +255,12 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(NEOp n) {
         n.getLeft().accept(this);
         n.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(n.getLeft(),n.getRight(),ExpressionType.NE);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getLeft().toString());
-            System.exit(1);
-        }else{
-            n.setType(t);
-        }
         return null;
     }
 
     @Override
     public Object visit(NotOp n) {
         n.getValue().accept(this);
-        Type t = TypeCheck.checkUnaryExprType(n.getValue(),ExpressionType.NOT);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getValue().toString());
-            System.exit(1);
-        }else{
-            n.setType(t);
-        }
         return null;
     }
 
@@ -424,13 +268,6 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(OrOp o) {
         o.getLeft().accept(this);
         o.getRight().accept(this);
-        Type t = TypeCheck.checkBinaryExprType(o.getLeft(),o.getRight(),ExpressionType.OR);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +o.getLeft().toString());
-            System.exit(1);
-        }else{
-            o.setType(t);
-        }
         return null;
     }
 
@@ -465,6 +302,9 @@ public class FirstTableVisitor implements Visitor {
             System.exit(1);
         }
 
+        p.getIdentifier().accept(this);
+        p.getBody().accept(this);
+
         if(p.getIdentifier().getName().equals("main"))
             mainFound=true;
 
@@ -475,6 +315,7 @@ public class FirstTableVisitor implements Visitor {
             System.exit(1);
         }else {
             SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
+            p.setSymbolTable(function);
             scopes.push(function);
         }
 
@@ -483,8 +324,8 @@ public class FirstTableVisitor implements Visitor {
 
         ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
         for (ProcFunParamOp pr : paramOps) {
-            s.addParamType(pr.getType());
             pr.accept(this);
+            s.addParamType(pr.getType());
         }
 
         try {
@@ -492,9 +333,6 @@ public class FirstTableVisitor implements Visitor {
         }catch(Exception e){
             System.err.println(e.getMessage());
         }
-
-        p.getIdentifier().accept(this);
-        p.getBody().accept(this);
 
         scopes.pop();
 
@@ -505,6 +343,7 @@ public class FirstTableVisitor implements Visitor {
     public Object visit(ProgramOp p) {
         SymbolTable global = new SymbolTable("global",ScopeType.GLOBAL);
         scopes.push(global);
+        p.setSymbolTable(global);
 
         ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();
         for (VarDeclOp v : varDeclList) {
@@ -556,8 +395,6 @@ public class FirstTableVisitor implements Visitor {
             e.accept(this);
         }
 
-        r.setType(Type.NOTYPE);
-
         return null;
     }
 
@@ -574,13 +411,6 @@ public class FirstTableVisitor implements Visitor {
     @Override
     public Object visit(UminusOp u) {
         u.getValue().accept(this);
-        Type t = TypeCheck.checkUnaryExprType(u.getValue(),ExpressionType.NOT);
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +u.getValue().toString());
-            System.exit(1);
-        }else{
-            u.setType(t);
-        }
         return null;
     }
 
@@ -595,6 +425,8 @@ public class FirstTableVisitor implements Visitor {
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         for(IdentifierExpression ie : identifierExpressionList) {
             SymbolTable currentTable = scopes.peek();
+
+            ie.accept(this);
 
             if(currentTable.findSymbolInside(ie.getIdentifier().getName())!=null){
                 System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
@@ -625,7 +457,6 @@ public class FirstTableVisitor implements Visitor {
 
                 }else{//dichiarazione, il tipo mi viene dato
                     s.setType(v.getType());
-                    ie.getIdentifier().setType(v.getType());
                 }
 
                 try {
@@ -634,7 +465,6 @@ public class FirstTableVisitor implements Visitor {
                     System.err.println(e.getMessage());
                 }
 
-                ie.accept(this);
             }
 
         }
@@ -649,17 +479,10 @@ public class FirstTableVisitor implements Visitor {
 
         SymbolTable whileScope = new SymbolTable("while_scope",father,ScopeType.WHILE);
         scopes.push(whileScope);
+        w.setSymbolTable(whileScope);
 
         w.getExpression().accept(this);
         w.getBody().accept(this);
-
-        Type t = TypeCheck.checkWhileStatement(w.getExpression().getType(), w.getBody().getType());
-        if(t==Type.ERROR){
-            System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo del while");
-            System.exit(1);
-        }else{
-            w.setType(t);
-        }
 
         scopes.pop();
         return null;
@@ -671,8 +494,6 @@ public class FirstTableVisitor implements Visitor {
         for(Expression e : expressions) {
             e.accept(this);
         }
-
-        w.setType(Type.NOTYPE);
 
         return null;
     }
@@ -745,44 +566,6 @@ public class FirstTableVisitor implements Visitor {
         for(ProcedureExpression e : arguments){
             e.accept(this);
         }
-
-        SymbolTable currentTable = scopes.peek();
-        Symbol s = currentTable.lookup(p.getIdentifier().getName());
-
-        if(s==null){
-            System.err.println(">Semantic error: chiamata ad una procedura non definita : "+ p.getIdentifier().getName());
-            System.exit(1);
-        }else{
-            /*
-             * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
-             * */
-            ArrayList<Type> definitionParameterTypes = s.getParamTypes();
-            int i=0;
-
-            for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
-
-                if(arguments.get(i).isReference()) {//se è per riferimento, questo argomento è per forza un identificatore
-                    if(definitionParameterTypes.get(i) != arguments.get(i).getIdentifier().getType()){
-                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getIdentifier().getType());
-                        System.exit(1);
-                    }
-                }
-                else{ //è un espressione qualsiasi, senza il riferimento
-                    if(definitionParameterTypes.get(i) != arguments.get(i).getExpression().getType()){
-                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression().getType());
-                        System.exit(1);
-                    }
-                }
-            }
-
-            if(i < definitionParameterTypes.size() || i < arguments.size()){
-                System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName());
-                System.exit(1);
-            }
-
-        }
-
-        p.setType(Type.NOTYPE);
 
         return null;
     }

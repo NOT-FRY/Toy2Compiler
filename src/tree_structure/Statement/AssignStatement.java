@@ -1,5 +1,6 @@
 package tree_structure.Statement;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import tree_structure.Expression.Identifier;
 import tree_structure.Node;
@@ -15,6 +16,8 @@ public class AssignStatement extends Node implements Statement {
     private ArrayList<Expression> expressions;
 
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public AssignStatement(ArrayList<Identifier> identifiers, ArrayList<Expression> expressions) {
         this.identifiers = identifiers;
@@ -66,6 +69,14 @@ public class AssignStatement extends Node implements Statement {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }
 

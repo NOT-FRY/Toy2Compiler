@@ -1,4 +1,5 @@
 package tree_structure;
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import tree_structure.Expression.Identifier;
 import visitors.Visitor;
@@ -12,6 +13,7 @@ public class ProcedureExpression extends Node{
 
     Identifier identifier;
 
+    private SymbolTable symbolTable;
 
     public ProcedureExpression(Expression expression, boolean reference, Identifier identifier) {
         this.expression = expression;
@@ -64,5 +66,13 @@ public class ProcedureExpression extends Node{
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

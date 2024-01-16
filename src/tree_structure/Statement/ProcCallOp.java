@@ -1,5 +1,6 @@
 package tree_structure.Statement;
 
+import scoping.SymbolTable;
 import tree_structure.ProcedureExpression;
 import tree_structure.Expression.Identifier;
 import tree_structure.Node;
@@ -16,6 +17,7 @@ public class ProcCallOp extends Node implements Statement {
 
     private Type type;
 
+    private SymbolTable symbolTable;
 
     public ProcCallOp(Identifier identifier) {
         this.identifier = identifier;
@@ -73,4 +75,11 @@ public class ProcCallOp extends Node implements Statement {
         this.type = type;
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 }

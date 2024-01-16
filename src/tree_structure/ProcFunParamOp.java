@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Identifier;
 import visitors.Visitor;
 
@@ -21,6 +22,8 @@ public class ProcFunParamOp extends Node{
     //private Qualifier qualifier;
     private Identifier identifier;
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public ProcFunParamOp(Identifier identifier, Type type) {
         this.identifier = identifier;
@@ -60,5 +63,13 @@ public class ProcFunParamOp extends Node{
 
     public Object accept(Visitor v){
         return v.visit(this);
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

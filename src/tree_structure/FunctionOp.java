@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Identifier;
 import visitors.Visitor;
 
@@ -13,6 +14,8 @@ public class FunctionOp extends Node implements FunctionOrProcedure{
     private ArrayList<Type> returnTypes;
 
     private BodyOp body;
+
+    private SymbolTable symbolTable;
 
     public FunctionOp(Identifier identifier, ArrayList<ProcFunParamOp> procFunParamOpList, ArrayList<Type> returnTypes, BodyOp body) {
         this.identifier = identifier;
@@ -76,5 +79,11 @@ public class FunctionOp extends Node implements FunctionOrProcedure{
         return v.visit(this);
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
 
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 }

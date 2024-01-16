@@ -1,5 +1,6 @@
 package tree_structure.Statement;
 
+import scoping.SymbolTable;
 import tree_structure.BodyOp;
 import tree_structure.Expression.Expression;
 import tree_structure.Node;
@@ -14,6 +15,8 @@ public class WhileStatement extends Node implements Statement {
     private BodyOp body;
 
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public WhileStatement(Expression expression, BodyOp body) {
         this.expression = expression;
@@ -61,5 +64,13 @@ public class WhileStatement extends Node implements Statement {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

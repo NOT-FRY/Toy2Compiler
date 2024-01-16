@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import visitors.Visitor;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.Objects;
 public class ProgramOp extends Node{
     private ArrayList<VarDeclOp> varDeclList;
     private ArrayList<FunctionOrProcedure> funProcList;
+
+    private SymbolTable symbolTable;
 
     public ProgramOp() {
         varDeclList = new ArrayList<VarDeclOp>();
@@ -61,5 +64,13 @@ public class ProgramOp extends Node{
 
     public void setFunProcList(ArrayList<FunctionOrProcedure> funProcList) {
         this.funProcList = funProcList;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

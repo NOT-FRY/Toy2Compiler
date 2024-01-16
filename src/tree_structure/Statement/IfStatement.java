@@ -1,5 +1,6 @@
 package tree_structure.Statement;
 
+import scoping.SymbolTable;
 import tree_structure.*;
 import tree_structure.Expression.Expression;
 import visitors.Visitor;
@@ -14,6 +15,8 @@ public class IfStatement extends Node implements Statement {
     private ElseOp elseBody;
 
     private Type type;
+
+    private SymbolTable symbolTable;
 
     public IfStatement(Expression expression, BodyOp body, ArrayList<ElifOp> elifList, ElseOp elseBody) {
         this.expression = expression;
@@ -82,5 +85,13 @@ public class IfStatement extends Node implements Statement {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

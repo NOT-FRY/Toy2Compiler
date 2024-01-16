@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 import scoping.ExpressionType;
+import scoping.SymbolTable;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;
@@ -13,6 +14,8 @@ public class UminusOp extends Node implements Expression {
     private Type type;
 
     private ExpressionType expressionType = ExpressionType.UMINUS;
+
+    private SymbolTable symbolTable;
 
     @Override
     public String toString() {
@@ -57,4 +60,11 @@ public class UminusOp extends Node implements Expression {
         return expressionType;
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 }

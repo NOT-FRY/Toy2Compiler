@@ -1,5 +1,6 @@
 package tree_structure;
 
+import scoping.SymbolTable;
 import tree_structure.Expression.Expression;
 import visitors.Visitor;
 
@@ -14,7 +15,7 @@ public class VarDeclOp extends Node {
 
     private DeclarationType declarationType;
 
-
+    private SymbolTable symbolTable;
 
     public VarDeclOp(ArrayList<IdentifierExpression> identifierExpressionsList, Type type,DeclarationType declarationType) {
         this.identifierExpressionsList = identifierExpressionsList;
@@ -66,5 +67,13 @@ public class VarDeclOp extends Node {
 
     public void setDeclarationType(DeclarationType declarationType) {
         this.declarationType = declarationType;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public void setSymbolTable(SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
     }
 }

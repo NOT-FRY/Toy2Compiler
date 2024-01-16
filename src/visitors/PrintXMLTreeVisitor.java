@@ -293,7 +293,10 @@ public class PrintXMLTreeVisitor implements Visitor {
         for (ElifOp p : elifOps) {
             p.accept(this);
         }
-        i.getElseBody().accept(this);
+
+        if(i.getElseBody() != null)
+            i.getElseBody().accept(this);
+
         decreaseIndent();
         out.println(getIndent() + "</IfStatement>");
         return null;

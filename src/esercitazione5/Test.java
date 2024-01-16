@@ -1,6 +1,7 @@
 package esercitazione5;
 
 import tree_structure.ProgramOp;
+import visitors.FirstTableVisitor;
 import visitors.PrintXMLTreeVisitor;
 import visitors.SemanticVisitor;
 
@@ -18,8 +19,11 @@ public class Test {
         treeVisitor.visit(program);
         treeVisitor.dispose();
 
-        SemanticVisitor semanticVisitor = new SemanticVisitor();
-        semanticVisitor.visit(program);
+        FirstTableVisitor firstTableVisitor = new FirstTableVisitor();
+        firstTableVisitor.visit(program);
+
+        //SemanticVisitor semanticVisitor = new SemanticVisitor();
+        //semanticVisitor.visit(program);
 
     }
 }

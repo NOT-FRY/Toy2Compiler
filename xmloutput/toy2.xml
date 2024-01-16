@@ -337,19 +337,6 @@
             </Type>
         </ProcFunParamOp>
         <BodyOp>
-            <VarDeclOp>
-                <IdentifierExpression>
-                    <Identifier>
-                        c
-                    </Identifier>
-                    <Integer_const>
-                        2
-                    </Integer_const>
-                </IdentifierExpression>
-                <DeclarationType>
-                    INITIALIZATION
-                </DeclarationType>
-            </VarDeclOp>
             <AssignStatement>
                 <Identifier>
                     risultato
@@ -366,14 +353,6 @@
                         </Identifier>
                     </rightVal>
                 </DivOp>
-            </AssignStatement>
-            <AssignStatement>
-                <Identifier>
-                    risultato
-                </Identifier>
-                <Identifier>
-                    c
-                </Identifier>
             </AssignStatement>
         </BodyOp>
     </ProcedureOp>

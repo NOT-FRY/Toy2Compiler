@@ -56,6 +56,15 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(AssignStatement a) {
 
+        ArrayList<Identifier> identifiers = a.getIdentifiers();
+        for(Identifier i : identifiers){
+            i.accept(this);
+        }
+        ArrayList<Expression> expressions = a.getExpressions();
+        for(Expression e : expressions){
+            e.accept(this);
+        }
+
         Type t=Type.ERROR;
         try{
             t = TypeCheck.checkAssignStatement(a);
@@ -66,29 +75,18 @@ public class SemanticVisitor implements Visitor {
             a.setType(t);
         }
 
-
-        ArrayList<Identifier> identifiers = a.getIdentifiers();
-        for(Identifier i : identifiers){
-            i.accept(this);
-        }
-        ArrayList<Expression> expressions = a.getExpressions();
-        for(Expression e : expressions){
-            e.accept(this);
-        }
         return null;
     }
 
     @Override
     public Object visit(BodyOp b) {
         /*Se il nodo dell’AST è legato ad un costrutto di creazione di nuovo scope (ProgramOp, FunOp,
-            ProcOp e BodyOp solo se non è figlio di FunOp o ProcOp) */
+            ProcOp e BodyOp solo se non è figlio di FunOp o ProcOp)
         ScopeType fatherScopeType = scopes.peek().getScopeType();
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
-            SymbolTable fatherScope = scopes.peek();
-            SymbolTable newBodyScope = new SymbolTable("body_scope",fatherScope,ScopeType.BODY);
-            scopes.push(newBodyScope);
+            RICORDARSI CHE c'è un nuovo scope (importante?)
         }
-
+        */
         ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
         for(VarDeclOp v : varDeclList){
             v.accept(this);
@@ -98,20 +96,13 @@ public class SemanticVisitor implements Visitor {
             s.accept(this);
         }
 
-        if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
-            scopes.pop();
-        }
-
         return null;
     }
 
     @Override
     public Object visit(DiffOp d) {
-
         d.getLeft().accept(this);
-
         d.getRight().accept(this);
-
         Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.MINUS);
         if(t==Type.ERROR){
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
@@ -124,11 +115,8 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(DivOp d) {
-
         d.getLeft().accept(this);
-
         d.getRight().accept(this);
-
         Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.DIV);
         if(t==Type.ERROR){
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
@@ -184,39 +172,31 @@ public class SemanticVisitor implements Visitor {
             e.accept(this);
         }
 
-        SymbolTable currentTable = scopes.peek();
+        SymbolTable currentTable = f.getSymbolTable();
         Symbol s = currentTable.lookup(f.getIdentifier().getName());
 
-        if(s==null){
-            System.err.println(">Semantic error: chiamata ad una funzione non definita : "+ f.getIdentifier().getName());
-            System.exit(1);
-        }else{
-            /*
-            * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
-            * */
-            ArrayList<Type> definitionParameterTypes = s.getParamTypes();
-            int i=0;
-
-            for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
-                if(definitionParameterTypes.get(i) != arguments.get(i).getType()){
-                    System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName() + " argomento: " +arguments.get(i).getType());
-                    System.exit(1);
-                }
-            }
-
-            if(i < definitionParameterTypes.size() || i < arguments.size()){
-                System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName());
+        /*
+           * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
+           * */
+        ArrayList<Type> definitionParameterTypes = s.getParamTypes();
+        int i=0;
+        for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
+            if(definitionParameterTypes.get(i) != arguments.get(i).getType()){
+                System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName() + " argomento: " +arguments.get(i).getType());
                 System.exit(1);
             }
-
-
-            /* Assegnazione dei tipi di ritorno alla chiamata della funzione
-            I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
-            */
-            for(Type t : s.getReturnTypes()){
-                f.addReturnType(t);
-            }
         }
+        if(i < definitionParameterTypes.size() || i < arguments.size()){
+            System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName());
+            System.exit(1);
+        }
+        /* Assegnazione dei tipi di ritorno alla chiamata della funzione
+           I TIPI DI RITORNO DELLA CHIAMATA DEVONO ESSERE GLI STESSI DELLA DEFINIZIONE!, riempio il nodo con le informazioni
+           */
+        for(Type t : s.getReturnTypes()){
+            f.addReturnType(t);
+        }
+
 
         return null;
     }

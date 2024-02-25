@@ -131,8 +131,6 @@ public class TypeCheck {
             throw new Exception(">Semantic error: numero di identificatori diverso dal numero di espressioni nell'assegnazione -starting at:" + assignStatement.getIdentifiers().get(0).getName());
         }
 
-        ArrayList<Identifier> identifier = assignStatement.getIdentifiers();
-
         // il tipo dell’i-esimo identificatore è compatibile con il tipo dell’iesimo valore per i = 1, .., n
         for(int i=0; i< assignStatement.getIdentifiers().size();i++){
 
@@ -144,7 +142,7 @@ public class TypeCheck {
                 Type idType = checkUnaryExprType(id,ex.getExpressionType());
                 Type expressionType = checkUnaryExprType(ex,ex.getExpressionType());
 
-                if(idType!=expressionType){
+                if(idType!=expressionType || idType==Type.ERROR ){
                     throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());
                 }
             }else if(ex.getExpressionType() == ExpressionType.FUNCALL) {

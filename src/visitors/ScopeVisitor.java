@@ -18,10 +18,10 @@ public class ScopeVisitor implements Visitor {
 
     private boolean mainFound = false;
 
-    private Stack<SymbolTable> scopes;
+    private SymbolTableStack symbolTableStack;
 
     public ScopeVisitor() {
-        scopes = new Stack<SymbolTable>();
+        symbolTableStack = new SymbolTableStack();
     }
 
     @Override
@@ -56,13 +56,10 @@ public class ScopeVisitor implements Visitor {
     public Object visit(BodyOp b) {
         /*Se il nodo dell’AST è legato ad un costrutto di creazione di nuovo scope (ProgramOp, FunOp,
             ProcOp e BodyOp solo se non è figlio di FunOp o ProcOp) */
-        ScopeType fatherScopeType = scopes.peek().getScopeType();
+        ScopeType fatherScopeType = symbolTableStack.peek().getScopeType();
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
-            SymbolTable fatherScope = scopes.peek();
-            SymbolTable newBodyScope = new SymbolTable("body_scope",fatherScope,ScopeType.BODY);
-
-            b.setSymbolTable(newBodyScope);
-            scopes.push(newBodyScope);
+            symbolTableStack.enterScope("body_scope",ScopeType.BODY);
+            //TODO b.setSymbolTable(newBodyScope);
         }
 
         ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
@@ -75,7 +72,7 @@ public class ScopeVisitor implements Visitor {
         }
 
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
-            scopes.pop();
+            symbolTableStack.exitScope();
         }
 
         return null;
@@ -138,42 +135,43 @@ public class ScopeVisitor implements Visitor {
             System.exit(1);
         }
 
-        SymbolTable father = scopes.peek();
 
-        if(father.findSymbolInside(f.getIdentifier().getName())!=null){
+        if(symbolTableStack.lookup(f.getIdentifier().getName(),Kind.METHOD)!=null){
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
             System.exit(1);
         }
         else {
-            SymbolTable function = new SymbolTable(f.getIdentifier().getName(), father, ScopeType.FUNCTION);
-            scopes.push(function);
-            f.setSymbolTable(function);
+            SymbolTable father = symbolTableStack.peek();
+            symbolTableStack.enterScope(f.getIdentifier().getName(), ScopeType.FUNCTION);
 
+            //TODO f.setSymbolTable(function);
             f.getIdentifier().accept(this);
+
+            //aggiungo la definizione della funzione alla symbol table corrente(padre)
+            Symbol s = new Symbol(f.getIdentifier().getName(), Kind.METHOD);
+
+            ArrayList<ProcFunParamOp> paramOps = f.getProcFunParamOpList();
+            for (ProcFunParamOp p : paramOps) {
+                p.accept(this);
+                s.addParamType(p.getType());
+            }
+            ArrayList<Type> returnTypes = f.getReturnTypes();
+            for (Type t : returnTypes) {
+                s.addReturnType(t);
+            }
+
+            try {
+                father.addEntry(s);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+
+            f.getBody().accept(this);
+
+            symbolTableStack.exitScope();
+
         }
-
-        //aggiungo la definizione della funzione alla symbol table corrente
-        Symbol s = new Symbol(f.getIdentifier().getName(),Kind.METHOD);
-
-        ArrayList<ProcFunParamOp> paramOps = f.getProcFunParamOpList();
-        for(ProcFunParamOp p : paramOps){
-            p.accept(this);
-            s.addParamType(p.getType());
-        }
-        ArrayList<Type> returnTypes = f.getReturnTypes();
-        for(Type t : returnTypes){
-            s.addReturnType(t);
-        }
-
-        try {
-            father.addEntry(s);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-
-        f.getBody().accept(this);
-
-        scopes.pop();
 
         return null;
     }
@@ -195,20 +193,16 @@ public class ScopeVisitor implements Visitor {
 
     @Override
     public Object visit(Identifier i) {
-        SymbolTable currentTable = scopes.peek();
-        Symbol s = currentTable.lookup(i.getName());
         return null;
     }
 
     @Override
     public Object visit(IfStatement i) {
 
-        SymbolTable father = scopes.peek();
+        SymbolTable current = symbolTableStack.peek();
+        current.setScopeType(ScopeType.IF);
 
-        SymbolTable ifScope = new SymbolTable("if_scope",father,ScopeType.IF);
-        scopes.push(ifScope);
-
-        i.setSymbolTable(ifScope);
+        i.setSymbolTable(current);
 
         i.getExpression().accept(this);
         i.getBody().accept(this);
@@ -218,8 +212,6 @@ public class ScopeVisitor implements Visitor {
         }
         if(i.getElseBody() != null)
             i.getElseBody().accept(this);
-
-        scopes.pop();
 
         return null;
     }
@@ -276,14 +268,13 @@ public class ScopeVisitor implements Visitor {
 
         p.getIdentifier().accept(this);
 
-        SymbolTable currentTable = scopes.peek();
-        if(currentTable.findSymbolInside(p.getIdentifier().getName())!=null){
+        if(symbolTableStack.lookup(p.getIdentifier().getName(),Kind.VAR)!=null){
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else{
             Symbol s = new Symbol(p.getIdentifier().getName(), Kind.VAR,p.getType());
             try {
-                currentTable.addEntry(s);
+                symbolTableStack.addEntry(s);
             }catch(Exception e){
                 System.err.println(e.getMessage());
             }
@@ -302,48 +293,48 @@ public class ScopeVisitor implements Visitor {
             System.exit(1);
         }
 
-        p.getIdentifier().accept(this);
-        p.getBody().accept(this);
-
         if(p.getIdentifier().getName().equals("main"))
             mainFound=true;
 
-        SymbolTable father = scopes.peek();
 
-        if(father.findSymbolInside(p.getIdentifier().getName())!=null){
+        if(symbolTableStack.lookup(p.getIdentifier().getName(),Kind.METHOD)!=null){
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else {
-            SymbolTable function = new SymbolTable(p.getIdentifier().getName(), father, ScopeType.PROCEDURE);
-            p.setSymbolTable(function);
-            scopes.push(function);
+            SymbolTable father = symbolTableStack.peek();
+            symbolTableStack.enterScope(p.getIdentifier().getName(), ScopeType.PROCEDURE);
+            //TODO p.setSymbolTable(function);
+
+            p.getIdentifier().accept(this);
+
+            //aggiungo la definizione della funzione alla symbol table corrente
+            Symbol s = new Symbol(p.getIdentifier().getName(),Kind.METHOD);
+
+            ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
+            for (ProcFunParamOp pr : paramOps) {
+                pr.accept(this);
+                s.addParamType(pr.getType());
+            }
+
+            try {
+                father.addEntry(s);
+            }catch(Exception e){
+                System.err.println(e.getMessage());
+            }
+
+            p.getBody().accept(this);
+
+            symbolTableStack.exitScope();
+
         }
-
-        //aggiungo la definizione della funzione alla symbol table corrente
-        Symbol s = new Symbol(p.getIdentifier().getName(),Kind.METHOD);
-
-        ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
-        for (ProcFunParamOp pr : paramOps) {
-            pr.accept(this);
-            s.addParamType(pr.getType());
-        }
-
-        try {
-            father.addEntry(s);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-
-        scopes.pop();
 
         return null;
     }
 
     @Override
     public Object visit(ProgramOp p) {
-        SymbolTable global = new SymbolTable("global",ScopeType.GLOBAL);
-        scopes.push(global);
-        p.setSymbolTable(global);
+        symbolTableStack.enterScope("global",ScopeType.GLOBAL);
+        //TODO p.setSymbolTable(global);
 
         ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();
         for (VarDeclOp v : varDeclList) {
@@ -359,7 +350,7 @@ public class ScopeVisitor implements Visitor {
             System.exit(1);
         }
 
-        scopes.pop();
+        symbolTableStack.exitScope();
         return null;
     }
 
@@ -424,11 +415,11 @@ public class ScopeVisitor implements Visitor {
 
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         for(IdentifierExpression ie : identifierExpressionList) {
-            SymbolTable currentTable = scopes.peek();
+            SymbolTable currentTable = symbolTableStack.peek();
 
             ie.accept(this);
 
-            if(currentTable.findSymbolInside(ie.getIdentifier().getName())!=null){
+            if(symbolTableStack.lookup(ie.getIdentifier().getName(),Kind.METHOD)!=null){
                 System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
                 System.exit(1);
             }
@@ -475,16 +466,14 @@ public class ScopeVisitor implements Visitor {
     @Override
     public Object visit(WhileStatement w) {
 
-        SymbolTable father = scopes.peek();
+        SymbolTable current = symbolTableStack.peek();
+        current.setScopeType(ScopeType.WHILE);
 
-        SymbolTable whileScope = new SymbolTable("while_scope",father,ScopeType.WHILE);
-        scopes.push(whileScope);
-        w.setSymbolTable(whileScope);
+        w.setSymbolTable(current);
 
         w.getExpression().accept(this);
         w.getBody().accept(this);
 
-        scopes.pop();
         return null;
     }
 

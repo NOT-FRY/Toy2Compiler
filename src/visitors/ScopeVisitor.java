@@ -59,7 +59,7 @@ public class ScopeVisitor implements Visitor {
         ScopeType fatherScopeType = symbolTableStack.peek().getScopeType();
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
             symbolTableStack.enterScope("body_scope",ScopeType.BODY);
-            //TODO b.setSymbolTable(newBodyScope);
+            b.setSymbolTable(symbolTableStack.peek());
         }
 
         ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
@@ -144,7 +144,7 @@ public class ScopeVisitor implements Visitor {
             SymbolTable father = symbolTableStack.peek();
             symbolTableStack.enterScope(f.getIdentifier().getName(), ScopeType.FUNCTION);
 
-            //TODO f.setSymbolTable(function);
+            f.setSymbolTable(symbolTableStack.peek());
             f.getIdentifier().accept(this);
 
             //aggiungo la definizione della funzione alla symbol table corrente(padre)
@@ -274,7 +274,7 @@ public class ScopeVisitor implements Visitor {
         }else{
             Symbol s = new Symbol(p.getIdentifier().getName(), Kind.VAR,p.getType());
             try {
-                symbolTableStack.addEntry(s);
+                symbolTableStack.peek().addEntry(s);
             }catch(Exception e){
                 System.err.println(e.getMessage());
             }
@@ -303,7 +303,7 @@ public class ScopeVisitor implements Visitor {
         }else {
             SymbolTable father = symbolTableStack.peek();
             symbolTableStack.enterScope(p.getIdentifier().getName(), ScopeType.PROCEDURE);
-            //TODO p.setSymbolTable(function);
+            p.setSymbolTable(symbolTableStack.peek());
 
             p.getIdentifier().accept(this);
 
@@ -334,7 +334,7 @@ public class ScopeVisitor implements Visitor {
     @Override
     public Object visit(ProgramOp p) {
         symbolTableStack.enterScope("global",ScopeType.GLOBAL);
-        //TODO p.setSymbolTable(global);
+        p.setSymbolTable(symbolTableStack.peek());
 
         ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();
         for (VarDeclOp v : varDeclList) {

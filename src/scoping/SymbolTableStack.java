@@ -39,10 +39,6 @@ public class SymbolTableStack {
         return stack.peek().lookup(symbolId,kind)!=null;
     }
 
-    public void addEntry(Symbol s)throws Exception{
-        stack.peek().addEntry(s);
-    }
-
     public SymbolTable peek(){
         return stack.peek();
     }

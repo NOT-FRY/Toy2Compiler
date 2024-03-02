@@ -210,19 +210,18 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(FunctionOp f) {
 
+        symbolTableStack.enterScope(f.getSymbolTable());
+
+        f.getIdentifier().accept(this);
+
+        f.getBody().accept(this);
+
         try{
             Checks.checkFunctionOp(f);
         }catch(Exception e){
             System.err.println(e.getMessage());
             System.exit(1);
         }
-
-
-        symbolTableStack.enterScope(f.getSymbolTable());
-
-        f.getIdentifier().accept(this);
-
-        f.getBody().accept(this);
 
         symbolTableStack.exitScope();
 
@@ -450,17 +449,17 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(ProcedureOp p) {
 
+        symbolTableStack.enterScope(p.getSymbolTable());
+
+        p.getIdentifier().accept(this);
+        p.getBody().accept(this);
+
         try {
             Checks.checkProcedureOp(p);
         }catch (Exception e){
             System.err.println(e.getMessage());
             System.exit(1);
         }
-
-        symbolTableStack.enterScope(p.getSymbolTable());
-
-        p.getIdentifier().accept(this);
-        p.getBody().accept(this);
 
         symbolTableStack.exitScope();
 
@@ -487,13 +486,6 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(ReadStatement r) {
-        try {
-            Checks.checkReadStatement(r);
-        }catch (Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-
 
         ArrayList<Expression> expressions = r.getExpressions();
         for (Expression v : expressions) {
@@ -501,6 +493,13 @@ public class SemanticVisitor implements Visitor {
         }
 
         r.setType(Type.NOTYPE);
+
+        try {
+            Checks.checkReadStatement(r);
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
 
         return null;
     }
@@ -558,16 +557,16 @@ public class SemanticVisitor implements Visitor {
     @Override
     public Object visit(VarDeclOp v) {
 
-        if(!Checks.checkDeclaration(v)){
-            System.err.println(">Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
-            System.exit(1);
-        }
-
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         for(IdentifierExpression ie : identifierExpressionList) {
 
             ie.accept(this);
 
+        }
+
+        if(!Checks.checkDeclaration(v)){
+            System.err.println(">Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
+            System.exit(1);
         }
 
         return null;
@@ -644,14 +643,15 @@ public class SemanticVisitor implements Visitor {
 
     @Override
     public Object visit(IOArg i) {
+
+        i.getExpression().accept(this);
+
         try {
             Checks.checkIOArg(i);
         }catch (Exception e){
             System.err.println(e.getMessage());
             System.exit(1);
         }
-
-        i.getExpression().accept(this);
 
         return null;
     }

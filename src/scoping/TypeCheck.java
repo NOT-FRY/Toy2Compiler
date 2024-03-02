@@ -152,8 +152,7 @@ public class TypeCheck {
                     if(id.getType() != t){
                         throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName()+" mismatch con la funzione: "+funCall.getIdentifier().getName());
                     }
-                    i++;
-                    id = assignStatement.getIdentifiers().get(i);//L'overflow dovrebbe essere stato controllato prima (numero identificatori)
+                    id = assignStatement.getIdentifiers().get(i++);//L'overflow dovrebbe essere stato controllato all'inizio di questo metodo (numero identificatori)
                 }
 
             }else{//tipo binario

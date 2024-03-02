@@ -129,14 +129,6 @@ public class ScopeVisitor implements Visitor {
     @Override
     public Object visit(FunctionOp f) {
 
-        try{
-            Checks.checkFunctionOp(f);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-
-
         if(symbolTableStack.lookup(f.getIdentifier().getName(),Kind.METHOD)!=null){
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
             System.exit(1);

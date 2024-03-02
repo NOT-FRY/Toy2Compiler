@@ -9,6 +9,8 @@ import tree_structure.*;
 import tree_structure.Statement.*;
 import tree_structure.Expression.*;
 import java.util.ArrayList;
+import scoping.Kind;
+import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
   */
@@ -807,7 +809,7 @@ class CUP$parser$actions {
 		int idListright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object idList = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-                            ((ArrayList<Identifier>)idList).add(0,new Identifier(id));
+                            ((ArrayList<Identifier>)idList).add(0,new Identifier(id,Kind.VAR));
                             RESULT = idList;
                             
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Ids",7, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -822,7 +824,7 @@ class CUP$parser$actions {
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 ArrayList<Identifier> idList = new ArrayList<Identifier>();
-            	            idList.add(new Identifier(id));
+            	            idList.add(new Identifier(id,Kind.VAR));
             	            RESULT = idList;
             	           
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Ids",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -968,7 +970,7 @@ class CUP$parser$actions {
 		int bodyleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int bodyright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object body = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		RESULT = new FunctionOp(new Identifier(id),(ArrayList<ProcFunParamOp>) params,(ArrayList<Type>) types,(BodyOp) body); 
+		RESULT = new FunctionOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcFunParamOp>) params,(ArrayList<Type>) types,(BodyOp) body); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Function",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -987,7 +989,7 @@ class CUP$parser$actions {
 		int paramsright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object params = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-                                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id,Qualifier.IN),(Type)type);
+                                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id,Qualifier.IN,Kind.VAR),(Type)type);
                                                                 ((ArrayList<ProcFunParamOp>)params).add(0,funParamOp);
                                                                 RESULT = params;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("FuncParams",11, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -1017,7 +1019,7 @@ class CUP$parser$actions {
 		int otherParamsright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object otherParams = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id, Qualifier.IN),(Type)type);
+                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id, Qualifier.IN,Kind.VAR),(Type)type);
                                                 ((ArrayList<ProcFunParamOp>)otherParams).add(0,funParamOp);
                                                 RESULT = otherParams;
                                              
@@ -1045,6 +1047,7 @@ class CUP$parser$actions {
 		int typeListright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object typeList = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		((ArrayList<Type>)typeList).add(0,(Type) type);
+                                             RESULT = typeList; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Types",12, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1077,7 +1080,7 @@ class CUP$parser$actions {
 		int bodyleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int bodyright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object body = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		  RESULT = new ProcedureOp(new Identifier(id),(ArrayList<ProcFunParamOp>)params,(BodyOp)body); 
+		  RESULT = new ProcedureOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcFunParamOp>)params,(BodyOp)body); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Procedure",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1149,7 +1152,7 @@ class CUP$parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 RESULT = new Identifier(id,Qualifier.INOUT);
+		 RESULT = new Identifier(id,Qualifier.INOUT,Kind.VAR);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ProcParamId",17, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1161,7 +1164,7 @@ class CUP$parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT = new Identifier(id,Qualifier.OUT); 
+		RESULT = new Identifier(id,Qualifier.OUT,Kind.VAR); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ProcParamId",17, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1322,7 +1325,7 @@ class CUP$parser$actions {
 		int expressionsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int expressionsright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object expressions = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = new FunCallOp(new Identifier(id),(ArrayList<Expression>) expressions); 
+		 RESULT = new FunCallOp(new Identifier(id,Kind.METHOD),(ArrayList<Expression>) expressions); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("FunCall",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1334,7 +1337,7 @@ class CUP$parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		 RESULT = new FunCallOp(new Identifier(id)); 
+		 RESULT = new FunCallOp(new Identifier(id,Kind.METHOD)); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("FunCall",20, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1349,7 +1352,7 @@ class CUP$parser$actions {
 		int procedureExpressionListleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int procedureExpressionListright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		Object procedureExpressionList = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = new ProcCallOp(new Identifier(id),(ArrayList<ProcedureExpression>)procedureExpressionList); 
+		 RESULT = new ProcCallOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcedureExpression>)procedureExpressionList); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ProcCall",19, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1361,7 +1364,7 @@ class CUP$parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		 RESULT = new ProcCallOp(new Identifier(id));
+		 RESULT = new ProcCallOp(new Identifier(id,Kind.METHOD));
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ProcCall",19, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1561,7 +1564,7 @@ class CUP$parser$actions {
 		int procedureExpressionsright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object procedureExpressions = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-                                                            ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id));
+                                                            ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id,Kind.VAR));
   	                                                        ((ArrayList<ProcedureExpression>)procedureExpressions).add(0,pe);
   	                                                        RESULT = procedureExpressions;
   	                                                    
@@ -1595,7 +1598,7 @@ class CUP$parser$actions {
 		String id = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
                         ArrayList<ProcedureExpression> PEList = new ArrayList<ProcedureExpression>();
-                        ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id));
+                        ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id,Kind.VAR));
                         PEList.add(pe);
                         RESULT = PEList;
   	               
@@ -1688,7 +1691,7 @@ class CUP$parser$actions {
 		int valueleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int valueright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String value = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		RESULT = new Identifier(value); 
+		RESULT = new Identifier(value,Kind.VAR); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Expr",28, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

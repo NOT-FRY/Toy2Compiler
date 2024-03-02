@@ -3,22 +3,26 @@
         <Identifier>
             main
         </Identifier>
+        <identifierType>METHOD</identifierType>
         <BodyOp>
             <VarDeclOp>
                 <IdentifierExpression>
                     <Identifier>
                         a
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IdentifierExpression>
                 <IdentifierExpression>
                     <Identifier>
                         b
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IdentifierExpression>
                 <IdentifierExpression>
                     <Identifier>
                         risultato
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IdentifierExpression>
                 <Type>
                     REAL
@@ -32,6 +36,7 @@
                     <Identifier>
                         ans
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                     <Integer_const>
                         1
                     </Integer_const>
@@ -46,6 +51,7 @@
                     <Identifier>
                         ans
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IOArg>
                 <IOArg>
                     <String_const>
@@ -61,6 +67,7 @@
                                 <Identifier>
                                     ans
                                 </Identifier>
+                                <identifierType>VAR</identifierType>
                             </leftVal>
                             <rightVal>
                                 <Integer_const>
@@ -75,6 +82,7 @@
                                 <Identifier>
                                     ans
                                 </Identifier>
+                                <identifierType>VAR</identifierType>
                             </leftVal>
                             <rightVal>
                                 <Integer_const>
@@ -91,6 +99,7 @@
                             <Identifier>
                                 a
                             </Identifier>
+                            <identifierType>VAR</identifierType>
                         </IOArg>
                         <IOArg>
                             <String_const>
@@ -104,6 +113,7 @@
                             <Identifier>
                                 b
                             </Identifier>
+                            <identifierType>VAR</identifierType>
                         </IOArg>
                         <IOArg>
                             <String_const>
@@ -117,6 +127,7 @@
                                 <Identifier>
                                     ans
                                 </Identifier>
+                                <identifierType>VAR</identifierType>
                             </leftVal>
                             <rightVal>
                                 <Integer_const>
@@ -129,17 +140,21 @@
                                 <Identifier>
                                     risultato
                                 </Identifier>
+                                <identifierType>VAR</identifierType>
                                 <FunCallOp>
                                     <Identifier>
                                         somma
                                     </Identifier>
+                                    <identifierType>METHOD</identifierType>
                                         <Parameters>
                                         <Identifier>
                                             a
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                         <Identifier>
                                             b
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </Parameters>
                                 </FunCallOp>
                             </AssignStatement>
@@ -150,6 +165,7 @@
                                     <Identifier>
                                         ans
                                     </Identifier>
+                                    <identifierType>VAR</identifierType>
                                 </leftVal>
                                 <rightVal>
                                     <Integer_const>
@@ -162,17 +178,21 @@
                                     <Identifier>
                                         risultato
                                     </Identifier>
+                                    <identifierType>VAR</identifierType>
                                     <FunCallOp>
                                         <Identifier>
                                             sottrazione
                                         </Identifier>
+                                        <identifierType>METHOD</identifierType>
                                             <Parameters>
                                             <Identifier>
                                                 a
                                             </Identifier>
+                                            <identifierType>VAR</identifierType>
                                             <Identifier>
                                                 b
                                             </Identifier>
+                                            <identifierType>VAR</identifierType>
                                         </Parameters>
                                     </FunCallOp>
                                 </AssignStatement>
@@ -184,6 +204,7 @@
                                     <Identifier>
                                         ans
                                     </Identifier>
+                                    <identifierType>VAR</identifierType>
                                 </leftVal>
                                 <rightVal>
                                     <Integer_const>
@@ -196,20 +217,24 @@
                                     <Identifier>
                                         divisione
                                     </Identifier>
+                                    <identifierType>METHOD</identifierType>
                                     <ProcedureExpression>
                                         <Identifier>
                                             a
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                     <ProcedureExpression>
                                         <Identifier>
                                             b
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                     <ProcedureExpression reference='true'>
                                         <Identifier>
                                             risultato
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                 </ProcCallOp>
                             </BodyOp>
@@ -220,6 +245,7 @@
                                     <Identifier>
                                         ans
                                     </Identifier>
+                                    <identifierType>VAR</identifierType>
                                 </leftVal>
                                 <rightVal>
                                     <Integer_const>
@@ -232,20 +258,24 @@
                                     <Identifier>
                                         moltiplicazione
                                     </Identifier>
+                                    <identifierType>METHOD</identifierType>
                                     <ProcedureExpression>
                                         <Identifier>
                                             a
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                     <ProcedureExpression>
                                         <Identifier>
                                             b
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                     <ProcedureExpression reference='true'>
                                         <Identifier>
                                             risultato
                                         </Identifier>
+                                        <identifierType>VAR</identifierType>
                                     </ProcedureExpression>
                                 </ProcCallOp>
                             </BodyOp>
@@ -274,6 +304,7 @@
                             <Identifier>
                                 risultato
                             </Identifier>
+                            <identifierType>VAR</identifierType>
                         </IOArg>
                         <IOArg>
                             <String_const>
@@ -287,6 +318,7 @@
                             <Identifier>
                                 ans
                             </Identifier>
+                            <identifierType>VAR</identifierType>
                         </IOArg>
                         <IOArg>
                             <String_const>
@@ -312,10 +344,12 @@
         <Identifier>
             divisione
         </Identifier>
+        <identifierType>METHOD</identifierType>
         <ProcFunParamOp>
             <Identifier qualifier='INOUT'>
                 a
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -324,6 +358,7 @@
             <Identifier qualifier='INOUT'>
                 b
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -332,6 +367,7 @@
             <Identifier qualifier='OUT'>
                 risultato
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -341,16 +377,19 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
                 <DivOp>
                     <leftVal>
                         <Identifier>
                             a
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </leftVal>
                     <rightVal>
                         <Identifier>
                             b
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </rightVal>
                 </DivOp>
             </AssignStatement>
@@ -360,10 +399,12 @@
         <Identifier>
             moltiplicazione
         </Identifier>
+        <identifierType>METHOD</identifierType>
         <ProcFunParamOp>
             <Identifier qualifier='INOUT'>
                 a
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -372,6 +413,7 @@
             <Identifier qualifier='INOUT'>
                 b
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -380,6 +422,7 @@
             <Identifier qualifier='OUT'>
                 risultato
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -389,16 +432,19 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
                 <MulOp>
                     <leftVal>
                         <Identifier>
                             a
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </leftVal>
                     <rightVal>
                         <Identifier>
                             b
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </rightVal>
                 </MulOp>
             </AssignStatement>
@@ -408,10 +454,12 @@
         <Identifier>
             somma
         </Identifier>
+        <identifierType>METHOD</identifierType>
         <ProcFunParamOp>
             <Identifier qualifier='IN'>
                 a
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -420,6 +468,7 @@
             <Identifier qualifier='IN'>
                 b
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -433,6 +482,7 @@
                     <Identifier>
                         risultato
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IdentifierExpression>
                 <Type>
                     REAL
@@ -445,16 +495,19 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
                 <AddOp>
                     <leftVal>
                         <Identifier>
                             a
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </leftVal>
                     <rightVal>
                         <Identifier>
                             b
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </rightVal>
                 </AddOp>
             </AssignStatement>
@@ -462,6 +515,7 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
             </ReturnStatement>
         </BodyOp>
     </FunctionOp>
@@ -469,10 +523,12 @@
         <Identifier>
             sottrazione
         </Identifier>
+        <identifierType>METHOD</identifierType>
         <ProcFunParamOp>
             <Identifier qualifier='IN'>
                 a
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -481,6 +537,7 @@
             <Identifier qualifier='IN'>
                 b
             </Identifier>
+            <identifierType>VAR</identifierType>
             <Type>
                 REAL
             </Type>
@@ -494,6 +551,7 @@
                     <Identifier>
                         risultato
                     </Identifier>
+                    <identifierType>VAR</identifierType>
                 </IdentifierExpression>
                 <Type>
                     REAL
@@ -506,16 +564,19 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
                 <DiffOp>
                     <leftVal>
                         <Identifier>
                             a
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </leftVal>
                     <rightVal>
                         <Identifier>
                             b
                         </Identifier>
+                        <identifierType>VAR</identifierType>
                     </rightVal>
                 </DiffOp>
             </AssignStatement>
@@ -523,6 +584,7 @@
                 <Identifier>
                     risultato
                 </Identifier>
+                <identifierType>VAR</identifierType>
             </ReturnStatement>
         </BodyOp>
     </FunctionOp>

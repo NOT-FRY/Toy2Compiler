@@ -1,0 +1,8 @@
+func f() -> boolean:
+    return true;
+endfunc
+
+proc main():
+    var a,f:boolean;\
+    a ^= f();
+endproc

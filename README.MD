@@ -1,0 +1,1 @@
+Nelle funzioni, il tipo i ritorno i-esimo dichiarato, deve corrispondere al tipo i-esimo effettivo

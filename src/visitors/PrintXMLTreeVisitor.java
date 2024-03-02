@@ -280,6 +280,7 @@ public class PrintXMLTreeVisitor implements Visitor {
         out.println(getIndent() + i.getName());
         decreaseIndent();
         out.println(getIndent() + "</Identifier>");
+        out.println(getIndent() + "<identifierType>"+i.getIdentifierType()+"</identifierType>");
         return null;
     }
 

@@ -38,12 +38,26 @@ public class Checks {
         * */
         int numberOfReturnTypesDeclared = f.getReturnTypes().size();
         int numberOfEffectiveReturnTypes = 0;
+        //clono perchè devo rimuovere gli elementi trovati
+        ArrayList<Type> expectedReturnTypes = (ArrayList<Type>)f.getReturnTypes().clone();
+
 
         ArrayList<Statement> bodyStatements = f.getBody().getStatementList();
 
+
         for(Statement s : bodyStatements){
             if(s instanceof ReturnStatement){
-                numberOfEffectiveReturnTypes++;
+                ArrayList<Expression> returnExpressions = ((ReturnStatement) s).getExpressions();
+                int i;
+                for(i=0;i<returnExpressions.size() && i<expectedReturnTypes.size();i++){
+                    numberOfEffectiveReturnTypes++;
+                    if(returnExpressions.get(i).getType()!=expectedReturnTypes.get(i)){
+                        break;
+                    }
+                }
+                if(i!=returnExpressions.size() || i!=expectedReturnTypes.size()){
+                    throw new Exception(">Semantic error: tipi di valori di ritorno effettivi diverso dal tipo di valori di ritorno dichiarati - at: "+f.getIdentifier().getName());
+                }
             }
         }
 
@@ -53,6 +67,7 @@ public class Checks {
 
         if(numberOfReturnTypesDeclared != numberOfEffectiveReturnTypes)
             throw new Exception(">Semantic error: Numero di valori di ritorno effettivi diverso dal numero di valori di ritorno dichiarati - at: "+f.getIdentifier().getName());
+
 
 
         /*
@@ -73,6 +88,8 @@ public class Checks {
                 }
             }
         }
+
+
 
     }
 

@@ -85,7 +85,8 @@ public class SemanticVisitor implements Visitor {
             RICORDARSI CHE c'è un nuovo scope (importante?)
         }
         */
-        symbolTableStack.enterScope(b.getSymbolTable());
+        if(b.getSymbolTable()!=null)
+            symbolTableStack.enterScope(b.getSymbolTable());
         ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
         for(VarDeclOp v : varDeclList){
             v.accept(this);
@@ -94,7 +95,9 @@ public class SemanticVisitor implements Visitor {
         for(Statement s : statements){
             s.accept(this);
         }
-        symbolTableStack.exitScope();
+        if(b.getSymbolTable()!=null)
+            symbolTableStack.exitScope();
+        b.setType(Type.NOTYPE);
 
         return null;
     }
@@ -174,6 +177,10 @@ public class SemanticVisitor implements Visitor {
 
         Symbol s = symbolTableStack.lookup(f.getIdentifier().getName(),Kind.METHOD);
 
+        if(s==null){
+            System.err.println(">Semantic error: chiamata a funzione non dichiarata : " + f.getIdentifier().getName());
+            System.exit(1);
+        }
         /*
            * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
            * */
@@ -263,12 +270,14 @@ public class SemanticVisitor implements Visitor {
     public Object visit(Identifier i) {
         Qualifier q = i.getQualifier();
 
-        Symbol s = symbolTableStack.lookup(i.getName(),Kind.VAR);
-        if(s==null){
-            System.err.println(">Semantic error: Identificatore non dichiarato : "+ i.getName());
-            System.exit(1);
-        }else{
-            i.setType(s.getType());
+        if(i.getIdentifierType() == Kind.VAR) {
+            Symbol s = symbolTableStack.lookup(i.getName(), i.getIdentifierType());
+            if (s == null) {
+                System.err.println(">Semantic error: Identificatore non dichiarato : " + i.getName());
+                System.exit(1);
+            } else {
+                i.setType(s.getType());
+            }
         }
 
         return null;
@@ -289,7 +298,9 @@ public class SemanticVisitor implements Visitor {
         Type ifType;
         Type expressionType = i.getExpression().getType();
         Type bodyType = i.getBody().getType();
-        Type elseBodyType = i.getElseBody().getBody().getType();
+        Type elseBodyType = null;
+        if(i.getElseBody() != null)
+            elseBodyType = i.getElseBody().getBody().getType();
 
         //if con elif completo (i controlli su null vengono fatti da checkIfElsifStatement )
         if(!elifOps.isEmpty()){
@@ -297,7 +308,8 @@ public class SemanticVisitor implements Visitor {
         }
         else if(i.getElseBody()!=null){//caso if else
             ifType = TypeCheck.checkIfElseStatement(expressionType,bodyType,elseBodyType);
-        }//caso semplice if
+        }
+        //caso semplice if
         else{
             ifType = TypeCheck.checkIfStatement(expressionType,bodyType);
         }

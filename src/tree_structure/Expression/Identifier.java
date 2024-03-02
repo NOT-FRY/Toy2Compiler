@@ -1,6 +1,7 @@
 package tree_structure.Expression;
 
 import scoping.ExpressionType;
+import scoping.Kind;
 import scoping.SymbolTable;
 import tree_structure.Node;
 import tree_structure.Qualifier;
@@ -36,13 +37,17 @@ public class Identifier extends Node implements Expression {
 
     private SymbolTable symbolTable;
 
-    public Identifier(String name) {
+    private Kind identifierType;
+
+    public Identifier(String name,Kind identifierType) {
         this.name = name;
         this.qualifier = null;
+        this.identifierType = identifierType;
     }
-    public Identifier(String name, Qualifier qualifier) {
+    public Identifier(String name, Qualifier qualifier, Kind identifierType) {
         this.name = name;
         this.qualifier = qualifier;
+        this.identifierType = identifierType;
     }
 
     public Qualifier getQualifier() {
@@ -100,5 +105,13 @@ public class Identifier extends Node implements Expression {
 
     public void setSymbolTable(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
+    }
+
+    public Kind getIdentifierType() {
+        return identifierType;
+    }
+
+    public void setIdentifierType(Kind identifierType) {
+        this.identifierType = identifierType;
     }
 }

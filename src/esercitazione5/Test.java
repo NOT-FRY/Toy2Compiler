@@ -3,6 +3,7 @@ package esercitazione5;
 import tree_structure.ProgramOp;
 import visitors.ScopeVisitor;
 import visitors.PrintXMLTreeVisitor;
+import visitors.SemanticVisitor;
 
 import java.io.File;
 import java.io.FileReader;
@@ -20,8 +21,8 @@ public class Test {
 
         ScopeVisitor scopeVisitor = new ScopeVisitor();
         scopeVisitor.visit(program);
-        //SemanticVisitor semanticVisitor = new SemanticVisitor();
-        //semanticVisitor.visit(program);
+        SemanticVisitor semanticVisitor = new SemanticVisitor();
+        semanticVisitor.visit(program);
 
     }
 }

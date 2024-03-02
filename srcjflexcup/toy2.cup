@@ -3,6 +3,7 @@ import tree_structure.*;
 import tree_structure.Statement.*;
 import tree_structure.Expression.*;
 import java.util.ArrayList;
+import scoping.Kind;
 
 
 terminal VAR, COLON, ASSIGN, SEMI, COMMA, REAL, INTEGER, STRING, BOOLEAN, RETURN, FUNCTION, TYPERETURN,
@@ -173,12 +174,12 @@ start with Program;
 
   Ids ::= ID:id COMMA Ids:idList
                             {:
-                            ((ArrayList<Identifier>)idList).add(0,new Identifier(id));
+                            ((ArrayList<Identifier>)idList).add(0,new Identifier(id,Kind.VAR));
                             RESULT = idList;
                             :}
           | ID:id
           {: ArrayList<Identifier> idList = new ArrayList<Identifier>();
-            	            idList.add(new Identifier(id));
+            	            idList.add(new Identifier(id,Kind.VAR));
             	            RESULT = idList;
             	           :};
 //Consts è una lista di espressioni
@@ -203,30 +204,31 @@ start with Program;
   	| STRING    {: RESULT = Type.STRING; :}
   	| BOOLEAN  {: RESULT = Type.BOOL; :};
 
-  Function  ::= FUNCTION ID:id LPAR FuncParams:params RPAR TYPERETURN Types:types COLON Body:body ENDFUNCTION {:RESULT = new FunctionOp(new Identifier(id),(ArrayList<ProcFunParamOp>) params,(ArrayList<Type>) types,(BodyOp) body); :};
+  Function  ::= FUNCTION ID:id LPAR FuncParams:params RPAR TYPERETURN Types:types COLON Body:body ENDFUNCTION {:RESULT = new FunctionOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcFunParamOp>) params,(ArrayList<Type>) types,(BodyOp) body); :};
 
   FuncParams ::= ID:id COLON Type:type OtherFuncParams:params {:
-                                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id,Qualifier.IN),(Type)type);
+                                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id,Qualifier.IN,Kind.VAR),(Type)type);
                                                                 ((ArrayList<ProcFunParamOp>)params).add(0,funParamOp);
                                                                 RESULT = params;:}
   	    | /* empty */{:RESULT = new ArrayList<ProcFunParamOp>(); :};
 
   OtherFuncParams ::= COMMA ID:id COLON Type:type OtherFuncParams:otherParams
                                               {:
-                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id, Qualifier.IN),(Type)type);
+                                                ProcFunParamOp funParamOp = new ProcFunParamOp(new Identifier(id, Qualifier.IN,Kind.VAR),(Type)type);
                                                 ((ArrayList<ProcFunParamOp>)otherParams).add(0,funParamOp);
                                                 RESULT = otherParams;
                                              :}
   	    | /* empty */{:RESULT = new ArrayList<ProcFunParamOp>(); :};
 
-  Types ::= Type:type COMMA Types:typeList {:((ArrayList<Type>)typeList).add(0,(Type) type);:}
+  Types ::= Type:type COMMA Types:typeList {:((ArrayList<Type>)typeList).add(0,(Type) type);
+                                             RESULT = typeList; :}
   	| Type:type {: ArrayList<Type> typeList = new ArrayList<Type>();
   	        typeList.add((Type)type);
   	        RESULT = typeList;
   	:};
 
   Procedure ::= PROCEDURE ID:id LPAR ProcParams:params RPAR COLON Body:body ENDPROCEDURE
-  {:  RESULT = new ProcedureOp(new Identifier(id),(ArrayList<ProcFunParamOp>)params,(BodyOp)body); :}
+  {:  RESULT = new ProcedureOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcFunParamOp>)params,(BodyOp)body); :}
   ;
 
   ProcParams::= ProcParamId:id COLON Type:type OtherProcParams:params
@@ -243,8 +245,8 @@ start with Program;
                                        :}
   	   | /* empty */{:RESULT = new ArrayList<ProcFunParamOp>(); :};
 
-  ProcParamId ::= ID:id {: RESULT = new Identifier(id,Qualifier.INOUT);:}
-  	    | OUT ID:id {:RESULT = new Identifier(id,Qualifier.OUT); :};
+  ProcParamId ::= ID:id {: RESULT = new Identifier(id,Qualifier.INOUT,Kind.VAR);:}
+  	    | OUT ID:id {:RESULT = new Identifier(id,Qualifier.OUT,Kind.VAR); :};
 
   Body ::= VarDecl:vardecls Body:body {:
                                         for(VarDeclOp v : (ArrayList<VarDeclOp>)vardecls ){
@@ -267,11 +269,11 @@ start with Program;
   	 | IfStat:ifStat SEMI {:RESULT = (IfStatement) ifStat; :}
   	 | WhileStat:whileStat SEMI {:RESULT = (WhileStatement) whileStat; :} ;
 
-  FunCall ::= ID:id LPAR Exprs:expressions RPAR {: RESULT = new FunCallOp(new Identifier(id),(ArrayList<Expression>) expressions); :}           /* chiamata con almeno un parametro */
-           | ID:id LPAR RPAR  {: RESULT = new FunCallOp(new Identifier(id)); :};               /* chiamata con nessun parametro */
+  FunCall ::= ID:id LPAR Exprs:expressions RPAR {: RESULT = new FunCallOp(new Identifier(id,Kind.METHOD),(ArrayList<Expression>) expressions); :}           /* chiamata con almeno un parametro */
+           | ID:id LPAR RPAR  {: RESULT = new FunCallOp(new Identifier(id,Kind.METHOD)); :};               /* chiamata con nessun parametro */
 
-  ProcCall ::= ID:id LPAR ProcExprs:procedureExpressionList RPAR {: RESULT = new ProcCallOp(new Identifier(id),(ArrayList<ProcedureExpression>)procedureExpressionList); :}    /* chiamata con almeno un parametro */
-           | ID:id LPAR RPAR {: RESULT = new ProcCallOp(new Identifier(id));:};             /* chiamata con nessun parametro */
+  ProcCall ::= ID:id LPAR ProcExprs:procedureExpressionList RPAR {: RESULT = new ProcCallOp(new Identifier(id,Kind.METHOD),(ArrayList<ProcedureExpression>)procedureExpressionList); :}    /* chiamata con almeno un parametro */
+           | ID:id LPAR RPAR {: RESULT = new ProcCallOp(new Identifier(id,Kind.METHOD));:};             /* chiamata con nessun parametro */
 
   IfStat ::= IF Expr:expr THEN Body:body Elifs:elifs Else:elseBody ENDIF
     {: RESULT = new IfStatement((Expression)expr,(BodyOp) body,(ArrayList<ElifOp>)elifs,(ElseOp)elseBody);  :}
@@ -314,7 +316,7 @@ start with Program;
                                                                         RESULT = procedureExpressions;
                                                                      :}
   	  | REF ID:id COMMA ProcExprs:procedureExpressions {:
-                                                            ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id));
+                                                            ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id,Kind.VAR));
   	                                                        ((ArrayList<ProcedureExpression>)procedureExpressions).add(0,pe);
   	                                                        RESULT = procedureExpressions;
   	                                                    :}
@@ -326,7 +328,7 @@ start with Program;
                         :}
   	  | REF ID:id {:
                         ArrayList<ProcedureExpression> PEList = new ArrayList<ProcedureExpression>();
-                        ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id));
+                        ProcedureExpression pe = new ProcedureExpression(null,true,new Identifier(id,Kind.VAR));
                         PEList.add(pe);
                         RESULT = PEList;
   	               :};
@@ -342,7 +344,7 @@ start with Program;
   	| REAL_CONST:value    {:RESULT = new Real_const(value); :}
     | INTEGER_CONST:value   {:RESULT = new Integer_const(value); :}
   	| STRING_CONST:value    {:RESULT = new String_const(value); :}
-  	| ID:value              {:RESULT = new Identifier(value); :}
+  	| ID:value              {:RESULT = new Identifier(value,Kind.VAR); :}
     | TRUE                  {:RESULT = new True_const(); :}
     | FALSE                 {:RESULT = new False_const(); :}
     | Expr:e1  PLUS Expr:e2 {:RESULT = new AddOp((Expression)e1,(Expression)e2); :}

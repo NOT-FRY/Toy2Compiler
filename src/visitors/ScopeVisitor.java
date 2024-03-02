@@ -58,7 +58,8 @@ public class ScopeVisitor implements Visitor {
             ProcOp e BodyOp solo se non è figlio di FunOp o ProcOp) */
         ScopeType fatherScopeType = symbolTableStack.peek().getScopeType();
         if(fatherScopeType != ScopeType.FUNCTION && fatherScopeType != ScopeType.PROCEDURE) {
-            symbolTableStack.enterScope("body_scope",ScopeType.BODY);
+            SymbolTable st = new SymbolTable("body_scope",ScopeType.BODY);
+            symbolTableStack.enterScope(st);
             b.setSymbolTable(symbolTableStack.peek());
         }
 
@@ -142,7 +143,8 @@ public class ScopeVisitor implements Visitor {
         }
         else {
             SymbolTable father = symbolTableStack.peek();
-            symbolTableStack.enterScope(f.getIdentifier().getName(), ScopeType.FUNCTION);
+            SymbolTable st = new SymbolTable(f.getIdentifier().getName(),ScopeType.FUNCTION);
+            symbolTableStack.enterScope(st);
 
             f.setSymbolTable(symbolTableStack.peek());
             f.getIdentifier().accept(this);
@@ -302,7 +304,9 @@ public class ScopeVisitor implements Visitor {
             System.exit(1);
         }else {
             SymbolTable father = symbolTableStack.peek();
-            symbolTableStack.enterScope(p.getIdentifier().getName(), ScopeType.PROCEDURE);
+
+            SymbolTable st = new SymbolTable(p.getIdentifier().getName(),ScopeType.PROCEDURE);
+            symbolTableStack.enterScope(st);
             p.setSymbolTable(symbolTableStack.peek());
 
             p.getIdentifier().accept(this);
@@ -312,8 +316,8 @@ public class ScopeVisitor implements Visitor {
 
             ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
             for (ProcFunParamOp pr : paramOps) {
-                pr.accept(this);
                 s.addParamType(pr.getType());
+                pr.accept(this);
             }
 
             try {
@@ -333,7 +337,8 @@ public class ScopeVisitor implements Visitor {
 
     @Override
     public Object visit(ProgramOp p) {
-        symbolTableStack.enterScope("global",ScopeType.GLOBAL);
+        SymbolTable st = new SymbolTable("global",ScopeType.GLOBAL);
+        symbolTableStack.enterScope(st);
         p.setSymbolTable(symbolTableStack.peek());
 
         ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();

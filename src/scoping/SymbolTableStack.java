@@ -11,12 +11,16 @@ public class SymbolTableStack {
         this.stack = new Stack<SymbolTable>();
     }
 
-    public void enterScope(String name){
+    /*public void enterScope(String name){
         stack.push(new SymbolTable(name));
-    }
+    }*/
 
-    public void enterScope(String name, ScopeType scopeType){
+    /*public void enterScope(String name, ScopeType scopeType){
         stack.push(new SymbolTable(name,scopeType));
+    }*/
+
+    public void enterScope(SymbolTable symbolTable){
+        stack.push(symbolTable);
     }
 
     public void exitScope(){

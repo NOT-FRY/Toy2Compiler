@@ -19,6 +19,8 @@ public class FunCallOp extends Node implements Expression{
 
     private SymbolTable symbolTable;
 
+    private Type type;
+
     public FunCallOp(Identifier identifier, ArrayList<Expression> expressions) {
         this.identifier = identifier;
         this.expressions = expressions;
@@ -88,7 +90,7 @@ public class FunCallOp extends Node implements Expression{
 
     @Override
     public Type getType() {
-        return null;
+        return type;
     }
 
     public SymbolTable getSymbolTable() {
@@ -97,5 +99,9 @@ public class FunCallOp extends Node implements Expression{
 
     public void setSymbolTable(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

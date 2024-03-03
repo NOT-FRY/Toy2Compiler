@@ -203,6 +203,17 @@ public class SemanticVisitor implements Visitor {
             f.addReturnType(t);
         }
 
+        //Tipo della funzione, nel caso in cui la si voglia utilizzare come parametro di un'altra funzione
+        //N.B.
+        /*
+        * se f(x) è invece una chiamata a funzione che restituisce più valori di ritorno allora NON deve essere possibile:
+            1. qualsiasi operazione unaria o binaria su f(x)
+            2. passare f(x) come argomento ad una funzione (questo sarebbe possibile solo se f(x) restituisse  un unico valore).
+        *
+        * */
+        if(s.getReturnTypes().size()==1)
+            f.setType(s.getReturnTypes().get(0));
+
 
         return null;
     }

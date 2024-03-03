@@ -404,8 +404,10 @@ public class Toy2ToCVisitor implements Visitor{
 
         out.print("return ");
         ArrayList<Expression> expressions = r.getExpressions();
-        for(Expression e : expressions) {
-            e.accept(this);
+        for(int i=0;i<expressions.size();i++) {
+            expressions.get(i).accept(this);
+            if(i+1< expressions.size())
+                out.print(",");
         }
 
         out.println(";");

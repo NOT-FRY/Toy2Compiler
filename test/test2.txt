@@ -1,8 +1,15 @@
-func f() -> boolean:
-    return true;
+func f() -> boolean,boolean:
+    return a,b;
+    var a,b^=true,true;\
 endfunc
 
 proc main():
-    var a,f:boolean;\
-    a ^= f();
+    var a,e:boolean;\
+    a,f ^= f();
+    var d,f:real;\
+    e ^= ((5 *4 +3) > d + 3) && d > 1;
+endproc
+
+proc somma(out a:integer,b:integer):
+    a ^= true;
 endproc

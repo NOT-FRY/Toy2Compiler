@@ -280,13 +280,6 @@ public class ScopeVisitor implements Visitor {
     @Override
     public Object visit(ProcedureOp p) {
 
-        try {
-            Checks.checkProcedureOp(p);
-        }catch (Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-
         if(p.getIdentifier().getName().equals("main"))
             mainFound=true;
 
@@ -353,12 +346,6 @@ public class ScopeVisitor implements Visitor {
 
     @Override
     public Object visit(ReadStatement r) {
-        try {
-            Checks.checkReadStatement(r);
-        }catch (Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
 
         ArrayList<Expression> expressions = r.getExpressions();
         for (Expression v : expressions) {
@@ -521,15 +508,7 @@ public class ScopeVisitor implements Visitor {
 
     @Override
     public Object visit(IOArg i) {
-        try {
-            Checks.checkIOArg(i);
-        }catch (Exception e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-
         i.getExpression().accept(this);
-
         return null;
     }
 

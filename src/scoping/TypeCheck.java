@@ -45,6 +45,9 @@ public class TypeCheck {
             case GE:
                 return checkRelationalExpr(type1, type2);
 
+            case CONST:
+                return type1==type2 ? type1 : Type.ERROR;
+
             default:
                 return Type.ERROR; // Tipo non valido o non supportato
         }
@@ -52,7 +55,7 @@ public class TypeCheck {
 
     //caso concatenazione stringhe
     public static Type checkStringConcatenation(Type type1, Type type2) {
-        if (type1 == Type.STRING && type2 == Type.STRING)
+        if (type1 == Type.STRING || type2 == Type.STRING)
             return Type.STRING;
         else
             return Type.ERROR;
@@ -155,7 +158,7 @@ public class TypeCheck {
                     id = assignStatement.getIdentifiers().get(i++);//L'overflow dovrebbe essere stato controllato all'inizio di questo metodo (numero identificatori)
                 }
 
-            }else{//tipo binario
+            }else{//tipo binario o costante ( a = 5 : expressionType = CONST)
                 Type type = checkBinaryExprType(id,ex,ex.getExpressionType());
                 if(type==Type.ERROR){
                     throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName());

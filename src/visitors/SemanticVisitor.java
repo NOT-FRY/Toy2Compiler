@@ -554,7 +554,7 @@ public class SemanticVisitor implements Visitor {
 
         u.getValue().accept(this);
 
-        Type t = TypeCheck.checkUnaryExprType(u.getValue(),ExpressionType.NOT);
+        Type t = TypeCheck.checkUnaryExprType(u.getValue(),ExpressionType.UMINUS);
         if(t==Type.ERROR){
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +u.getValue().toString());
             System.exit(1);

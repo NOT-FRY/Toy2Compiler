@@ -71,7 +71,7 @@ public class Toy2ToCVisitor implements Visitor{
             e.accept(this);
         }
 
-
+        out.print(";");
 
         return null;
     }
@@ -443,13 +443,26 @@ public class Toy2ToCVisitor implements Visitor{
 
     @Override
     public Object visit(VarDeclOp v) {
-        //TODO inserire i tipi
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
-        for(IdentifierExpression ie : identifierExpressionList) {
+        for(int i=0;i<identifierExpressionList.size();i++) {
+            IdentifierExpression ie = identifierExpressionList.get(i);
+            out.print(typeConverter(ie.getIdentifier().getType())+" ");
 
-            ie.accept(this);
+            if(ie.getIdentifier()!=null){
+                ie.getIdentifier().accept(this);
+            }
 
+            if(v.getDeclarationType()==DeclarationType.INITIALIZATION)
+                out.print(" = ");
+
+            if(ie.getExpression()!=null){
+                ie.getExpression().accept(this);
+            }
+
+            if(i+1 < identifierExpressionList.size())
+                out.print(",");
         }
+        out.print(";");
 
         return null;
     }
@@ -516,6 +529,9 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(IdentifierExpression ie) {
 
+        //Bypassata: ho bisogno di sapere se è una dichiarazione o inizializzazione per mettere il simbolo " = ",
+        //quindi li vado ad esaminare in VarDeclOp perchè li ho getDeclarationType
+
         if(ie.getIdentifier()!=null){
             ie.getIdentifier().accept(this);
         }
@@ -573,6 +589,17 @@ public class Toy2ToCVisitor implements Visitor{
         out.print(" ) ");
 
         return null;
+    }
+
+    //Converte un tipo del linguaggio toy2 nel corrispondente tipo C
+    public String typeConverter(Type type){
+        return switch (type) {
+            case INTEGER -> "int";
+            case BOOL -> "bool";
+            case REAL -> "double";
+            case STRING -> "char*";
+            default -> "error";
+        };
     }
 
 }

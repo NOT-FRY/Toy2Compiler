@@ -47,16 +47,16 @@
             </VarDeclOp>
             <ReadStatement>
                 <IOArg>
+                    <String_const>
+                        scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
+                    </String_const>
+                </IOArg>
+                <IOArg>
                     <DollarSign/>
                     <Identifier>
                         ans
                     </Identifier>
                     <identifierType>VAR</identifierType>
-                </IOArg>
-                <IOArg>
-                    <String_const>
-                        scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
-                    </String_const>
                 </IOArg>
             </ReadStatement>
             <WhileStatement>
@@ -95,30 +95,30 @@
                 <BodyOp>
                     <ReadStatement>
                         <IOArg>
+                            <String_const>
+                                inserisci il primo numero: 
+                            </String_const>
+                        </IOArg>
+                        <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 a
                             </Identifier>
                             <identifierType>VAR</identifierType>
                         </IOArg>
-                        <IOArg>
-                            <String_const>
-                                inserisci il primo numero: 
-                            </String_const>
-                        </IOArg>
                     </ReadStatement>
                     <ReadStatement>
+                        <IOArg>
+                            <String_const>
+                                inserisci il secondo numero: 
+                            </String_const>
+                        </IOArg>
                         <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 b
                             </Identifier>
                             <identifierType>VAR</identifierType>
-                        </IOArg>
-                        <IOArg>
-                            <String_const>
-                                inserisci il secondo numero: 
-                            </String_const>
                         </IOArg>
                     </ReadStatement>
                     <IfStatement>
@@ -300,19 +300,36 @@
                             WRITE_RETURN
                         </WritingType>
                         <IOArg>
+                            <String_const>
+                                il risultato è: 
+                            </String_const>
+                        </IOArg>
+                        <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 risultato
                             </Identifier>
                             <identifierType>VAR</identifierType>
                         </IOArg>
-                        <IOArg>
-                            <String_const>
-                                il risultato è¨: 
-                            </String_const>
-                        </IOArg>
                     </WriteStatement>
-                    <ReadStatement>
+                    <WriteStatement>
+                        <WritingType>
+                            WRITE
+                        </WritingType>
+                        <IOArg>
+                            <AddOp>
+                                <leftVal>
+                                    <String_const>
+                                        Inserisci
+                                    </String_const>
+                                </leftVal>
+                                <rightVal>
+                                    <String_const>
+                                         un numero intero
+                                    </String_const>
+                                </rightVal>
+                            </AddOp>
+                        </IOArg>
                         <IOArg>
                             <DollarSign/>
                             <Identifier>
@@ -322,8 +339,29 @@
                         </IOArg>
                         <IOArg>
                             <String_const>
+                                ed un numero reale
+                            </String_const>
+                        </IOArg>
+                        <IOArg>
+                            <DollarSign/>
+                            <Identifier>
+                                ans
+                            </Identifier>
+                            <identifierType>VAR</identifierType>
+                        </IOArg>
+                    </WriteStatement>
+                    <ReadStatement>
+                        <IOArg>
+                            <String_const>
                                 scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
                             </String_const>
+                        </IOArg>
+                        <IOArg>
+                            <DollarSign/>
+                            <Identifier>
+                                ans
+                            </Identifier>
+                            <identifierType>VAR</identifierType>
                         </IOArg>
                     </ReadStatement>
                 </BodyOp>
@@ -373,6 +411,20 @@
             </Type>
         </ProcFunParamOp>
         <BodyOp>
+            <VarDeclOp>
+                <IdentifierExpression>
+                    <Identifier>
+                        c
+                    </Identifier>
+                    <identifierType>VAR</identifierType>
+                </IdentifierExpression>
+                <Type>
+                    STRING
+                </Type>
+                <DeclarationType>
+                    DECLARATION
+                </DeclarationType>
+            </VarDeclOp>
             <AssignStatement>
                 <Identifier>
                     risultato
@@ -392,6 +444,24 @@
                         <identifierType>VAR</identifierType>
                     </rightVal>
                 </DivOp>
+            </AssignStatement>
+            <AssignStatement>
+                <Identifier>
+                    c
+                </Identifier>
+                <identifierType>VAR</identifierType>
+                <AddOp>
+                    <leftVal>
+                        <String_const>
+                            ciao
+                        </String_const>
+                    </leftVal>
+                    <rightVal>
+                        <Integer_const>
+                            1
+                        </Integer_const>
+                    </rightVal>
+                </AddOp>
             </AssignStatement>
         </BodyOp>
     </ProcedureOp>

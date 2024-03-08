@@ -1475,7 +1475,7 @@ class CUP$parser$actions {
 		
                                IOArg arg = new IOArg((Expression)expression,false);
                                ArrayList<IOArg> argsList = new ArrayList<IOArg>();
-                               argsList.add(arg);
+                               argsList.add(0,arg);
                                RESULT = argsList;
                                
               CUP$parser$result = parser.getSymbolFactory().newSymbol("IOArgs",21, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
@@ -1496,10 +1496,11 @@ class CUP$parser$actions {
 		int IOArgsListright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object IOArgsList = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-                                                                                    IOArg arg1 = new IOArg((Expression)expression1,false);
-                                                                                    ((ArrayList<IOArg>)IOArgsList).add(0,arg1);
                                                                                     IOArg arg2 = new IOArg((Expression)expression2,true);
                                                                                     ((ArrayList<IOArg>)IOArgsList).add(0,arg2);
+                                                                                    IOArg arg1 = new IOArg((Expression)expression1,false);
+                                                                                    ((ArrayList<IOArg>)IOArgsList).add(0,arg1);
+
                                                                                     RESULT = IOArgsList;
                                                                                     
               CUP$parser$result = parser.getSymbolFactory().newSymbol("IOArgs",21, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);

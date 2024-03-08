@@ -1,48 +1,51 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-main (  ){
-double a,double b,double risultato;
+void main (  ){
+double a,b,risultato;
 int ans = 1;
- %d ansscegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
+scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)ans
 while(ans != 0 && ans != 1){
- %f ainserisci il primo numero: 
- %f binserisci il secondo numero: 
+inserisci il primo numero: a
+inserisci il secondo numero: b
 if ( ans == 2 ){ 
-risultato = somma ( ab ) ;
+risultato = somma ( a,b ) ;
  } 
 else if ( ans == 3 ){
-risultato = sottrazione ( ab ) ;
+risultato = sottrazione ( a,b ) ;
 }
 else if ( ans == 4 ){
-divisione ( abrisultato ) 
+divisione ( a,b,risultato ) 
 }
 else if ( ans == 5 ){
-moltiplicazione ( abrisultato ) 
+moltiplicazione ( a,b,risultato ) 
 }
  else{
-Seleziona un comando valido
+printf("Seleziona un comando valido\n");
  } 
 
- %f risultatoil risultato è¨: 
- %d ansscegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
+printf("il risultato è:  %f \n",risultato);
+printf("Inserisci un numero intero %d ed un numero reale %d ",ans,ans);
+scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)ans
 }
 
-ciao
+printf("ciao\n");
  } 
-divisione ( a,b,&risultato ){
+void divisione ( a,b,&risultato ){
+char* c;
 risultato = a / b;
+c = "ciao1";
  } 
-moltiplicazione ( a,b,&risultato ){
+void moltiplicazione ( a,b,&risultato ){
 risultato = a * b;
  } 
-somma ( a,b ){
+double somma ( a,b ){
 double risultato;
 risultato = a + b;
 return risultato;
 
  } 
-sottrazione ( a,b ){
+double sottrazione ( a,b ){
 double risultato;
 risultato = a - b;
 return risultato;

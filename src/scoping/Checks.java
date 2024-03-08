@@ -2,7 +2,7 @@ package scoping;
 
 import tree_structure.*;
 import tree_structure.Expression.Expression;
-import tree_structure.Expression.FunCallOp;
+import tree_structure.Expression.IOArg;
 import tree_structure.Expression.Identifier;
 import tree_structure.Statement.*;
 

@@ -1,11 +1,10 @@
 package visitors;
 
-import scoping.*;
+import scoping.ExpressionType;
 import tree_structure.*;
 import tree_structure.Expression.*;
 import tree_structure.Statement.*;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -32,12 +31,18 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(AddOp a) {
 
+        if(a.getType()==Type.STRING)
+            out.print("\"");
         a.getLeft().accept(this);
 
-        out.print(" + ");
+        //caso concatenazione fra stringhe
+        if(a.getType()!=Type.STRING)
+            out.print(" + ");
 
         a.getRight().accept(this);
 
+        if(a.getType()==Type.STRING)
+            out.print("\"");
 
         return null;
     }
@@ -154,8 +159,11 @@ public class Toy2ToCVisitor implements Visitor{
         out.print(" ( ");
 
         ArrayList<Expression> arguments = f.getExpressions();
-        for(Expression e : arguments){
-            e.accept(this);
+
+        for(int i = 0 ;i< arguments.size(); i++){
+            arguments.get(i).accept(this);
+            if(i+1< arguments.size())
+                out.write(",");
         }
 
         out.print(" ) ");
@@ -165,6 +173,10 @@ public class Toy2ToCVisitor implements Visitor{
 
     @Override
     public Object visit(FunctionOp f) {
+        //TODO gestire più tipi di ritorno...
+        for(Type t : f.getReturnTypes()){
+            out.print(typeConverter(t)+" ");
+        }
 
         f.getIdentifier().accept(this);
 
@@ -336,6 +348,8 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(ProcedureOp p) {
 
+        out.print("void ");
+
         p.getIdentifier().accept(this);
 
         out.print(" ( ");
@@ -444,9 +458,14 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(VarDeclOp v) {
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
+        Type lastTypeDeclared = Type.NOTYPE;
         for(int i=0;i<identifierExpressionList.size();i++) {
             IdentifierExpression ie = identifierExpressionList.get(i);
-            out.print(typeConverter(ie.getIdentifier().getType())+" ");
+            if(lastTypeDeclared != ie.getIdentifier().getType()) {
+                //In C non si deve avere: double a,double b,double risultato;
+                out.print(typeConverter(ie.getIdentifier().getType()) + " ");
+                lastTypeDeclared = ie.getIdentifier().getType();
+            }
 
             if(ie.getIdentifier()!=null){
                 ie.getIdentifier().accept(this);
@@ -483,17 +502,65 @@ public class Toy2ToCVisitor implements Visitor{
         return null;
     }
 
+
+    /*
+    * --> "La somma finale è" $(a+b) "e va bene così";
+        % istruzione di stampa in output, equivalente a printf("La
+        somma finale è %d e va bene così", a+b) %
+    *
+    * */
     @Override
     public Object visit(WriteStatement w) {
+        //TODO concatenazione stringhe
 
         WritingType writingType = w.getWritingType();
 
+        out.print("printf(\"");
+
         ArrayList<Expression> expressions = w.getExpressions();
-        for(Expression e : expressions) {
-            e.accept(this);
+
+        ArrayList<Expression> printfArguments = new ArrayList<>();
+        for(int i= 0; i<expressions.size();i++) {
+
+            IOArg ioArg = (IOArg)expressions.get(i);
+            Type ioArgExpressionType = ioArg.getExpression().getType();
+
+            //TODO booleano?
+            if(ioArg.isDollarSign()){
+                switch(ioArgExpressionType) {
+                    case INTEGER -> out.print(" %d ");
+                    case BOOL -> {
+                    }
+                    case REAL -> out.print(" %f ");
+                    case STRING -> out.print(" %s ");
+                }
+                printfArguments.add(ioArg);
+            }
+            else if(ioArgExpressionType==Type.STRING){
+                if(ioArg.getExpression().getExpressionType() == ExpressionType.PLUS){
+                    //è una concatenazione tra stringhe, non devo inserire gli apici, quindi faccio manualmente la visita
+                    ((AddOp)ioArg.getExpression()).getLeft().accept(this);
+                    ((AddOp)ioArg.getExpression()).getRight().accept(this);
+                }
+                else
+                    ioArg.accept(this);
+            }
+
+        }
+        if(writingType == WritingType.WRITE_RETURN)
+            out.print("\\n\"");
+        else
+            out.print("\"");
+
+        if(!printfArguments.isEmpty())
+            out.print(",");
+        for(int i = 0; i<printfArguments.size();i++){
+            printfArguments.get(i).accept(this);
+            if(i+1<printfArguments.size())
+                out.write(",");
         }
 
-        w.setType(Type.NOTYPE);
+        out.print(");");
 
         return null;
     }
@@ -544,20 +611,7 @@ public class Toy2ToCVisitor implements Visitor{
 
     @Override
     public Object visit(IOArg i) {
-        //TODO booleano?
-        if(i.isDollarSign()){
-            Type type = i.getExpression().getType();
-            switch(type) {
-                case INTEGER -> out.print(" %d ");
-                case BOOL -> {
-                }
-                case REAL -> out.print(" %f ");
-                case STRING -> out.print(" %s ");
-
-            }
-        }
         i.getExpression().accept(this);
-
         return null;
     }
 
@@ -582,8 +636,11 @@ public class Toy2ToCVisitor implements Visitor{
         out.print(" ( ");
 
         ArrayList<ProcedureExpression> arguments = p.getProcedureExpressions();
-        for(ProcedureExpression e : arguments){
-            e.accept(this);
+
+        for(int i = 0 ;i< arguments.size(); i++){
+            arguments.get(i).accept(this);
+            if(i+1< arguments.size())
+                out.write(",");
         }
 
         out.print(" ) ");

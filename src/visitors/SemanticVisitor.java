@@ -8,7 +8,6 @@ import tree_structure.Statement.*;
 import tree_structure.Statement.Statement;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class SemanticVisitor implements Visitor {
 

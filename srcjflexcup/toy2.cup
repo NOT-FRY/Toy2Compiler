@@ -293,14 +293,15 @@ start with Program;
   IOArgs ::= Expr:expression {:
                                IOArg arg = new IOArg((Expression)expression,false);
                                ArrayList<IOArg> argsList = new ArrayList<IOArg>();
-                               argsList.add(arg);
+                               argsList.add(0,arg);
                                RESULT = argsList;
                                :} //ammette una sola stringa oppure una concatenazione
             |Expr:expression1 DOLLARSIGN LPAR Expr:expression2 RPAR IOArgs:IOArgsList{:
-                                                                                    IOArg arg1 = new IOArg((Expression)expression1,false);
-                                                                                    ((ArrayList<IOArg>)IOArgsList).add(0,arg1);
                                                                                     IOArg arg2 = new IOArg((Expression)expression2,true);
                                                                                     ((ArrayList<IOArg>)IOArgsList).add(0,arg2);
+                                                                                    IOArg arg1 = new IOArg((Expression)expression1,false);
+                                                                                    ((ArrayList<IOArg>)IOArgsList).add(0,arg1);
+
                                                                                     RESULT = IOArgsList;
                                                                                     :}//ammette una stringa (o concatenazione), un passaggio di parametri ed eventuali altri passaggi e/o stringhe
             |DOLLARSIGN LPAR Expr:expression RPAR IOArgs:IOArgsList{:

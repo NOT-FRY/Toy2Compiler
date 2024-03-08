@@ -8,7 +8,6 @@ import tree_structure.Statement.*;
 import tree_structure.Statement.Statement;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 
 /*Prima visita dell'albero che serve ad aggiungere informazioni ai nodi, come valori di ritorno delle funzioni

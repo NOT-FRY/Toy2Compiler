@@ -6,7 +6,6 @@ import tree_structure.Expression.Expression;
 import tree_structure.Expression.FunCallOp;
 import tree_structure.Expression.Identifier;
 import tree_structure.Statement.AssignStatement;
-import tree_structure.Statement.IOArg;
 import tree_structure.Type;
 
 import java.util.ArrayList;

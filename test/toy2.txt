@@ -23,6 +23,8 @@ endproc
 proc divisione(a: real, b:real, out risultato: real):
 
 	risultato  ^=  a / b;
+	var c:string;\
+	c ^= "ciao" + 1;
 
 endproc
 
@@ -51,7 +53,10 @@ proc main():
 		    -->!"Seleziona un comando valido";
 		endif;
 
-		-->!"il risultato è¨: "$(risultato);
+		-->!"il risultato è: "$(risultato);
+
+		--> "Inserisci" + " un numero intero" $(ans) "ed un numero reale"
+                $(ans);
 
 	    <-- "scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)" $(ans);
 

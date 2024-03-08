@@ -1,8 +1,7 @@
-package tree_structure.Statement;
+package tree_structure.Expression;
 
 import scoping.ExpressionType;
 import scoping.SymbolTable;
-import tree_structure.Expression.Expression;
 import tree_structure.Node;
 import tree_structure.Type;
 import visitors.Visitor;

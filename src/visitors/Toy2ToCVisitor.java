@@ -402,6 +402,9 @@ public class Toy2ToCVisitor implements Visitor{
         for (VarDeclOp v : varDeclList) {
             result += v.accept(this);
         }
+
+        //
+
         ArrayList<? extends FunctionOrProcedure> paramOps = p.getFunProcList();
         for (FunctionOrProcedure n : paramOps) {
             result += n.accept(this);
@@ -423,17 +426,52 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ReadStatement r) {
         String result = "";
 
+        result += "scanf(\"";
+
+        String toPrint = "printf(\"";
+
         ArrayList<Expression> expressions = r.getExpressions();
 
-        ArrayList<Expression> scanfArguments = new ArrayList<>();
+        int flag = 0;
+
         for (int i= 0; i<expressions.size();i++) {
             IOArg ioArg = (IOArg)expressions.get(i);
             Type ioArgExpressionType = ioArg.getExpression().getType();
-            //TODO readStatement
-            result += expressions.get(i).accept(this);
+            if(ioArg.isDollarSign()) {
+                flag = 1;
+                result += getPrintfScanfType(ioArgExpressionType);
+            }else{
+                //solo stampa
+                toPrint += ioArg.accept(this);
+            }
+
         }
 
-        return result;
+        toPrint += "\");\n";
+        if(flag==1){
+            result += "\",";
+            for (int i= 0; i<expressions.size();i++) {
+                IOArg ioArg = (IOArg)expressions.get(i);
+                if(ioArg.isDollarSign()) {
+                    result += "&" + ioArg.getExpression().accept(this);
+
+                    for(int j = i+1; j<expressions.size();j++)
+                    {//skippo tutte le eventuali print per vedere se ci sono altre espressioni per cui fare scanf
+                        if(((IOArg)expressions.get(j)).isDollarSign())
+                        {
+                            result+=",";
+                            break;
+                        }
+                    }
+                }
+            }
+        }else if(flag==0){
+            result += "\"";
+        }
+        result += ");\n";
+        toPrint += result;
+
+        return toPrint;
     }
 
     @Override
@@ -566,13 +604,7 @@ public class Toy2ToCVisitor implements Visitor{
 
             //TODO booleano?
             if(ioArg.isDollarSign()){
-                switch(ioArgExpressionType) {
-                    case INTEGER -> result += " %d ";
-                    case BOOL -> {
-                    }
-                    case REAL -> result += " %f ";
-                    case STRING -> result += " %s ";
-                }
+                result += getPrintfScanfType(ioArgExpressionType);
                 printfArguments.add(ioArg);
             }
             else if(ioArgExpressionType==Type.STRING){
@@ -693,6 +725,17 @@ public class Toy2ToCVisitor implements Visitor{
             case STRING -> "char*";
             default -> "error";
         };
+    }
+
+    private static String getPrintfScanfType(Type ioArgExpressionType) {
+        String result = "";
+        switch(ioArgExpressionType) {
+            case INTEGER -> result += " %d ";
+            case BOOL -> result += " %d "; //TODO bool?
+            case REAL -> result += " %f ";
+            case STRING -> result += " %s ";
+        }
+        return result;
     }
 
 }

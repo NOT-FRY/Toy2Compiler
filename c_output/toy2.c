@@ -4,10 +4,16 @@
 void main (  ){
 double a,b,risultato;
 int ans = 1;
-scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)ans
+printf("scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)");
+scanf(" %d ",&ans);
+
 while(ans != 0 && ans != 1){
-inserisci il primo numero: a
-inserisci il secondo numero: b
+printf("inserisci il primo numero: ");
+scanf(" %f ",&a);
+
+printf("inserisci il secondo numero: ");
+scanf(" %f ",&b);
+
 if ( ans == 2 ){
 somma ( a,b );
  }
@@ -26,7 +32,9 @@ printf("Seleziona un comando valido\n");
 
 printf("il risultato è:  %f \n",risultato);
 printf("Inserisci un numero intero %d ed un numero reale %d ",ans,ans);
-scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)ans
+printf("scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)");
+scanf(" %d ",&ans);
+
 }
 
 printf("ciao\n");

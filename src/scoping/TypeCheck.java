@@ -44,6 +44,7 @@ public class TypeCheck {
             case GE:
                 return checkRelationalExpr(type1, type2);
 
+            case ID:
             case CONST:
                 return type1==type2 ? type1 : Type.ERROR;
 

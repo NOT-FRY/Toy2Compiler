@@ -5,6 +5,8 @@
 
  Questo programma calcola e stampa la somma di due numeri, incrementata di 1.
  Inoltre ne definisce la taglia
+
+ error #42
 %
 
 
@@ -37,7 +39,7 @@ proc main():
 	a, b ^= 1, 2.2; x ^= 3;
 	taglia, ans1 : string;
 	ans ^= "no";
-	risultato ^= 0.0;\
+	risultato ^= 0;\
 
 	sommac(a, x, b, @taglia, @risultato);
 

@@ -5,6 +5,8 @@
 
  Questo programma calcola e stampa la somma di due numeri, incrementata di 1.
  Inoltre ne definisce la taglia
+
+ error #75
 %
 
 
@@ -70,5 +72,5 @@ func stampa(messaggio: string)-> string:
     endwhile;
 
      --> $(messaggio);
-    return "ok";
+    return 1;
 endfunc

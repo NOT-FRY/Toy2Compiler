@@ -5,12 +5,14 @@
 
  Questo programma calcola e stampa la somma di due numeri, incrementata di 1.
  Inoltre ne definisce la taglia
+
+ error #55
 %
 
 
 
 % fa somma e restituisce anche la taglia del numero, oltre che il risultato%
-proc sommac(a: integer, d: integer, b:real, out size: string, out result: real):
+proc sommac(a: integer, d: integer, b:real,  out size: string, out result: real):
 
 	result  ^=  a + b + c + d;
 
@@ -50,7 +52,7 @@ proc main():
 	while ans = "si" do
 	    <-- "inserisci un intero:" $(a);
 	    <-- "inserisci un reale:" $(b);
-	    sommac(a, x, b, @taglia, @risultato);
+	    sommac(a, x, b, @taglia, risultato);
 	    valore ^= stampa("la somma di " + a + " e " + b +  " incrementata di " + c + " e' " + taglia);
 	    valore ^= stampa(" ed e' pari a " + risultato);
 	    <-- "vuoi continuare? (si/no):\t" $(ans);

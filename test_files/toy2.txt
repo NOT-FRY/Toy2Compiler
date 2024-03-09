@@ -42,7 +42,7 @@ proc main():
 		<-- "inserisci il secondo numero: " $(b);
 
 		if ans = 2 then
-			risultato ^= somma(a,b);
+			somma(a,b);
 		elseif ans = 3 then
 			risultato ^= sottrazione(a,b);
 		elseif ans = 4 then

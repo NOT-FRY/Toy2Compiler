@@ -11,378 +11,403 @@ import java.util.ArrayList;
 
 public class Toy2ToCVisitor implements Visitor{
 
-    PrintWriter out;
-
-    public Toy2ToCVisitor(String fileName)throws FileNotFoundException {
-        out = new PrintWriter(fileName);
-        writeHeaders();
+    public Toy2ToCVisitor(){
     }
 
-    public void dispose(){
-        out.close();
-    }
-
-    public void writeHeaders(){
-        out.println("#include<stdio.h>");
-        out.println("#include<stdlib.h>");
-        out.println("#include<string.h>");
+    public String writeHeaders(){
+        String result = "";
+        result += "#include<stdio.h>\n";
+        result += "#include<stdlib.h>\n";
+        result += "#include<string.h>\n";
+        return result;
     }
 
     @Override
     public Object visit(AddOp a) {
+        String result = "";
 
         if(a.getType()==Type.STRING)
-            out.print("\"");
-        a.getLeft().accept(this);
+            result += "\"";
+        result += a.getLeft().accept(this);
 
         //caso concatenazione fra stringhe
         if(a.getType()!=Type.STRING)
-            out.print(" + ");
+            result += " + ";
 
-        a.getRight().accept(this);
+        result += a.getRight().accept(this);
 
         if(a.getType()==Type.STRING)
-            out.print("\"");
+            result += "\"";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(AndOp a) {
-        a.getLeft().accept(this);
+        String result = "";
 
-        out.print(" && ");
+        result += a.getLeft().accept(this);
 
-        a.getRight().accept(this);
+        result += " && ";
 
-        return null;
+        result += a.getRight().accept(this);
+
+        return result;
     }
 
     @Override
     public Object visit(AssignStatement a) {
+        String result = "";
 
         //TODO controllare tipi
         ArrayList<Identifier> identifiers = a.getIdentifiers();
         for(int i = 0 ;i < identifiers.size(); i++){
-            identifiers.get(i).accept(this);
+            result += identifiers.get(i).accept(this);
             if(i+1< identifiers.size())
-                out.print(",");
+                result += ",";
         }
 
-        out.print(" = ");
+        result += " = ";
 
         ArrayList<Expression> expressions = a.getExpressions();
         for(Expression e : expressions){
-            e.accept(this);
+            result += e.accept(this);
         }
 
-        out.print(";");
+        result +=";";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(BodyOp b) {
+        String result = "";
 
         ArrayList<VarDeclOp> varDeclList = b.getVarDeclList();
         for(VarDeclOp v : varDeclList){
-            v.accept(this);
-            out.println();
+            result += v.accept(this);
+            result += "\n";
         }
         ArrayList<Statement> statements = b.getStatementList();
         for(Statement s : statements){
-            s.accept(this);
-            out.println();
+            result += s.accept(this);
+            result += "\n";
         }
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(DiffOp d) {
-        d.getLeft().accept(this);
+        String result = "";
 
-        out.print(" - ");
+        result += d.getLeft().accept(this);
 
-        d.getRight().accept(this);
+        result += " - ";
 
-        return null;
+        result += d.getRight().accept(this);
+
+        return result;
     }
 
     @Override
     public Object visit(DivOp d) {
-        d.getLeft().accept(this);
-        out.print(" / ");
-        d.getRight().accept(this);
-        return null;
+        String result = "";
+
+        result += d.getLeft().accept(this);
+        result += " / ";
+        result += d.getRight().accept(this);
+        return result;
     }
 
     @Override
     public Object visit(ElifOp e) {
+        String result = "";
 
-        out.print("else if ( ");
+        result +="else if ( ";
 
-        e.getExpression().accept(this);
+        result += e.getExpression().accept(this);
 
-        out.println(" ){");
-        e.getBody().accept(this);
-        out.println("}");
+        result += " ){\n";
+        result += e.getBody().accept(this);
+        result +="}\n";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(EQOp e) {
+        String result = "";
 
         //TODO controllare tipi
-        e.getLeft().accept(this);
+        result += e.getLeft().accept(this);
 
-        out.print(" == ");
+        result += " == ";
 
-        e.getRight().accept(this);
+        result += e.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(False_const f) {
+        String result = "";
 
-        out.print("false");
+        result += "false";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(FunCallOp f) {
+        String result = "";
 
-        f.getIdentifier().accept(this);
-        out.print(" ( ");
+        result += f.getIdentifier().accept(this);
+        result +=" ( ";
 
         ArrayList<Expression> arguments = f.getExpressions();
 
         for(int i = 0 ;i< arguments.size(); i++){
-            arguments.get(i).accept(this);
+            result += arguments.get(i).accept(this);
             if(i+1< arguments.size())
-                out.write(",");
+                result += ",";
         }
 
-        out.print(" ) ");
+        result += " ) ";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(FunctionOp f) {
+        String result = "";
+
         //TODO gestire più tipi di ritorno...
         for(Type t : f.getReturnTypes()){
-            out.print(typeConverter(t)+" ");
+            result += typeConverter(t)+" ";
         }
 
-        f.getIdentifier().accept(this);
+        result += f.getIdentifier().accept(this);
 
-        out.print(" ( ");
+        result += " ( ";
 
         ArrayList<ProcFunParamOp> parameters = f.getProcFunParamOpList();
 
         for(int i = 0 ;i< parameters.size(); i++){
-            parameters.get(i).accept(this);
+            result += parameters.get(i).accept(this);
             if(i+1< parameters.size())
-                out.write(",");
+                result += ",";
         }
-        out.println(" ){");
+        result +=" ){\n";
 
 
-        f.getBody().accept(this);
+        result += f.getBody().accept(this);
 
-        out.println(" } ");
+        result += " }\n";
 
-        return null;
+        return result;
     }
 
 
     @Override
     public Object visit(GEOp g) {
+        String result = "";
         //TODO controlli di tipo se stringa es strcmp
-        g.getLeft().accept(this);
+        result += g.getLeft().accept(this);
 
-        out.print(" >= ");
+        result += " >= ";
 
-        g.getRight().accept(this);
+        result += g.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(GTOp g) {
+        String result = "";
         //TODO controlli di tipo se stringa es strcmp
-        g.getLeft().accept(this);
+        result += g.getLeft().accept(this);
 
-        out.print(" > ");
+        result += " > ";
 
-        g.getRight().accept(this);
+        result += g.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(Identifier i) {
+        String result = "";
         Qualifier q = i.getQualifier();
 
         if(q!=null){
             //TODO passaggio per riferimento
             if(q == Qualifier.OUT)
-                out.print("&");
+                result += "*";
         }
 
-        out.print(i.getName());
+        result += i.getName();
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(IfStatement i) {
+        String result = "";
 
-        out.print("if ( ");
+        result += "if ( ";
 
-        i.getExpression().accept(this);
-        out.println(" ){ ");
-        i.getBody().accept(this);
+        result += i.getExpression().accept(this);
+        result += " ){\n";
+        result += i.getBody().accept(this);
 
-        out.println(" } ");
+        result +=" }\n";
 
         ArrayList<ElifOp> elifOps = i.getElifList();
         for (ElifOp p : elifOps) {
-            p.accept(this);
+            result += p.accept(this);
         }
         if(i.getElseBody() != null)
-            i.getElseBody().accept(this);
+            result += i.getElseBody().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(Integer_const i) {
+        String result = "";
 
-        out.print(i.getValue());
+        result += i.getValue();
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(LEOp l) {
+        String result = "";
         //TODO controlli di tipo se stringa es strcmp
-        l.getLeft().accept(this);
+        result += l.getLeft().accept(this);
 
-        out.print(" <= ");
+        result += " <= ";
 
-        l.getRight().accept(this);
+        result +=l.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(LTOp l) {
+        String result = "";
         //TODO controlli di tipo se stringa es strcmp
-        l.getLeft().accept(this);
+        result += l.getLeft().accept(this);
 
-        out.print(" < ");
+        result +=" < ";
 
-        l.getRight().accept(this);
+        result += l.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
 
     @Override
     public Object visit(MulOp m) {
+        String result = "";
 
-        m.getLeft().accept(this);
+        result += m.getLeft().accept(this);
 
-        out.print(" * ");
+        result += " * ";
 
-        m.getRight().accept(this);
+        result += m.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(NEOp n) {
+        String result = "";
         //TODO controlli di tipo se stringa es strcmp
-        n.getLeft().accept(this);
+        result += n.getLeft().accept(this);
 
-        out.print(" != ");
+        result += " != ";
 
-        n.getRight().accept(this);
+        result +=n.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(NotOp n) {
-        out.print("!");
-        n.getValue().accept(this);
+        String result = "";
+        result += "!";
+        result += n.getValue().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(OrOp o) {
+        String result = "";
 
-        o.getLeft().accept(this);
+        result += o.getLeft().accept(this);
 
-        out.print(" || ");
+        result += " || ";
 
-        o.getRight().accept(this);
+        result += o.getRight().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ProcFunParamOp p){
+        String result = "";
 
-        p.getIdentifier().accept(this);
+        result += p.getIdentifier().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ProcedureOp p) {
+        String result = "";
 
-        out.print("void ");
+        result += "void ";
 
-        p.getIdentifier().accept(this);
+        result += p.getIdentifier().accept(this);
 
-        out.print(" ( ");
+        result +=" ( ";
 
         ArrayList<ProcFunParamOp> parameters = p.getProcFunParamOpList();
 
         for(int i = 0 ;i< parameters.size(); i++){
-            parameters.get(i).accept(this);
+            result += parameters.get(i).accept(this);
             if(i+1< parameters.size())
-                out.write(",");
+                result += ",";
         }
-        out.println(" ){");
+        result += " ){\n";
 
-        p.getBody().accept(this);
+        result += p.getBody().accept(this);
 
-        out.println(" } ");
+        result +=" }\n";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ProgramOp p) {
+        String result = "";
+
+        result += writeHeaders();
 
         ArrayList<VarDeclOp> varDeclList = p.getVarDeclList();
         for (VarDeclOp v : varDeclList) {
-            v.accept(this);
+            result += v.accept(this);
         }
         ArrayList<? extends FunctionOrProcedure> paramOps = p.getFunProcList();
         for (FunctionOrProcedure n : paramOps) {
-            n.accept(this);
+            result += n.accept(this);
         }
 
-        return null;
+        return result;
     }
 
 
@@ -396,110 +421,123 @@ public class Toy2ToCVisitor implements Visitor{
     * */
     @Override
     public Object visit(ReadStatement r) {
+        String result = "";
 
         ArrayList<Expression> expressions = r.getExpressions();
-        for (Expression v : expressions) {
-            v.accept(this);
+
+        ArrayList<Expression> scanfArguments = new ArrayList<>();
+        for (int i= 0; i<expressions.size();i++) {
+            IOArg ioArg = (IOArg)expressions.get(i);
+            Type ioArgExpressionType = ioArg.getExpression().getType();
+            //TODO readStatement
+            result += expressions.get(i).accept(this);
         }
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(Real_const r) {
+        String result = "";
 
-        out.print(r.getValue());
+        result += r.getValue();
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ReturnStatement r) {
+        String result = "";
 
-        out.print("return ");
+        result += "return ";
         ArrayList<Expression> expressions = r.getExpressions();
         for(int i=0;i<expressions.size();i++) {
-            expressions.get(i).accept(this);
+            result += expressions.get(i).accept(this);
             if(i+1< expressions.size())
-                out.print(",");
+                result += ",";
         }
 
-        out.println(";");
+        result += ";\n";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(String_const s) {
+        String result = "";
 
-        out.print(s.getValue());
+        result += s.getValue();
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(True_const t) {
+        String result = "";
 
-        out.print("true");
+        result += "true";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(UminusOp u) {
+        String result = "";
 
-        out.print(" -");
+        result += " -";
 
-        u.getValue().accept(this);
+        result += u.getValue().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(VarDeclOp v) {
+        String result = "";
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         Type lastTypeDeclared = Type.NOTYPE;
         for(int i=0;i<identifierExpressionList.size();i++) {
             IdentifierExpression ie = identifierExpressionList.get(i);
             if(lastTypeDeclared != ie.getIdentifier().getType()) {
                 //In C non si deve avere: double a,double b,double risultato;
-                out.print(typeConverter(ie.getIdentifier().getType()) + " ");
+                result += typeConverter(ie.getIdentifier().getType()) + " ";
                 lastTypeDeclared = ie.getIdentifier().getType();
             }
 
             if(ie.getIdentifier()!=null){
-                ie.getIdentifier().accept(this);
+                result += ie.getIdentifier().accept(this);
             }
 
             if(v.getDeclarationType()==DeclarationType.INITIALIZATION)
-                out.print(" = ");
+                result += " = ";
 
             if(ie.getExpression()!=null){
-                ie.getExpression().accept(this);
+                result += ie.getExpression().accept(this);
             }
 
             if(i+1 < identifierExpressionList.size())
-                out.print(",");
+                result += ",";
         }
-        out.print(";");
+        result += ";";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(WhileStatement w) {
+        String result = "";
 
-        out.print("while(");
+        result += "while(";
 
-        w.getExpression().accept(this);
+        result += w.getExpression().accept(this);
 
-        out.println("){");
+        result += "){\n";
 
-        w.getBody().accept(this);
+        result += w.getBody().accept(this);
 
-        out.println("}");
+        result +="}\n";
 
-        return null;
+        return result;
     }
 
 
@@ -511,11 +549,12 @@ public class Toy2ToCVisitor implements Visitor{
     * */
     @Override
     public Object visit(WriteStatement w) {
+        String result = "";
         //TODO concatenazione stringhe
 
         WritingType writingType = w.getWritingType();
 
-        out.print("printf(\"");
+        result += "printf(\"";
 
         ArrayList<Expression> expressions = w.getExpressions();
 
@@ -528,124 +567,121 @@ public class Toy2ToCVisitor implements Visitor{
             //TODO booleano?
             if(ioArg.isDollarSign()){
                 switch(ioArgExpressionType) {
-                    case INTEGER -> out.print(" %d ");
+                    case INTEGER -> result += " %d ";
                     case BOOL -> {
                     }
-                    case REAL -> out.print(" %f ");
-                    case STRING -> out.print(" %s ");
+                    case REAL -> result += " %f ";
+                    case STRING -> result += " %s ";
                 }
                 printfArguments.add(ioArg);
             }
             else if(ioArgExpressionType==Type.STRING){
                 if(ioArg.getExpression().getExpressionType() == ExpressionType.PLUS){
                     //è una concatenazione tra stringhe, non devo inserire gli apici, quindi faccio manualmente la visita
-                    ((AddOp)ioArg.getExpression()).getLeft().accept(this);
-                    ((AddOp)ioArg.getExpression()).getRight().accept(this);
+                    result += ((AddOp)ioArg.getExpression()).getLeft().accept(this);
+                    result += ((AddOp)ioArg.getExpression()).getRight().accept(this);
                 }
                 else
-                    ioArg.accept(this);
+                    result += ioArg.accept(this);
             }
 
         }
         if(writingType == WritingType.WRITE_RETURN)
-            out.print("\\n\"");
+            result += "\\n\"";
         else
-            out.print("\"");
+            result += "\"";
 
         if(!printfArguments.isEmpty())
-            out.print(",");
+            result += ",";
         for(int i = 0; i<printfArguments.size();i++){
-            printfArguments.get(i).accept(this);
+            result += printfArguments.get(i).accept(this);
             if(i+1<printfArguments.size())
-                out.write(",");
+                result += ",";
         }
 
-        out.print(");");
+        result += ");";
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ElseOp e) {
+        String result = "";
 
-        out.println(" else{");
+        result += " else{\n";
 
-        e.getBody().accept(this);
+        result += e.getBody().accept(this);
 
-        out.println(" } ");
+        result +=" }\n";
 
-        return null;
+        return result;
     }
 
 
     @Override
     public Object visit(IterOp i) {
-
-        ArrayList<VarDeclOp> varDeclList = i.getVarDeclList();
-        for(VarDeclOp v : varDeclList) {
-            v.accept(this);
-        }
-        ArrayList<? extends FunctionOrProcedure> paramOps = i.getFunProcList();
-        for(FunctionOrProcedure n : paramOps) {
-            n.accept(this);
-        }
-
+        //Utilizzato solo per costruire l'albero nel parser
         return null;
     }
 
     @Override
     public Object visit(IdentifierExpression ie) {
+        String result = "";
 
         //Bypassata: ho bisogno di sapere se è una dichiarazione o inizializzazione per mettere il simbolo " = ",
         //quindi li vado ad esaminare in VarDeclOp perchè li ho getDeclarationType
 
         if(ie.getIdentifier()!=null){
-            ie.getIdentifier().accept(this);
+            result += ie.getIdentifier().accept(this);
         }
         if(ie.getExpression()!=null){
-            ie.getExpression().accept(this);
+            result += ie.getExpression().accept(this);
         }
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(IOArg i) {
-        i.getExpression().accept(this);
-        return null;
+        String result = "";
+        result += i.getExpression().accept(this);
+        return result;
     }
 
     public Object visit(ProcedureExpression p) {
+        String result = "";
         //TODO controlli per riferimento
 
         if(p.getIdentifier() != null) {
-            p.isReference();
-            p.getIdentifier().accept(this);
+            if(p.isReference())
+                result += "&";
+            result += p.getIdentifier().accept(this);
         }
         if(p.getExpression() != null)
-            p.getExpression().accept(this);
+            result += p.getExpression().accept(this);
 
-        return null;
+        return result;
     }
 
     @Override
     public Object visit(ProcCallOp p) {
+        String result = "";
 
-        p.getIdentifier().accept(this);
+        result += p.getIdentifier().accept(this);
 
-        out.print(" ( ");
+        result += " ( ";
 
         ArrayList<ProcedureExpression> arguments = p.getProcedureExpressions();
 
         for(int i = 0 ;i< arguments.size(); i++){
-            arguments.get(i).accept(this);
+            result += arguments.get(i).accept(this);
             if(i+1< arguments.size())
-                out.write(",");
+                result += ",";
         }
 
-        out.print(" ) ");
+        result += " );";
 
-        return null;
+        return result;
     }
 
     //Converte un tipo del linguaggio toy2 nel corrispondente tipo C

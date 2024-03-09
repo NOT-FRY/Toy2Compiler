@@ -8,10 +8,11 @@ import visitors.Toy2ToCVisitor;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintWriter;
 
 public class Test {
     public static void main(String[] args){
-        File file = new File("test"+ File.separator + args[0]+".txt");
+        File file = new File("test_files"+ File.separator + args[0]+".txt");
         try {
             parser p = new parser(new Yylex(new FileReader(file)));
 
@@ -27,9 +28,12 @@ public class Test {
             SemanticVisitor semanticVisitor = new SemanticVisitor();
             semanticVisitor.visit(program);
 
-            Toy2ToCVisitor toy2ToCVisitor = new Toy2ToCVisitor("c_output"+ File.separator + args[0] + ".c");
-            toy2ToCVisitor.visit(program);
-            toy2ToCVisitor.dispose();
+            Toy2ToCVisitor toy2ToCVisitor = new Toy2ToCVisitor();
+            String cFile = (String) toy2ToCVisitor.visit(program);
+
+            PrintWriter out = new PrintWriter("c_output"+ File.separator + args[0] + ".c");
+            out.write(cFile);
+            out.flush();
 
         }catch(Exception e){
             e.printStackTrace();

@@ -136,28 +136,24 @@
                             </rightVal>
                         </EQOp>
                         <BodyOp>
-                            <AssignStatement>
+                            <ProcCallOp>
                                 <Identifier>
-                                    risultato
+                                    somma
                                 </Identifier>
-                                <identifierType>VAR</identifierType>
-                                <FunCallOp>
+                                <identifierType>METHOD</identifierType>
+                                <ProcedureExpression>
                                     <Identifier>
-                                        somma
+                                        a
                                     </Identifier>
-                                    <identifierType>METHOD</identifierType>
-                                        <Parameters>
-                                        <Identifier>
-                                            a
-                                        </Identifier>
-                                        <identifierType>VAR</identifierType>
-                                        <Identifier>
-                                            b
-                                        </Identifier>
-                                        <identifierType>VAR</identifierType>
-                                    </Parameters>
-                                </FunCallOp>
-                            </AssignStatement>
+                                    <identifierType>VAR</identifierType>
+                                </ProcedureExpression>
+                                <ProcedureExpression>
+                                    <Identifier>
+                                        b
+                                    </Identifier>
+                                    <identifierType>VAR</identifierType>
+                                </ProcedureExpression>
+                            </ProcCallOp>
                         </BodyOp>
                         <ElifOp>
                             <EQOp>

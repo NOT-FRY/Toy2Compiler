@@ -607,18 +607,7 @@ public class PrintXMLTreeVisitor implements Visitor {
 
     @Override
     public Object visit(IterOp i) {
-        out.println(getIndent() + "<IterOp>");
-        increaseIndent();
-        ArrayList<VarDeclOp> varDeclList = i.getVarDeclList();
-        for(VarDeclOp v : varDeclList) {
-            v.accept(this);
-        }
-        ArrayList<? extends FunctionOrProcedure> paramOps = i.getFunProcList();
-        for(FunctionOrProcedure n : paramOps) {
-            n.accept(this);
-        }
-        decreaseIndent();
-        out.println(getIndent() + "</IterOp>");
+        //Utilizzato solo per costruire l'albero nel parser
         return null;
     }
 

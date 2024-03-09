@@ -479,16 +479,7 @@ public class ScopeVisitor implements Visitor {
 
     @Override
     public Object visit(IterOp i) {
-
-        ArrayList<VarDeclOp> varDeclList = i.getVarDeclList();
-        for(VarDeclOp v : varDeclList) {
-            v.accept(this);
-        }
-        ArrayList<? extends FunctionOrProcedure> paramOps = i.getFunProcList();
-        for(FunctionOrProcedure n : paramOps) {
-            n.accept(this);
-        }
-
+        //Utilizzato solo per costruire l'albero nel parser
         return null;
     }
 

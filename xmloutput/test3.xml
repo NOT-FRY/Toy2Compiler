@@ -584,6 +584,27 @@
                     </ReadStatement>
                 </BodyOp>
             </WhileStatement>
+            <IfStatement>
+                <EQOp>
+                    <leftVal>
+                        <String_const>
+                            ciao
+                        </String_const>
+                    </leftVal>
+                    <rightVal>
+                        <String_const>
+                            ciao
+                        </String_const>
+                    </rightVal>
+                </EQOp>
+                <BodyOp>
+                    <ReturnStatement>
+                        <String_const>
+                            ciao
+                        </String_const>
+                    </ReturnStatement>
+                </BodyOp>
+            </IfStatement>
             <WriteStatement>
                 <WritingType>
                     WRITE_RETURN
@@ -802,6 +823,11 @@
                     </BodyOp>
                 </ElseOp>
             </IfStatement>
+            <ReturnStatement>
+                <String_const>
+                    ciao
+                </String_const>
+            </ReturnStatement>
         </BodyOp>
     </ProcedureOp>
 </ProgramOp>

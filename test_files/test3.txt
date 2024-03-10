@@ -55,6 +55,9 @@ proc main():
 	    valore ^= stampa(" ed e' pari a " + risultato);
 	    <-- "vuoi continuare? (si/no):\t" $(ans);
    endwhile;
+   if "ciao"="ciao" then
+        return "ciao";
+   endif;
 
         -->! ;
         --> "ciao";

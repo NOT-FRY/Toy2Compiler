@@ -17,6 +17,7 @@ public class Toy2ToCVisitor implements Visitor{
         result += "#include<stdio.h>\n";
         result += "#include<stdlib.h>\n";
         result += "#include<string.h>\n";
+        result += "#include <stdbool.h>\n";
         result += "#define MAX 512\n";
 
         result+="char * concatString(char* str1 , char* str2) {\n" +
@@ -259,6 +260,7 @@ public class Toy2ToCVisitor implements Visitor{
         ArrayList<ProcFunParamOp> parameters = f.getProcFunParamOpList();
 
         for(int i = 0 ;i< parameters.size(); i++){
+            result += typeConverter(parameters.get(i).getType()) + " ";
             result += parameters.get(i).accept(this);
             if(i+1< parameters.size())
                 result += ",";
@@ -466,6 +468,7 @@ public class Toy2ToCVisitor implements Visitor{
         ArrayList<ProcFunParamOp> parameters = p.getProcFunParamOpList();
 
         for(int i = 0 ;i< parameters.size(); i++){
+            result += typeConverter(parameters.get(i).getType())+" ";
             result += parameters.get(i).accept(this);
             if(i+1< parameters.size())
                 result += ",";
@@ -640,8 +643,13 @@ public class Toy2ToCVisitor implements Visitor{
                 result += ie.getExpression().accept(this);
             }
 
-            if(i+1 < identifierExpressionList.size())
+            if(i+1 < identifierExpressionList.size() && lastTypeDeclared != identifierExpressionList.get(i+1).getIdentifier().getType() ){
+                //caso int a = 1,double b = 2.2; non devo mettere la , ma andare a capo
+                result+=";\n";
+            }
+            else if(i+1 < identifierExpressionList.size()) {
                 result += ",";
+            }
         }
         result += ";";
 

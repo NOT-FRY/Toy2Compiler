@@ -19,25 +19,89 @@ public class Toy2ToCVisitor implements Visitor{
         result += "#include<stdio.h>\n";
         result += "#include<stdlib.h>\n";
         result += "#include<string.h>\n";
+        result += "#define MAX 512\n";
+
+        result+="char * stringConcat(char* str1 , char* str2) {\n" +
+                "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
+                "   strcpy(out,str1);\n" +
+                "   strcat(out , str2);\n" +
+                "   return out;\n" +
+                "}\n"+
+                "char * stringCopy(char * string){\n"+
+                "   char *out= malloc(strlen(string)*sizeof(char));\n"+
+                "   strcpy(out,string);\n"+
+                "   return out;\n"+
+                "}\n" +
+                "char * concatInt(char *a, int b, bool invert){\n" +
+                "   char *n = malloc(MAX*sizeof(char));\n" +
+                "   sprintf(n, \"%d\", b);\n" +
+                "   if (invert==true)\n" +
+                "       return stringConcat(a, n);\n" +
+                "   else\n" +
+                "       return stringConcat(n, a);\n" +
+                "}\n" +
+                "char * concatDouble(char *a, double b, bool invert){\n" +
+                "   char *n = malloc(MAX*sizeof(char));\n" +
+                "   sprintf(n, \"%f\", b);\n" +
+                "   if (invert==true)\n" +
+                "       return stringConcat(a, n);\n" +
+                "   else\n" +
+                "       return stringConcat(n, a);\n" +
+                "}\n" +
+                "char * concatBool(char *a, bool b, bool invert){\n" +
+                "   char *n = malloc(MAX*sizeof(char));\n" +
+                "   sprintf(n, \"%d\", b);\n" +
+                "   if (invert==true)\n" +
+                "       return stringConcat(a, n);\n" +
+                "   else\n" +
+                "       return stringConcat(n, a);\n" +
+                "}\n";
+
+
         return result;
+
     }
 
     @Override
     public Object visit(AddOp a) {
         String result = "";
 
-        if(a.getType()==Type.STRING)
-            result += "\"";
-        result += a.getLeft().accept(this);
-
         //caso concatenazione fra stringhe
-        if(a.getType()!=Type.STRING)
+        if(a.getType()==Type.STRING) {
+            String string1 = (String) a.getLeft().accept(this);
+            String string2 = (String) a.getRight().accept(this);
+            //Stringa + Stringa
+            if(a.getLeft().getType()==a.getRight().getType()) {
+                result += "stringConcat(" + string1 + "," + string2 + ")";
+            }//Stringa + REAL
+            else if(a.getLeft().getType()==Type.REAL    ||  a.getRight().getType()==Type.REAL){
+                if(a.getLeft().getType()==Type.REAL){
+                    result += "concatDouble(" + string1 + "," + string2 + ",false)";
+                } else if (a.getRight().getType()==Type.REAL) {
+                    result += "concatDouble(" + string1 + "," + string2 + ",true)";
+                }
+            }//stringa + INT
+            else if(a.getLeft().getType()==Type.INTEGER    ||  a.getRight().getType()==Type.INTEGER){
+                if(a.getLeft().getType()==Type.INTEGER){
+                    result += "concatInt(" + string1 + "," + string2 + ",false)";
+                } else if (a.getRight().getType()==Type.INTEGER) {
+                    result += "concatInt(" + string1 + "," + string2 + ",true)";
+                }
+            }//stringa + BOOL
+            else if(a.getLeft().getType()==Type.BOOL    ||  a.getRight().getType()==Type.BOOL){
+                if(a.getLeft().getType()==Type.BOOL){
+                    result += "concatBool(" + string1 + "," + string2 + ",false)";
+                } else if (a.getRight().getType()==Type.BOOL) {
+                    result += "concatBool(" + string1 + "," + string2 + ",true)";
+                }
+            }
+        }
+        //caso addizione normale
+        else{
+            result += a.getLeft().accept(this);
             result += " + ";
-
-        result += a.getRight().accept(this);
-
-        if(a.getType()==Type.STRING)
-            result += "\"";
+            result += a.getRight().accept(this);
+        }
 
         return result;
     }
@@ -246,7 +310,10 @@ public class Toy2ToCVisitor implements Visitor{
                 result += "*";
         }
 
-        result += i.getName();
+        /*if(i.getType()==Type.STRING)
+            result += "\""+i.getName()+"\"";
+        else*/
+            result += i.getName();
 
         return result;
     }
@@ -442,7 +509,7 @@ public class Toy2ToCVisitor implements Visitor{
                 result += getPrintfScanfType(ioArgExpressionType);
             }else{
                 //solo stampa
-                toPrint += ioArg.accept(this);
+                toPrint += ((String)ioArg.accept(this)).replace("\"","");
             }
 
         }
@@ -504,7 +571,7 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(String_const s) {
         String result = "";
 
-        result += s.getValue();
+        result += "\""+s.getValue()+"\"";
 
         return result;
     }
@@ -608,13 +675,14 @@ public class Toy2ToCVisitor implements Visitor{
                 printfArguments.add(ioArg);
             }
             else if(ioArgExpressionType==Type.STRING){
-                if(ioArg.getExpression().getExpressionType() == ExpressionType.PLUS){
+                //Risolto in AddOp
+                /*(ioArg.getExpression().getExpressionType() == ExpressionType.PLUS){
                     //è una concatenazione tra stringhe, non devo inserire gli apici, quindi faccio manualmente la visita
                     result += ((AddOp)ioArg.getExpression()).getLeft().accept(this);
                     result += ((AddOp)ioArg.getExpression()).getRight().accept(this);
                 }
-                else
-                    result += ioArg.accept(this);
+                else*/
+                    result += ((String)ioArg.accept(this)).replace("\"","");
             }
 
         }
@@ -730,10 +798,10 @@ public class Toy2ToCVisitor implements Visitor{
     private static String getPrintfScanfType(Type ioArgExpressionType) {
         String result = "";
         switch(ioArgExpressionType) {
-            case INTEGER -> result += " %d ";
-            case BOOL -> result += " %d "; //TODO bool?
-            case REAL -> result += " %f ";
-            case STRING -> result += " %s ";
+            case INTEGER -> result += "%d";
+            case BOOL -> result += "%d"; //TODO bool?
+            case REAL -> result += "%f";
+            case STRING -> result += "%s";
         }
         return result;
     }

@@ -5,8 +5,6 @@ import tree_structure.*;
 import tree_structure.Expression.*;
 import tree_structure.Statement.*;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Toy2ToCVisitor implements Visitor{
@@ -21,7 +19,7 @@ public class Toy2ToCVisitor implements Visitor{
         result += "#include<string.h>\n";
         result += "#define MAX 512\n";
 
-        result+="char * stringConcat(char* str1 , char* str2) {\n" +
+        result+="char * concatString(char* str1 , char* str2) {\n" +
                 "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
                 "   strcpy(out,str1);\n" +
                 "   strcat(out , str2);\n" +
@@ -35,26 +33,26 @@ public class Toy2ToCVisitor implements Visitor{
                 "char * concatInt(char *a, int b, bool invert){\n" +
                 "   char *n = malloc(MAX*sizeof(char));\n" +
                 "   sprintf(n, \"%d\", b);\n" +
-                "   if (invert==true)\n" +
-                "       return stringConcat(a, n);\n" +
+                "   if (invert)\n" +
+                "       return concatString(a, n);\n" +
                 "   else\n" +
-                "       return stringConcat(n, a);\n" +
+                "       return concatString(n, a);\n" +
                 "}\n" +
                 "char * concatDouble(char *a, double b, bool invert){\n" +
                 "   char *n = malloc(MAX*sizeof(char));\n" +
                 "   sprintf(n, \"%f\", b);\n" +
-                "   if (invert==true)\n" +
-                "       return stringConcat(a, n);\n" +
+                "   if (invert)\n" +
+                "       return concatString(a, n);\n" +
                 "   else\n" +
-                "       return stringConcat(n, a);\n" +
+                "       return concatString(n, a);\n" +
                 "}\n" +
                 "char * concatBool(char *a, bool b, bool invert){\n" +
                 "   char *n = malloc(MAX*sizeof(char));\n" +
                 "   sprintf(n, \"%d\", b);\n" +
-                "   if (invert==true)\n" +
-                "       return stringConcat(a, n);\n" +
+                "   if (invert)\n" +
+                "       return concatString(a, n);\n" +
                 "   else\n" +
-                "       return stringConcat(n, a);\n" +
+                "       return concatString(n, a);\n" +
                 "}\n";
 
 
@@ -72,7 +70,7 @@ public class Toy2ToCVisitor implements Visitor{
             String string2 = (String) a.getRight().accept(this);
             //Stringa + Stringa
             if(a.getLeft().getType()==a.getRight().getType()) {
-                result += "stringConcat(" + string1 + "," + string2 + ")";
+                result += "concatString(" + string1 + "," + string2 + ")";
             }//Stringa + REAL
             else if(a.getLeft().getType()==Type.REAL    ||  a.getRight().getType()==Type.REAL){
                 if(a.getLeft().getType()==Type.REAL){
@@ -202,13 +200,16 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(EQOp e) {
         String result = "";
-
-        //TODO controllare tipi
-        result += e.getLeft().accept(this);
-
-        result += " == ";
-
-        result += e.getRight().accept(this);
+        //caso confronto fra stringhe
+        if(e.getLeft().getType()==Type.STRING && e.getRight().getType()==Type.STRING){
+            String string1 = (String) e.getLeft().accept(this);
+            String string2 = (String) e.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")==0";
+        }else{
+            result += e.getLeft().accept(this);
+            result += " == ";
+            result += e.getRight().accept(this);
+        }
 
         return result;
     }
@@ -276,12 +277,17 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(GEOp g) {
         String result = "";
-        //TODO controlli di tipo se stringa es strcmp
-        result += g.getLeft().accept(this);
 
-        result += " >= ";
-
-        result += g.getRight().accept(this);
+        //caso confronto fra stringhe
+        if(g.getLeft().getType()==Type.STRING && g.getRight().getType()==Type.STRING){
+            String string1 = (String) g.getLeft().accept(this);
+            String string2 = (String) g.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")>=0";
+        }else {
+            result += g.getLeft().accept(this);
+            result += " >= ";
+            result += g.getRight().accept(this);
+        }
 
         return result;
     }
@@ -289,12 +295,16 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(GTOp g) {
         String result = "";
-        //TODO controlli di tipo se stringa es strcmp
-        result += g.getLeft().accept(this);
-
-        result += " > ";
-
-        result += g.getRight().accept(this);
+        //caso confronto fra stringhe
+        if(g.getLeft().getType()==Type.STRING && g.getRight().getType()==Type.STRING){
+            String string1 = (String) g.getLeft().accept(this);
+            String string2 = (String) g.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")>0";
+        }else {
+            result += g.getLeft().accept(this);
+            result += " > ";
+            result += g.getRight().accept(this);
+        }
 
         return result;
     }
@@ -352,12 +362,16 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(LEOp l) {
         String result = "";
-        //TODO controlli di tipo se stringa es strcmp
-        result += l.getLeft().accept(this);
-
-        result += " <= ";
-
-        result +=l.getRight().accept(this);
+        //caso confronto fra stringhe
+        if(l.getLeft().getType()==Type.STRING && l.getRight().getType()==Type.STRING){
+            String string1 = (String) l.getLeft().accept(this);
+            String string2 = (String) l.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")<=0";
+        }else {
+            result += l.getLeft().accept(this);
+            result += " <= ";
+            result += l.getRight().accept(this);
+        }
 
         return result;
     }
@@ -365,12 +379,15 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(LTOp l) {
         String result = "";
-        //TODO controlli di tipo se stringa es strcmp
-        result += l.getLeft().accept(this);
-
-        result +=" < ";
-
-        result += l.getRight().accept(this);
+        if(l.getLeft().getType()==Type.STRING && l.getRight().getType()==Type.STRING){
+            String string1 = (String) l.getLeft().accept(this);
+            String string2 = (String) l.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")<0";
+        }else {
+            result += l.getLeft().accept(this);
+            result += " < ";
+            result += l.getRight().accept(this);
+        }
 
         return result;
     }
@@ -392,12 +409,15 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(NEOp n) {
         String result = "";
-        //TODO controlli di tipo se stringa es strcmp
-        result += n.getLeft().accept(this);
-
-        result += " != ";
-
-        result +=n.getRight().accept(this);
+        if(n.getLeft().getType()==Type.STRING && n.getRight().getType()==Type.STRING){
+            String string1 = (String) n.getLeft().accept(this);
+            String string2 = (String) n.getRight().accept(this);
+            result += "strcmp("+string1+","+string2+")!=0";
+        }else {
+            result += n.getLeft().accept(this);
+            result += " != ";
+            result += n.getRight().accept(this);
+        }
 
         return result;
     }
@@ -655,7 +675,6 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(WriteStatement w) {
         String result = "";
-        //TODO concatenazione stringhe
 
         WritingType writingType = w.getWritingType();
 
@@ -669,7 +688,6 @@ public class Toy2ToCVisitor implements Visitor{
             IOArg ioArg = (IOArg)expressions.get(i);
             Type ioArgExpressionType = ioArg.getExpression().getType();
 
-            //TODO booleano?
             if(ioArg.isDollarSign()){
                 result += getPrintfScanfType(ioArgExpressionType);
                 printfArguments.add(ioArg);

@@ -9,7 +9,10 @@ import java.util.ArrayList;
 
 public class Toy2ToCVisitor implements Visitor{
 
+    private int functionOrProcedureCount;
+
     public Toy2ToCVisitor(){
+        functionOrProcedureCount = 0;
     }
 
     public String writeHeaders(){
@@ -19,6 +22,18 @@ public class Toy2ToCVisitor implements Visitor{
         result += "#include<string.h>\n";
         result += "#include <stdbool.h>\n";
         result += "#define MAX 512\n";
+
+
+        //array per consentire la restituzione di valori multipli nelle funzioni
+        result += "typedef struct\n" +
+                "{\n" +
+                "    int INTEGER;\n" +
+                "    double REAL;\n" +
+                "    char *STRING;\n" +
+                "    bool BOOL;\n" +
+                "}returnTypesStruct;\n"+
+
+                "struct returnTypesStruct *returnValues;\n"; //
 
         result+="char * concatString(char* str1 , char* str2) {\n" +
                 "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
@@ -248,10 +263,15 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(FunctionOp f) {
         String result = "";
 
-        //TODO gestire più tipi di ritorno...
+
+        /*
         for(Type t : f.getReturnTypes()){
             result += typeConverter(t)+" ";
         }
+        */
+        //gestione con più valori di ritono
+
+        result += "struct returnValues * ";
 
         result += f.getIdentifier().accept(this);
 
@@ -265,8 +285,16 @@ public class Toy2ToCVisitor implements Visitor{
             if(i+1< parameters.size())
                 result += ",";
         }
-        result +=" ){\n";
 
+        if(functionOrProcedureCount>0){
+            functionOrProcedureCount--;
+            result+=");\n";
+            return result;
+        }
+        else
+        {
+            result += " ){\n";
+        }
 
         result += f.getBody().accept(this);
 
@@ -459,6 +487,10 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ProcedureOp p) {
         String result = "";
 
+        if(p.getIdentifier().getName().equals("main") && functionOrProcedureCount>0){
+            return result;
+        }
+
         result += "void ";
 
         result += p.getIdentifier().accept(this);
@@ -473,7 +505,16 @@ public class Toy2ToCVisitor implements Visitor{
             if(i+1< parameters.size())
                 result += ",";
         }
-        result += " ){\n";
+
+        if(functionOrProcedureCount>0){
+            functionOrProcedureCount--;
+            result+=");\n";
+            return result;
+        }
+        else
+        {
+            result += " ){\n";
+        }
 
         result += p.getBody().accept(this);
 
@@ -493,9 +534,27 @@ public class Toy2ToCVisitor implements Visitor{
             result += v.accept(this);
         }
 
-        //
+        //Devo scrivere prima la firma delle funzioni/procedure, quindi le conto per poi saltarle quando vado ad esaminarle
+        //per questo faccio la accept 2 volte
 
         ArrayList<? extends FunctionOrProcedure> paramOps = p.getFunProcList();
+        for (FunctionOrProcedure n : paramOps) {
+            if(n instanceof ProcedureOp){
+                if(!((ProcedureOp) n).getIdentifier().getName().equals("main"))
+                    functionOrProcedureCount++;
+            }else{
+                functionOrProcedureCount++;
+            }
+        }
+
+        //prima visita per scrivere le firme
+        paramOps = p.getFunProcList();
+        for (FunctionOrProcedure n : paramOps) {
+            result += n.accept(this);
+        }
+
+        //seconda visita per le definizioni
+        paramOps = p.getFunProcList();
         for (FunctionOrProcedure n : paramOps) {
             result += n.accept(this);
         }
@@ -577,15 +636,17 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ReturnStatement r) {
         String result = "";
 
-        result += "return ";
+        result +=  "returnValues = (returnTypesStruct *) malloc(MAX);\n";
         ArrayList<Expression> expressions = r.getExpressions();
         for(int i=0;i<expressions.size();i++) {
-            result += expressions.get(i).accept(this);
-            if(i+1< expressions.size())
-                result += ",";
+            if(expressions.get(i).getType()==Type.STRING)
+                result += " returnValues["+i+"]."+expressions.get(i).getType()+" = stringCopy("+expressions.get(i).accept(this)+");\n";
+            else
+                result += " returnValues["+i+"]."+expressions.get(i).getType()+" = "+expressions.get(i).accept(this)+";\n";
         }
 
-        result += ";\n";
+        //TODO fare free(t)
+        result += "return returnValues;\n";
 
         return result;
     }

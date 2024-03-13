@@ -27,13 +27,48 @@ public class Toy2ToCVisitor implements Visitor{
         //array per consentire la restituzione di valori multipli nelle funzioni
         result += "typedef struct\n" +
                 "{\n" +
-                "    int INTEGER;\n" +
-                "    double REAL;\n" +
-                "    char *STRING;\n" +
-                "    bool BOOL;\n" +
-                "}returnTypesStruct;\n"+
+                "    int* integers;\n" +
+                "    double* reals;\n" +
+                "    char** strings;\n" +
+                "    bool* booleans;\n" +
+                "    int int_count;\n   "+
+                "    int real_count;\n  "+
+                "    int string_count;\n"+
+                "    int boolean_count;\n"+
+                "}ReturnValues;\n";
 
-                "struct returnTypesStruct *returnValues;\n"; //
+        result+="ReturnValues* createReturnValues(int int_count, int real_count, int string_count,int boolean_count) {\n" +
+                "    ReturnValues* rv = (ReturnValues*)malloc(sizeof(ReturnValues));\n" +
+                "    if (rv == NULL) {\n" +
+                "        printf(\"Errore di allocazione della memoria.\\n\");\n" +
+                "        exit(1);\n" +
+                "    }\n" +
+                "    rv->integers = (int*)malloc(int_count * sizeof(int));\n" +
+                "    rv->reals = (double*)malloc(real_count * sizeof(double));\n" +
+                "    rv->strings = (char**)malloc(string_count * sizeof(char*));\n" +
+                "    rv->booleans = (bool*)malloc(boolean_count * sizeof(bool));\n" +
+                "    for (int i = 0; i < string_count; i++) {\n" +
+                "        rv->strings[i] = NULL;\n" +
+                "    }\n" +
+                "    rv->int_count = int_count;\n" +
+                "    rv->real_count = real_count;\n" +
+                "    rv->string_count = string_count;\n" +
+                "    rv->boolean_count = boolean_count;\n" +
+                "    return rv;\n" +
+                "}";
+
+        result += "void freeReturnValues(ReturnValues* rv) {\n" +
+                "    if (rv != NULL) {\n" +
+                "        free(rv->integers);\n" +
+                "        free(rv->reals);\n" +
+                "        free(rv->booleans);\n" +
+                "        for (int i = 0; i < rv->string_count; i++) {\n" +
+                "            free(rv->strings[i]);\n" +
+                "        }\n" +
+                "        free(rv->strings);\n" +
+                "        free(rv);\n" +
+                "    }\n" +
+                "}";
 
         result+="char * concatString(char* str1 , char* str2) {\n" +
                 "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
@@ -136,10 +171,10 @@ public class Toy2ToCVisitor implements Visitor{
     @Override
     public Object visit(AssignStatement a) {
         String result = "";
+        boolean isMultipleAssignment = false;
 
-        //TODO controllare tipi
         ArrayList<Identifier> identifiers = a.getIdentifiers();
-        for(int i = 0 ;i < identifiers.size(); i++){
+        /*for(int i = 0 ;i < identifiers.size(); i++){
             result += identifiers.get(i).accept(this);
             if(i+1< identifiers.size())
                 result += ",";
@@ -152,7 +187,65 @@ public class Toy2ToCVisitor implements Visitor{
             result += e.accept(this);
         }
 
-        result +=";";
+        result +=";";*/
+
+        if(identifiers.size()>1)
+            isMultipleAssignment=true;
+
+        if(isMultipleAssignment){
+            boolean isFunctionWithMultipleAssignmentCalled = false;
+            int indexFunctionWithMultipleAssignmentCalled =0;
+            ArrayList<Expression> expressions = a.getExpressions();
+            for(int i=0;i< expressions.size();i++){
+                if(expressions.get(i) instanceof FunCallOp){
+                    isFunctionWithMultipleAssignmentCalled = true;
+                    indexFunctionWithMultipleAssignmentCalled = i;
+                    //TODO
+                }
+            }
+            if(isFunctionWithMultipleAssignmentCalled){
+                //TODO Potrei chiamare due volte assegnazioni a valori multipli nello stesso scope, ma non posso dichiarare due variabili ReturnValues* con lo stesso nome nello stesso scope, quindi faccio il nome dinamico
+                result += " ReturnValues* result = " + expressions.get(indexFunctionWithMultipleAssignmentCalled).accept(this)+";\n";
+                int structIntCounter=0,structStringCounter=0,structRealCounter=0,structBooleanCounter=0;
+                for(int i=0;i< identifiers.size();i++){
+                    if(identifiers.get(i).getType()==Type.INTEGER) {
+                        result += identifiers.get(i).accept(this)+" = result->integers["+structIntCounter+"];\n";
+                        structIntCounter++;
+                    }
+                    else if(identifiers.get(i).getType()==Type.REAL){
+                        result += identifiers.get(i).accept(this)+" = result->reals["+structRealCounter+"];\n";
+                        structRealCounter++;
+                    }
+                    else if (identifiers.get(i).getType()==Type.STRING){
+                        result += identifiers.get(i).accept(this) + " = stringCopy(result->strings["+structStringCounter+"]);\n";
+                        structStringCounter++;
+                    }
+                    else if(identifiers.get(i).getType()==Type.BOOL){
+                        result += identifiers.get(i).accept(this)+" = result->booleans["+structBooleanCounter+"];\n";
+                        structBooleanCounter++;
+                    }else{
+                        result += "##############ERROR CONVERTING MULTIPLE PARAMETERS################";
+                    }
+                }
+
+                result += "freeReturnValues(result);\n";
+            }else{
+                int i=0;
+                for(i=0;i< identifiers.size() && i<expressions.size();i++){
+                    result += identifiers.get(i).accept(this)+" = " + expressions.get(i).accept(this)+";\n";
+                }
+                if(i< identifiers.size()||i<expressions.size())
+                    result+="###################ERROR IN ASSIGNMENT##################";
+            }
+        }else{
+            result += identifiers.get(0).accept(this);
+            result += " = ";
+            ArrayList<Expression> expressions = a.getExpressions();
+            for(Expression e : expressions){
+                result += e.accept(this);
+            }
+            result +=";\n";
+        }
 
         return result;
     }
@@ -271,8 +364,12 @@ public class Toy2ToCVisitor implements Visitor{
         */
         //gestione con più valori di ritono
 
-        result += "struct returnValues * ";
-
+        if(f.getReturnTypes().size()>1) {
+            result += " ReturnValues* ";
+        }
+        else{
+            result += typeConverter(f.getReturnTypes().get(0)) +" ";
+        }
         result += f.getIdentifier().accept(this);
 
         result += " ( ";
@@ -636,17 +733,62 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ReturnStatement r) {
         String result = "";
 
-        result +=  "returnValues = (returnTypesStruct *) malloc(MAX);\n";
+        //TODO fare free(t)
+
+        /*result +=  "returnValues = (returnTypesStruct *) malloc(MAX);\n";
         ArrayList<Expression> expressions = r.getExpressions();
         for(int i=0;i<expressions.size();i++) {
             if(expressions.get(i).getType()==Type.STRING)
                 result += " returnValues["+i+"]."+expressions.get(i).getType()+" = stringCopy("+expressions.get(i).accept(this)+");\n";
             else
                 result += " returnValues["+i+"]."+expressions.get(i).getType()+" = "+expressions.get(i).accept(this)+";\n";
-        }
+        }*/
+        ArrayList<Expression> expressions = r.getExpressions();
+        if(expressions.size()>1) {//return multiple values
+            int integerCount = 0;
+            int realCount = 0;
+            int stringCount = 0;
+            int booleanCount = 0;
+            //conto solo
+            for(int i=0;i<expressions.size();i++) {
+                if(expressions.get(i).getType()==Type.INTEGER)
+                    integerCount++;
+                else if(expressions.get(i).getType()==Type.REAL)
+                    realCount++;
+                else if (expressions.get(i).getType()==Type.STRING)
+                    stringCount++;
+                else if(expressions.get(i).getType()==Type.BOOL)
+                    booleanCount++;
+            }
 
-        //TODO fare free(t)
-        result += "return returnValues;\n";
+            result += "\nReturnValues* rv = createReturnValues("+integerCount+","+realCount+","+stringCount+","+booleanCount+");\n";
+
+            int structIntCounter=0,structStringCounter=0,structRealCounter=0,structBooleanCounter=0;
+
+            for(int i=0;i<expressions.size();i++) {
+                if(expressions.get(i).getType()==Type.INTEGER) {
+                    result += "rv->integers["+structIntCounter+"] = "+expressions.get(i).accept(this)+";\n";
+                    structIntCounter++;
+                }
+                else if(expressions.get(i).getType()==Type.REAL){
+                    result += "rv->reals["+structRealCounter+"] = "+expressions.get(i).accept(this)+";\n";
+                    structRealCounter++;
+                }
+                else if (expressions.get(i).getType()==Type.STRING){
+                    result += "rv->strings["+structStringCounter+"] = stringCopy("+expressions.get(i).accept(this)+");\n";
+                    structStringCounter++;
+                }
+                else if(expressions.get(i).getType()==Type.BOOL){
+                    result += "rv->booleans["+structBooleanCounter+"] = "+expressions.get(i).accept(this)+";\n";
+                    structBooleanCounter++;
+                }
+            }
+
+            result+="return rv;\n";
+        }
+        else {//return single expression
+            result += "return " + expressions.get(0).accept(this)+";\n";
+        }
 
         return result;
     }

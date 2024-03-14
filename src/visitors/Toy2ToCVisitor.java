@@ -10,9 +10,11 @@ import java.util.ArrayList;
 public class Toy2ToCVisitor implements Visitor{
 
     private int functionOrProcedureCount;
+    private boolean mainVisited;
 
     public Toy2ToCVisitor(){
         functionOrProcedureCount = 0;
+        mainVisited = false;
     }
 
     public String writeHeaders(){
@@ -200,12 +202,12 @@ public class Toy2ToCVisitor implements Visitor{
                 if(expressions.get(i) instanceof FunCallOp){
                     isFunctionWithMultipleAssignmentCalled = true;
                     indexFunctionWithMultipleAssignmentCalled = i;
-                    //TODO
+                    //TODO più chiamate a funzione nelle assegnazioni?...errore su analisi sintattica
                 }
             }
             if(isFunctionWithMultipleAssignmentCalled){
-                //TODO Potrei chiamare due volte assegnazioni a valori multipli nello stesso scope, ma non posso dichiarare due variabili ReturnValues* con lo stesso nome nello stesso scope, quindi faccio il nome dinamico
-                result += " ReturnValues* result = " + expressions.get(indexFunctionWithMultipleAssignmentCalled).accept(this)+";\n";
+                //Potrei chiamare due volte assegnazioni a valori multipli nello stesso scope, ma non posso dichiarare due variabili ReturnValues* con lo stesso nome nello stesso scope, quindi faccio il nome dinamico
+                result += " ReturnValues* result_"+identifiers.get(indexFunctionWithMultipleAssignmentCalled).getName()+" = " + expressions.get(indexFunctionWithMultipleAssignmentCalled).accept(this)+";\n";
                 int structIntCounter=0,structStringCounter=0,structRealCounter=0,structBooleanCounter=0;
                 for(int i=0;i< identifiers.size();i++){
                     if(identifiers.get(i).getType()==Type.INTEGER) {
@@ -584,11 +586,15 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ProcedureOp p) {
         String result = "";
 
-        if(p.getIdentifier().getName().equals("main") && functionOrProcedureCount>0){
+        if((p.getIdentifier().getName().equals("main") && functionOrProcedureCount>0 )|| mainVisited){
             return result;
         }
 
         result += "void ";
+
+        if(p.getIdentifier().getName().equals("main")){
+            mainVisited=true;
+        }
 
         result += p.getIdentifier().accept(this);
 

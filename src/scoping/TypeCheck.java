@@ -155,7 +155,10 @@ public class TypeCheck {
                     if(id.getType() != t){
                         throw new Exception(">Semantic error: Tipo dell'identificatore non compatibile con il lato destro dell'assegnazione -starting at:" + id.getName()+" mismatch con la funzione: "+funCall.getIdentifier().getName());
                     }
-                    id = assignStatement.getIdentifiers().get(i++);//L'overflow dovrebbe essere stato controllato all'inizio di questo metodo (numero identificatori)
+                    i++;
+                    if(i>=assignStatement.getIdentifiers().size())
+                        break;
+                    id = assignStatement.getIdentifiers().get(i);//L'overflow dovrebbe essere stato controllato all'inizio di questo metodo (numero identificatori)
                 }
 
             }else{//tipo binario o costante ( a = 5 : expressionType = CONST)

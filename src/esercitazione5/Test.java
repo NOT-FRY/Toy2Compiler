@@ -18,14 +18,14 @@ public class Test {
         }
 
         //File file = new File("test_files"+ File.separator + args[0]+".txt");
-        File file = new File("tests"+File.separator+args[0]+File.separator+args[0]+".txt");
+        File file = new File(args[0]);
 
         try {
             parser p = new parser(new Yylex(new FileReader(file)));
 
             ProgramOp program = (ProgramOp) p.parse().value;
 
-            File xmlFile = new File("xml_out" +File.separator +"tests"+ File.separator + args[0] +File.separator+args[0] + ".xml");
+            File xmlFile = new File("xml_out" +File.separator +args[0].replace(".txt",".xml"));
 
             if(!xmlFile.exists()){
                 xmlFile.getParentFile().mkdirs();
@@ -46,7 +46,7 @@ public class Test {
             String cFile = (String) toy2ToCVisitor.visit(program);
 
 
-            File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + args[0] + ".c");
+            File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + args[0].replace(".txt",".c"));
 
             if(!cFilePath.exists()){
                 cFilePath.getParentFile().mkdirs();

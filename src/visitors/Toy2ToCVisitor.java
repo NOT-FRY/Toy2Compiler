@@ -444,8 +444,7 @@ public class Toy2ToCVisitor implements Visitor{
         Qualifier q = i.getQualifier();
 
         if(q!=null){
-            //TODO passaggio per riferimento
-            if(q == Qualifier.OUT)
+            if(q == Qualifier.OUT && i.getType()!=Type.STRING)//la stringa è già un puntatore
                 result += "*";
         }
 
@@ -586,7 +585,7 @@ public class Toy2ToCVisitor implements Visitor{
     public Object visit(ProcedureOp p) {
         String result = "";
 
-        if((p.getIdentifier().getName().equals("main") && functionOrProcedureCount>0 )|| mainVisited){
+        if((p.getIdentifier().getName().equals("main") && functionOrProcedureCount>0 )|| (p.getIdentifier().getName().equals("main") && mainVisited)){
             return result;
         }
 

@@ -18,14 +18,21 @@ public class Test {
         }
 
         //File file = new File("test_files"+ File.separator + args[0]+".txt");
-        File file = new File(args[0]);
+        File file = new File("tests"+File.separator+args[0]+File.separator+args[0]+".txt");
 
         try {
             parser p = new parser(new Yylex(new FileReader(file)));
 
-            ProgramOp program = (ProgramOp) p.debug_parse().value;
+            ProgramOp program = (ProgramOp) p.parse().value;
 
-            PrintXMLTreeVisitor treeVisitor = new PrintXMLTreeVisitor("xmloutput"+ File.separator + args[0] + ".xml");
+            File xmlFile = new File("xml_out" +File.separator +"tests"+ File.separator + args[0] +File.separator+args[0] + ".xml");
+
+            if(!xmlFile.exists()){
+                xmlFile.getParentFile().mkdirs();
+                xmlFile.createNewFile();
+            }
+
+            PrintXMLTreeVisitor treeVisitor = new PrintXMLTreeVisitor(xmlFile);
             treeVisitor.visit(program);
             treeVisitor.dispose();
 
@@ -38,7 +45,15 @@ public class Test {
             Toy2ToCVisitor toy2ToCVisitor = new Toy2ToCVisitor();
             String cFile = (String) toy2ToCVisitor.visit(program);
 
-            PrintWriter out = new PrintWriter("c_output"+ File.separator + args[0] + ".c");
+
+            File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + args[0] + ".c");
+
+            if(!cFilePath.exists()){
+                cFilePath.getParentFile().mkdirs();
+                cFilePath.createNewFile();
+            }
+            PrintWriter out = new PrintWriter(cFilePath);
+
             out.write(cFile);
             out.flush();
 

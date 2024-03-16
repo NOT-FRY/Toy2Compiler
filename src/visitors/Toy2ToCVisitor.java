@@ -57,7 +57,7 @@ public class Toy2ToCVisitor implements Visitor{
                 "    rv->string_count = string_count;\n" +
                 "    rv->boolean_count = boolean_count;\n" +
                 "    return rv;\n" +
-                "}";
+                "}\n";
 
         result += "void freeReturnValues(ReturnValues* rv) {\n" +
                 "    if (rv != NULL) {\n" +
@@ -70,7 +70,7 @@ public class Toy2ToCVisitor implements Visitor{
                 "        free(rv->strings);\n" +
                 "        free(rv);\n" +
                 "    }\n" +
-                "}";
+                "}\n";
 
         result+="char * concatString(char* str1 , char* str2) {\n" +
                 "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
@@ -1009,6 +1009,7 @@ public class Toy2ToCVisitor implements Visitor{
         ArrayList<ProcedureExpression> arguments = p.getProcedureExpressions();
 
         for(int i = 0 ;i< arguments.size(); i++){
+
             result += arguments.get(i).accept(this);
             if(i+1< arguments.size())
                 result += ",";

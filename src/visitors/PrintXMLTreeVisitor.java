@@ -6,6 +6,7 @@ import tree_structure.Expression.Expression;
 import tree_structure.Statement.*;
 import tree_structure.Statement.Statement;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public class PrintXMLTreeVisitor implements Visitor {
     PrintWriter out;
     private int indentLevel = 0;
 
-    public PrintXMLTreeVisitor(String filename) throws FileNotFoundException {
-        out = new PrintWriter(filename);
+    public PrintXMLTreeVisitor(File file) throws FileNotFoundException {
+        out = new PrintWriter(file);
     }
 
     public void dispose(){

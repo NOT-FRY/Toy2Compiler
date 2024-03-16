@@ -299,6 +299,7 @@ public class ScopeVisitor implements Visitor {
             Symbol s = new Symbol(p.getIdentifier().getName(),Kind.METHOD);
 
             ArrayList<ProcFunParamOp> paramOps = p.getProcFunParamOpList();
+            s.setParameters(paramOps);
             for (ProcFunParamOp pr : paramOps) {
                 s.addParamType(pr.getType());
                 pr.accept(this);

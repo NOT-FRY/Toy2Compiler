@@ -1,5 +1,6 @@
 package scoping;
 
+import tree_structure.ProcFunParamOp;
 import tree_structure.Type;
 
 import java.util.ArrayList;
@@ -12,10 +13,11 @@ public class Symbol {
     private Type type; // Tipo del simbolo (Int, String, ecc.)
     private Object value; // Valore per variabili o costanti
 
-    //TODO da aggiungere valori di ritorno funzioni e probabilmente altre cose...
     private ArrayList<Type> returnTypes; // Lista di valori di ritorno per le funzioni
 
     private ArrayList<Type> paramTypes; // Lista di valori di ritorno per le funzioni
+
+    private ArrayList<ProcFunParamOp> parameters;
 
 
     public Symbol(String id, Kind kind, Type type) {
@@ -75,12 +77,12 @@ public class Symbol {
         this.value = value;
     }
 
-    public List<Type> getParameters() {
-        return returnTypes;
+    public ArrayList<ProcFunParamOp> getParameters() {
+        return parameters;
     }
 
-    public void setParameters(ArrayList<Type> returnTypes) {
-        this.returnTypes = returnTypes;
+    public void setParameters(ArrayList<ProcFunParamOp> parameters) {
+        this.parameters = parameters;
     }
 
     public void addReturnType(Type returnType){

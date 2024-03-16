@@ -689,6 +689,7 @@ public class SemanticVisitor implements Visitor {
              * Controllo che il tipo dei parametri della chiamata sia corretto rispetto alla definizione
              * */
             ArrayList<Type> definitionParameterTypes = s.getParamTypes();
+            ArrayList<ProcFunParamOp> definitionParameters = s.getParameters();
             int i=0;
 
             for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
@@ -698,10 +699,21 @@ public class SemanticVisitor implements Visitor {
                         System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getIdentifier().getType());
                         System.exit(1);
                     }
+                    //Controllo sul passaggio per riferimento
+                    if(definitionParameters.get(i).getIdentifier().getQualifier() != Qualifier.OUT){
+                        System.err.println(">Semantic error: Passaggio per riferimento non consentito nella definizione della funzione - at: "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression());
+                        System.exit(1);
+                    }
                 }
                 else{ //è un espressione qualsiasi, senza il riferimento
                     if(definitionParameterTypes.get(i) != arguments.get(i).getExpression().getType()){
                         System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression().getType());
+                        System.exit(1);
+                    }
+                    //Controllo sul passaggio per riferimento, che dovrebbe essere lo stesso della definizione
+                    if(definitionParameters.get(i).getIdentifier().getQualifier() == Qualifier.OUT){
+                        //non sono entrato nell'if precedente isReference, quindi è errore
+                        System.err.println(">Semantic error: Passaggio per riferimento necessario nella chiamata a funzione - at: "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression());
                         System.exit(1);
                     }
                 }
@@ -711,6 +723,8 @@ public class SemanticVisitor implements Visitor {
                 System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName());
                 System.exit(1);
             }
+
+
 
         }
 

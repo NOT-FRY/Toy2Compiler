@@ -270,6 +270,7 @@ public class ScopeVisitor implements Visitor {
                 symbolTableStack.peek().addEntry(s);
             }catch(Exception e){
                 System.err.println(e.getMessage());
+                System.exit(1);
             }
         }
 
@@ -309,6 +310,7 @@ public class ScopeVisitor implements Visitor {
                 father.addEntry(s);
             }catch(Exception e){
                 System.err.println(e.getMessage());
+                System.exit(1);
             }
 
             p.getBody().accept(this);
@@ -438,6 +440,7 @@ public class ScopeVisitor implements Visitor {
                     currentTable.addEntry(s);
                 }catch(Exception e){
                     System.err.println(e.getMessage());
+                    System.exit(1);
                 }
 
             }

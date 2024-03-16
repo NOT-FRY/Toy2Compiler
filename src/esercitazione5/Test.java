@@ -12,7 +12,14 @@ import java.io.PrintWriter;
 
 public class Test {
     public static void main(String[] args){
-        File file = new File("test_files"+ File.separator + args[0]+".txt");
+        if (args.length == 0) {
+            System.out.println("Argomenti insufficienti\n Inserire il nome del file come parametro");
+            System.exit(1);
+        }
+
+        //File file = new File("test_files"+ File.separator + args[0]+".txt");
+        File file = new File(args[0]);
+
         try {
             parser p = new parser(new Yylex(new FileReader(file)));
 

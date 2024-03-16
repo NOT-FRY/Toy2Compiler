@@ -45,8 +45,10 @@ public class Test {
             Toy2ToCVisitor toy2ToCVisitor = new Toy2ToCVisitor();
             String cFile = (String) toy2ToCVisitor.visit(program);
 
+            String fileName = args[0].substring(args[0].lastIndexOf("/")+1);
+            fileName = fileName.replace(".txt",".c");
 
-            File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + args[0].replace(".txt",".c"));
+            File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + fileName);
 
             if(!cFilePath.exists()){
                 cFilePath.getParentFile().mkdirs();

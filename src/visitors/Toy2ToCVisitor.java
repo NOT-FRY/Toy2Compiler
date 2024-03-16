@@ -6,15 +6,23 @@ import tree_structure.Expression.*;
 import tree_structure.Statement.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Toy2ToCVisitor implements Visitor{
 
     private int functionOrProcedureCount;
     private boolean mainVisited;
 
+    //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore
+    //nome funzione, ArrayList delle variabili passate per riferimento
+    private HashMap<String,ArrayList<String>> identifiersByReference;
+    private String currentProcedure;
+
     public Toy2ToCVisitor(){
         functionOrProcedureCount = 0;
         mainVisited = false;
+        identifiersByReference = new HashMap<String,ArrayList<String>>();
+        currentProcedure = "";
     }
 
     public String writeHeaders(){
@@ -446,6 +454,17 @@ public class Toy2ToCVisitor implements Visitor{
         if(q!=null){
             if(q == Qualifier.OUT && i.getType()!=Type.STRING)//la stringa è già un puntatore
                 result += "*";
+        }else if(i.getType()!=Type.STRING){
+            //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore
+            ArrayList<String> identifierWithReferenceInCurrentProcedure = identifiersByReference.get(currentProcedure);
+            if (identifierWithReferenceInCurrentProcedure != null) {
+                for (String s : identifierWithReferenceInCurrentProcedure) {
+                    if (i.getName().equals(s)) {
+                        result += "*";
+                        break;
+                    }
+                }
+            }
         }
 
         /*if(i.getType()==Type.STRING)
@@ -599,6 +618,9 @@ public class Toy2ToCVisitor implements Visitor{
 
         result +=" ( ";
 
+        //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore
+        currentProcedure = p.getIdentifier().getName();
+
         ArrayList<ProcFunParamOp> parameters = p.getProcFunParamOpList();
 
         for(int i = 0 ;i< parameters.size(); i++){
@@ -606,6 +628,14 @@ public class Toy2ToCVisitor implements Visitor{
             result += parameters.get(i).accept(this);
             if(i+1< parameters.size())
                 result += ",";
+            //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore
+            if(parameters.get(i).getIdentifier().getQualifier()==Qualifier.OUT){
+                ArrayList<String> otherReferences = identifiersByReference.get(p.getIdentifier().getName());
+                if(otherReferences==null)
+                    otherReferences = new ArrayList<String>();
+                otherReferences.add(parameters.get(i).getIdentifier().getName());
+                identifiersByReference.put(p.getIdentifier().getName(),otherReferences);
+            }
         }
 
         if(functionOrProcedureCount>0){
@@ -619,6 +649,8 @@ public class Toy2ToCVisitor implements Visitor{
         }
 
         result += p.getBody().accept(this);
+
+        currentProcedure = "";
 
         result +=" }\n";
 
@@ -704,7 +736,11 @@ public class Toy2ToCVisitor implements Visitor{
             for (int i= 0; i<expressions.size();i++) {
                 IOArg ioArg = (IOArg)expressions.get(i);
                 if(ioArg.isDollarSign()) {
-                    result += "&" + ioArg.getExpression().accept(this);
+                    //La stringa char* è già un puntatore
+                    if(ioArg.getExpression().getType()==Type.STRING)
+                        result += ioArg.getExpression().accept(this);
+                    else
+                        result += "&" + ioArg.getExpression().accept(this);
 
                     for(int j = i+1; j<expressions.size();j++)
                     {//skippo tutte le eventuali print per vedere se ci sono altre espressioni per cui fare scanf
@@ -987,7 +1023,7 @@ public class Toy2ToCVisitor implements Visitor{
         //TODO controlli per riferimento
 
         if(p.getIdentifier() != null) {
-            if(p.isReference())
+            if(p.isReference() && p.getIdentifier().getType()!=Type.STRING)
                 result += "&";
             result += p.getIdentifier().accept(this);
         }
@@ -1035,7 +1071,7 @@ public class Toy2ToCVisitor implements Visitor{
         switch(ioArgExpressionType) {
             case INTEGER -> result += "%d";
             case BOOL -> result += "%d"; //TODO bool?
-            case REAL -> result += "%f";
+            case REAL -> result += "%lf";
             case STRING -> result += "%s";
         }
         return result;

@@ -462,6 +462,10 @@ public class SemanticVisitor implements Visitor {
         symbolTableStack.enterScope(p.getSymbolTable());
 
         p.getIdentifier().accept(this);
+
+        //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore, ma lo faccio nella traduzione in C
+        //perchè qui è troppo complesso
+
         p.getBody().accept(this);
 
         try {

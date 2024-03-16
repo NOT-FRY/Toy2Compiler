@@ -15,7 +15,7 @@ public class Symbol {
 
     private ArrayList<Type> returnTypes; // Lista di valori di ritorno per le funzioni
 
-    private ArrayList<Type> paramTypes; // Lista di valori di ritorno per le funzioni
+    private ArrayList<Type> paramTypes; // Lista dei tipi dei parametri per le funzioni
 
     private ArrayList<ProcFunParamOp> parameters;
 

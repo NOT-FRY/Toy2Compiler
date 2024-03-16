@@ -266,6 +266,7 @@ public class ScopeVisitor implements Visitor {
             System.exit(1);
         }else{
             Symbol s = new Symbol(p.getIdentifier().getName(), Kind.VAR,p.getType());
+            p.getIdentifier().setType(p.getType());
             try {
                 symbolTableStack.peek().addEntry(s);
             }catch(Exception e){

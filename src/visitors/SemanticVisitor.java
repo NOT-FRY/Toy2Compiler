@@ -694,6 +694,12 @@ public class SemanticVisitor implements Visitor {
              * */
             ArrayList<Type> definitionParameterTypes = s.getParamTypes();
             ArrayList<ProcFunParamOp> definitionParameters = s.getParameters();
+
+            if(definitionParameters==null){//Si è verificato errore, probabilmente è stata chiamata una funzione che in realtà è stata presa dal parser come procedura
+                System.err.println(">Semantic error: errore nella chiamata a procedura : "+ p.getIdentifier().getName());
+                System.exit(1);
+            }
+
             int i=0;
 
             for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){

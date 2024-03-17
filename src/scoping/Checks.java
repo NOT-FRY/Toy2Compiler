@@ -44,7 +44,7 @@ public class Checks {
 
         ArrayList<Statement> bodyStatements = f.getBody().getStatementList();
 
-
+        //cerco i return e i tipi
         for(Statement s : bodyStatements){
             if(s instanceof ReturnStatement){
                 ArrayList<Expression> returnExpressions = ((ReturnStatement) s).getExpressions();
@@ -58,7 +58,7 @@ public class Checks {
                 if(i!=returnExpressions.size() || i!=expectedReturnTypes.size()){
                     throw new Exception(">Semantic error: tipi di valori di ritorno effettivi diverso dal tipo di valori di ritorno dichiarati - at: "+f.getIdentifier().getName());
                 }
-            }
+            }//TODO i return possono essere anche all'interno di altri scope interni come IF e WHILE, recupero complesso
         }
 
         /*ALMENO UN RETURN*/

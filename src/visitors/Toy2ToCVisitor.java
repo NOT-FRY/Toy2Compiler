@@ -87,7 +87,7 @@ public class Toy2ToCVisitor implements Visitor{
                 "   return out;\n" +
                 "}\n"+
                 "char * stringCopy(char * string){\n"+
-                "   char *out= malloc(strlen(string)*sizeof(char));\n"+
+                "   char *out= malloc(MAX*sizeof(char));\n"+
                 "   strcpy(out,string);\n"+
                 "   return out;\n"+
                 "}\n" +
@@ -252,7 +252,10 @@ public class Toy2ToCVisitor implements Visitor{
             result += " = ";
             ArrayList<Expression> expressions = a.getExpressions();
             for(Expression e : expressions){
-                result += e.accept(this);
+                if(e.getType()==Type.STRING)
+                    result += "stringCopy("+e.accept(this)+")";
+                else
+                    result += e.accept(this);
             }
             result +=";\n";
         }
@@ -452,9 +455,9 @@ public class Toy2ToCVisitor implements Visitor{
         Qualifier q = i.getQualifier();
 
         if(q!=null){
-            if(q == Qualifier.OUT && i.getType()!=Type.STRING)//la stringa è già un puntatore
+            if(q == Qualifier.OUT)
                 result += "*";
-        }else if(i.getType()!=Type.STRING){
+        }else{
             //Devo settare il tipo dell'argomento (OUT), così all'interno del body della funzione, si potrà utilizzarlo come puntatore
             ArrayList<String> identifierWithReferenceInCurrentProcedure = identifiersByReference.get(currentProcedure);
             if (identifierWithReferenceInCurrentProcedure != null) {
@@ -736,7 +739,7 @@ public class Toy2ToCVisitor implements Visitor{
             for (int i= 0; i<expressions.size();i++) {
                 IOArg ioArg = (IOArg)expressions.get(i);
                 if(ioArg.isDollarSign()) {
-                    //La stringa char* è già un puntatore
+
                     if(ioArg.getExpression().getType()==Type.STRING)
                         result += ioArg.getExpression().accept(this);
                     else
@@ -868,9 +871,10 @@ public class Toy2ToCVisitor implements Visitor{
         String result = "";
         ArrayList<IdentifierExpression> identifierExpressionList = v.getIdentifierExpressionsList();
         Type lastTypeDeclared = Type.NOTYPE;
+        boolean semiColonFlag = true;
         for(int i=0;i<identifierExpressionList.size();i++) {
             IdentifierExpression ie = identifierExpressionList.get(i);
-            if(lastTypeDeclared != ie.getIdentifier().getType()) {
+            if(lastTypeDeclared != ie.getIdentifier().getType() || ie.getIdentifier().getType()==Type.STRING) {
                 //In C non si deve avere: double a,double b,double risultato;
                 result += typeConverter(ie.getIdentifier().getType()) + " ";
                 lastTypeDeclared = ie.getIdentifier().getType();
@@ -884,18 +888,24 @@ public class Toy2ToCVisitor implements Visitor{
                 result += " = ";
 
             if(ie.getExpression()!=null){
-                result += ie.getExpression().accept(this);
+                if(ie.getExpression().getType()==Type.STRING)
+                    result += "stringCopy("+ie.getExpression().accept(this)+")";
+                else
+                    result += ie.getExpression().accept(this);
             }
-
-            if(i+1 < identifierExpressionList.size() && lastTypeDeclared != identifierExpressionList.get(i+1).getIdentifier().getType() ){
+            semiColonFlag=true;
+            if((i+1 < identifierExpressionList.size() && lastTypeDeclared != identifierExpressionList.get(i+1).getIdentifier().getType()) ||ie.getIdentifier().getType()==Type.STRING){
                 //caso int a = 1,double b = 2.2; non devo mettere la , ma andare a capo
                 result+=";\n";
+                semiColonFlag=false;
+                lastTypeDeclared = Type.NOTYPE;
             }
             else if(i+1 < identifierExpressionList.size()) {
                 result += ",";
             }
         }
-        result += ";";
+        if(semiColonFlag)
+            result += ";";
 
         return result;
     }
@@ -1023,7 +1033,7 @@ public class Toy2ToCVisitor implements Visitor{
         //TODO controlli per riferimento
 
         if(p.getIdentifier() != null) {
-            if(p.isReference() && p.getIdentifier().getType()!=Type.STRING)
+            if(p.isReference())
                 result += "&";
             result += p.getIdentifier().accept(this);
         }

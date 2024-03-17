@@ -41,8 +41,8 @@ public class Toy2ToCVisitor implements Visitor{
                 "    double* reals;\n" +
                 "    char** strings;\n" +
                 "    bool* booleans;\n" +
-                "    int int_count;\n   "+
-                "    int real_count;\n  "+
+                "    int int_count;\n"+
+                "    int real_count;\n"+
                 "    int string_count;\n"+
                 "    int boolean_count;\n"+
                 "}ReturnValues;\n";

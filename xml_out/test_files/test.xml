@@ -47,16 +47,16 @@
             </VarDeclOp>
             <ReadStatement>
                 <IOArg>
+                    <String_const>
+                        scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
+                    </String_const>
+                </IOArg>
+                <IOArg>
                     <DollarSign/>
                     <Identifier>
                         ans
                     </Identifier>
                     <identifierType>VAR</identifierType>
-                </IOArg>
-                <IOArg>
-                    <String_const>
-                        scegli un'operazione (0 o 1.Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
-                    </String_const>
                 </IOArg>
             </ReadStatement>
             <WhileStatement>
@@ -95,30 +95,30 @@
                 <BodyOp>
                     <ReadStatement>
                         <IOArg>
+                            <String_const>
+                                inserisci il primo numero: 
+                            </String_const>
+                        </IOArg>
+                        <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 a
                             </Identifier>
                             <identifierType>VAR</identifierType>
                         </IOArg>
-                        <IOArg>
-                            <String_const>
-                                inserisci il primo numero: 
-                            </String_const>
-                        </IOArg>
                     </ReadStatement>
                     <ReadStatement>
+                        <IOArg>
+                            <String_const>
+                                inserisci il secondo numero: 
+                            </String_const>
+                        </IOArg>
                         <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 b
                             </Identifier>
                             <identifierType>VAR</identifierType>
-                        </IOArg>
-                        <IOArg>
-                            <String_const>
-                                inserisci il secondo numero: 
-                            </String_const>
                         </IOArg>
                     </ReadStatement>
                     <IfStatement>
@@ -173,30 +173,30 @@
                             WRITE_RETURN
                         </WritingType>
                         <IOArg>
+                            <String_const>
+                                il risultato è¨: 
+                            </String_const>
+                        </IOArg>
+                        <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 risultato
                             </Identifier>
                             <identifierType>VAR</identifierType>
                         </IOArg>
-                        <IOArg>
-                            <String_const>
-                                il risultato è¨: 
-                            </String_const>
-                        </IOArg>
                     </WriteStatement>
                     <ReadStatement>
+                        <IOArg>
+                            <String_const>
+                                scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
+                            </String_const>
+                        </IOArg>
                         <IOArg>
                             <DollarSign/>
                             <Identifier>
                                 ans
                             </Identifier>
                             <identifierType>VAR</identifierType>
-                        </IOArg>
-                        <IOArg>
-                            <String_const>
-                                scegli un'operazione (0 o 1 .Per uscire 2.Addizione 3.Sottrazione 4.Moltiplicazione 5.Divisione)
-                            </String_const>
                         </IOArg>
                     </ReadStatement>
                 </BodyOp>

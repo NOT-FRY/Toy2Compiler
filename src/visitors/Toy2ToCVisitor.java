@@ -214,31 +214,32 @@ public class Toy2ToCVisitor implements Visitor{
                 }
             }
             if(isFunctionWithMultipleAssignmentCalled){
+                String nameToAppend=identifiers.get(indexFunctionWithMultipleAssignmentCalled).getName();
                 //Potrei chiamare due volte assegnazioni a valori multipli nello stesso scope, ma non posso dichiarare due variabili ReturnValues* con lo stesso nome nello stesso scope, quindi faccio il nome dinamico
-                result += " ReturnValues* result_"+identifiers.get(indexFunctionWithMultipleAssignmentCalled).getName()+" = " + expressions.get(indexFunctionWithMultipleAssignmentCalled).accept(this)+";\n";
+                result += " ReturnValues* result_"+nameToAppend+" = " + expressions.get(indexFunctionWithMultipleAssignmentCalled).accept(this)+";\n";
                 int structIntCounter=0,structStringCounter=0,structRealCounter=0,structBooleanCounter=0;
                 for(int i=0;i< identifiers.size();i++){
                     if(identifiers.get(i).getType()==Type.INTEGER) {
-                        result += identifiers.get(i).accept(this)+" = result->integers["+structIntCounter+"];\n";
+                        result += identifiers.get(i).accept(this)+" = result_"+nameToAppend+"->integers["+structIntCounter+"];\n";
                         structIntCounter++;
                     }
                     else if(identifiers.get(i).getType()==Type.REAL){
-                        result += identifiers.get(i).accept(this)+" = result->reals["+structRealCounter+"];\n";
+                        result += identifiers.get(i).accept(this)+" = result_"+nameToAppend+"->reals["+structRealCounter+"];\n";
                         structRealCounter++;
                     }
                     else if (identifiers.get(i).getType()==Type.STRING){
-                        result += identifiers.get(i).accept(this) + " = stringCopy(result->strings["+structStringCounter+"]);\n";
+                        result += identifiers.get(i).accept(this) + " = stringCopy(result_"+nameToAppend+"->strings["+structStringCounter+"]);\n";
                         structStringCounter++;
                     }
                     else if(identifiers.get(i).getType()==Type.BOOL){
-                        result += identifiers.get(i).accept(this)+" = result->booleans["+structBooleanCounter+"];\n";
+                        result += identifiers.get(i).accept(this)+" = result_"+nameToAppend+"->booleans["+structBooleanCounter+"];\n";
                         structBooleanCounter++;
                     }else{
                         result += "##############ERROR CONVERTING MULTIPLE PARAMETERS################";
                     }
                 }
 
-                result += "freeReturnValues(result);\n";
+                result += "freeReturnValues(result_"+nameToAppend+");\n";
             }else{
                 int i=0;
                 for(i=0;i< identifiers.size() && i<expressions.size();i++){
@@ -892,6 +893,8 @@ public class Toy2ToCVisitor implements Visitor{
                     result += "stringCopy("+ie.getExpression().accept(this)+")";
                 else
                     result += ie.getExpression().accept(this);
+            }else if(v.getDeclarationType()==DeclarationType.DECLARATION && ie.getIdentifier().getType()==Type.STRING){//Allocazione dinamica delle stringhe
+                result += " = (char*)malloc(MAX*sizeof(char))";
             }
             semiColonFlag=true;
             if((i+1 < identifierExpressionList.size() && lastTypeDeclared != identifierExpressionList.get(i+1).getIdentifier().getType()) ||ie.getIdentifier().getType()==Type.STRING){

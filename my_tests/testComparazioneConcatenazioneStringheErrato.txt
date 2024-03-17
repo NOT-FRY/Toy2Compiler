@@ -1,0 +1,17 @@
+proc main():
+
+    var ans,ans1 : string;\
+    <-- "Inserisci 2 stringhe" $(ans) $(ans1);
+    var aggiunta ^="sneaky";\
+
+    var intero ^= 2;\
+    ans ^= ans+""+aggiunta + intero ;
+
+    if ans < intero then
+        -->!"La prima stringa :"$(ans)" e' piu' corta della seconda: "$(ans1);
+    else
+        -->!"La seconda stringa :"$(ans)" e' piu' lunga o uguale alla dimensione della seconda: "$(ans1);
+    endif;
+
+endproc
+

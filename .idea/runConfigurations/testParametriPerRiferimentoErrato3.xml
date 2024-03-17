@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="testParametriPerRiferimentoErrato3" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="esercitazione5.Test" />
+    <module name="DiLauro-Ciancio_es5" />
+    <option name="PROGRAM_PARAMETERS" value="my_tests/testParametriPerRiferimentoErrato3.txt" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

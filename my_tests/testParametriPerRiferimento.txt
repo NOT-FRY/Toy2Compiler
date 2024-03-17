@@ -1,0 +1,10 @@
+proc incrementa(out valore: real):
+    valore ^= valore + 1;
+endproc
+
+proc main():
+
+    var x : integer; y: boolean; pi ^= 3.14;\
+    incrementa(@pi);
+    -->!"Valore di pi incrementato: "$(pi);
+endproc

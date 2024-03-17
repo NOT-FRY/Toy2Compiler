@@ -1,0 +1,25 @@
+func raddoppia(raddoppia : boolean) -> integer, integer:
+    if raddoppia=true then
+        return a*2, b*2;
+    else
+        return a, b;
+    endif;
+    return 0,0;
+endfunc
+
+var a ^= 2;\
+var b ^= 4;\
+
+proc main():
+
+    var ans : string;\
+    <-- "Vuoi raddoppiare? (si/no)" $(ans);
+    if ans = "si" then
+        a,b ^= raddoppia(true);
+        -->!"hai scelto di raddoppiare: a="$(a)",b="$(b);
+    else
+        -->!"hai scelto di non raddoppiare: a="$(a)",b="$(b);
+    endif;
+
+endproc
+

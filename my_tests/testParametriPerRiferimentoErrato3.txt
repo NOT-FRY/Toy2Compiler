@@ -1,0 +1,11 @@
+func incrementa(valore: real)->integer:
+    valore ^= valore + 1;
+    return 0;
+endfunc
+
+proc main():
+
+    var x : integer; y: boolean; pi ^= 3.14;\
+    x ^= incrementa(pi);
+    -->!"Valore di pi non incrementato perche' in una funzione i parametri sono in sola lettura: "$(pi);
+endproc

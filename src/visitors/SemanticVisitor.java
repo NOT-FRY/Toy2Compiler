@@ -700,7 +700,7 @@ public class SemanticVisitor implements Visitor {
 
                 if(arguments.get(i).isReference()) {//se è per riferimento, questo argomento è per forza un identificatore
                     if(definitionParameterTypes.get(i) != arguments.get(i).getIdentifier().getType()){
-                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getIdentifier().getType());
+                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " tipo dell' argomento: " +arguments.get(i).getIdentifier().getType()+" tipo atteso: "+definitionParameterTypes.get(i));
                         System.exit(1);
                     }
                     //Controllo sul passaggio per riferimento
@@ -711,7 +711,7 @@ public class SemanticVisitor implements Visitor {
                 }
                 else{ //è un espressione qualsiasi, senza il riferimento
                     if(definitionParameterTypes.get(i) != arguments.get(i).getExpression().getType()){
-                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression().getType());
+                        System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " tipo dell' argomento: " +arguments.get(i).getExpression().getType()+" tipo atteso: "+definitionParameterTypes.get(i));
                         System.exit(1);
                     }
                     //Controllo sul passaggio per riferimento, che dovrebbe essere lo stesso della definizione

@@ -1,0 +1,23 @@
+proc main():
+    var a,n:real;\
+    a,n^=f();
+    -->!"a:"$(a)"n:"$(n);
+    var negativo :integer;\
+    negativo ^= -2;
+    var c : integer;\
+    var d : boolean;\
+    c,d ^= numero_positivo(negativo);
+    -->!"c:"$(c)"d:"$(d);
+endproc
+
+func f()-> real,real:
+    var a^= 5.15;\
+    var b^= 6.66;\
+    return a,b;
+endfunc
+
+func numero_positivo(a : integer)-> integer, boolean:
+var b : boolean;\
+if a > 0 then b ^= true; else b ^= false; endif;
+return a, b;
+endfunc

@@ -1,5 +1,15 @@
-Nelle funzioni, il tipo i ritorno i-esimo dichiarato, deve corrispondere al tipo i-esimo effettivo
+Per la lettura dell’albero in formato xml, l’analisi semantica e la generazione del codice intermedio,
+sono state utilizzate quattro classi, rispettivamente:
+- PrintXMLTreeVisitor
+- ScopeVisitor (prima visita dell'albero)
+- SemanticVisitor (seconda visita dell'albero) 
+- Toy2ToCVisitor
 
+Queste quattro classi utilizzando il design pattern Visitor per effettuare la visita completa dell'albero
+dato in input, generato dal parser cup e arricchito con i tipi grazie a ScopeVisitor e SemanticVisitor.
+
+
+## Type system
 | operazione           | tipo operando1 | tipo operando2 | tipo risultante |
 |----------------------|----------------|----------------|-----------------|
 | PLUS,MINUS,TIMES,DIV | INTEGER        | INTEGER        | INTEGER         |
@@ -30,3 +40,5 @@ Nelle funzioni, il tipo i ritorno i-esimo dichiarato, deve corrispondere al tipo
 | LT,LE,GT,GE,EQ,NE | STRING          | STRING         | BOOLEAN         |
 | EQ,NE             | BOOLEAN         | BOOLEAN        | BOOLEAN         |
 
+### Controlli aggiunti al type system:
+![img_type_system.png](img_type_system.png)

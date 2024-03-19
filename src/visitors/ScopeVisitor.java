@@ -18,9 +18,11 @@ public class ScopeVisitor implements Visitor {
     private boolean mainFound = false;
 
     private SymbolTableStack symbolTableStack;
+    private String fileName;
 
-    public ScopeVisitor() {
+    public ScopeVisitor(String fileName) {
         symbolTableStack = new SymbolTableStack();
+        this.fileName = fileName;
     }
 
     @Override
@@ -129,6 +131,7 @@ public class ScopeVisitor implements Visitor {
     public Object visit(FunctionOp f) {
 
         if(symbolTableStack.lookup(f.getIdentifier().getName(),Kind.METHOD)!=null){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ f.getIdentifier().getName());
             System.exit(1);
         }
@@ -156,6 +159,7 @@ public class ScopeVisitor implements Visitor {
             try {
                 father.addEntry(s);
             } catch (Exception e) {
+                System.err.println("Invalid "+fileName);
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
@@ -262,6 +266,7 @@ public class ScopeVisitor implements Visitor {
         p.getIdentifier().accept(this);
 
         if(symbolTableStack.lookup(p.getIdentifier().getName(),Kind.VAR)!=null){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else{
@@ -270,6 +275,7 @@ public class ScopeVisitor implements Visitor {
             try {
                 symbolTableStack.peek().addEntry(s);
             }catch(Exception e){
+                System.err.println("Invalid "+fileName);
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
@@ -286,6 +292,7 @@ public class ScopeVisitor implements Visitor {
 
 
         if(symbolTableStack.lookup(p.getIdentifier().getName(),Kind.METHOD)!=null){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ p.getIdentifier().getName());
             System.exit(1);
         }else {
@@ -310,6 +317,7 @@ public class ScopeVisitor implements Visitor {
             try {
                 father.addEntry(s);
             }catch(Exception e){
+                System.err.println("Invalid "+fileName);
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
@@ -339,6 +347,7 @@ public class ScopeVisitor implements Visitor {
         }
 
         if(!mainFound){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: main procedure not found");
             System.exit(1);
         }
@@ -396,6 +405,7 @@ public class ScopeVisitor implements Visitor {
     public Object visit(VarDeclOp v) {
 
         if(!Checks.checkDeclaration(v)){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
             System.exit(1);
         }
@@ -407,6 +417,7 @@ public class ScopeVisitor implements Visitor {
             ie.accept(this);
 
             if(symbolTableStack.lookup(ie.getIdentifier().getName(),Kind.METHOD)!=null){
+                System.err.println("Invalid "+fileName);
                 System.err.println(">Semantic error: Errore di dichiarazione multipla : "+ ie.getIdentifier().getName());
                 System.exit(1);
             }
@@ -429,6 +440,7 @@ public class ScopeVisitor implements Visitor {
                     }else if(e instanceof  Real_const){
                         s.setType(Type.REAL);
                     }else{
+                        System.err.println("Invalid "+fileName);
                         System.err.println(">Semantic error: Errore di inferenza di tipo, il tipo non può essere dedotto: "+ ie.getIdentifier().getName());
                         System.exit(1);
                     }
@@ -440,6 +452,7 @@ public class ScopeVisitor implements Visitor {
                 try {
                     currentTable.addEntry(s);
                 }catch(Exception e){
+                    System.err.println("Invalid "+fileName);
                     System.err.println(e.getMessage());
                     System.exit(1);
                 }

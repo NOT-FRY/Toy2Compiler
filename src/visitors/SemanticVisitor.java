@@ -12,9 +12,11 @@ import java.util.ArrayList;
 public class SemanticVisitor implements Visitor {
 
     private SymbolTableStack symbolTableStack;
+    private String fileName;
 
-    public SemanticVisitor() {
+    public SemanticVisitor(String fileName) {
         symbolTableStack = new SymbolTableStack();
+        this.fileName = fileName;
     }
 
     @Override
@@ -26,6 +28,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.PLUS);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
             System.exit(1);
         }else{
@@ -42,6 +45,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(a.getLeft(),a.getRight(),ExpressionType.AND);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +a.getLeft().toString());
             System.exit(1);
         }else{
@@ -66,6 +70,7 @@ public class SemanticVisitor implements Visitor {
         try{
             t = TypeCheck.checkAssignStatement(a);
         }catch(Exception e){
+            System.err.println("Invalid "+fileName);
             System.err.println(e.getMessage());
             System.exit(1);
         }finally {
@@ -107,6 +112,7 @@ public class SemanticVisitor implements Visitor {
         d.getRight().accept(this);
         Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.MINUS);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
             System.exit(1);
         }else{
@@ -121,6 +127,7 @@ public class SemanticVisitor implements Visitor {
         d.getRight().accept(this);
         Type t = TypeCheck.checkBinaryExprType(d.getLeft(),d.getRight(),ExpressionType.DIV);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +d.getLeft().toString());
             System.exit(1);
         }else{
@@ -147,6 +154,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(e.getLeft(),e.getRight(),ExpressionType.EQ);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +e.getLeft().toString());
             System.exit(1);
         }else{
@@ -177,6 +185,7 @@ public class SemanticVisitor implements Visitor {
         Symbol s = symbolTableStack.lookup(f.getIdentifier().getName(),Kind.METHOD);
 
         if(s==null){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: chiamata a funzione non dichiarata : " + f.getIdentifier().getName());
             System.exit(1);
         }
@@ -187,11 +196,13 @@ public class SemanticVisitor implements Visitor {
         int i=0;
         for(i=0;i<definitionParameterTypes.size() && i<arguments.size();i++){
             if(definitionParameterTypes.get(i) != arguments.get(i).getType()){
+                System.err.println("Invalid "+fileName);
                 System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName() + " argomento: " +arguments.get(i).getType());
                 System.exit(1);
             }
         }
         if(i < definitionParameterTypes.size() || i < arguments.size()){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della funzione : "+ f.getIdentifier().getName());
             System.exit(1);
         }
@@ -229,6 +240,7 @@ public class SemanticVisitor implements Visitor {
         try{
             Checks.checkFunctionOp(f);
         }catch(Exception e){
+            System.err.println("Invalid "+fileName);
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -248,6 +260,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GE);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
             System.exit(1);
         }else{
@@ -266,6 +279,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(g.getLeft(),g.getRight(),ExpressionType.GT);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +g.getLeft().toString());
             System.exit(1);
         }else{
@@ -282,6 +296,7 @@ public class SemanticVisitor implements Visitor {
         if(i.getIdentifierType() == Kind.VAR) {
             Symbol s = symbolTableStack.lookup(i.getName(), i.getIdentifierType());
             if (s == null) {
+                System.err.println("Invalid "+fileName);
                 System.err.println(">Semantic error: Identificatore non dichiarato : " + i.getName());
                 System.exit(1);
             } else {
@@ -324,6 +339,7 @@ public class SemanticVisitor implements Visitor {
         }
 
         if(ifType==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo dell if");
             System.exit(1);
         }else{
@@ -350,6 +366,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LE);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
             System.exit(1);
         }else{
@@ -368,6 +385,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(l.getLeft(),l.getRight(),ExpressionType.LT);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +l.getLeft().toString());
             System.exit(1);
         }else{
@@ -387,6 +405,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(m.getLeft(),m.getRight(),ExpressionType.TIMES);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +m.getLeft().toString());
             System.exit(1);
         }else{
@@ -405,6 +424,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(n.getLeft(),n.getRight(),ExpressionType.NE);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getLeft().toString());
             System.exit(1);
         }else{
@@ -421,6 +441,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkUnaryExprType(n.getValue(),ExpressionType.NOT);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +n.getValue().toString());
             System.exit(1);
         }else{
@@ -439,6 +460,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkBinaryExprType(o.getLeft(),o.getRight(),ExpressionType.OR);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +o.getLeft().toString());
             System.exit(1);
         }else{
@@ -471,6 +493,7 @@ public class SemanticVisitor implements Visitor {
         try {
             Checks.checkProcedureOp(p);
         }catch (Exception e){
+            System.err.println("Invalid "+fileName);
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -511,6 +534,7 @@ public class SemanticVisitor implements Visitor {
         try {
             Checks.checkReadStatement(r);
         }catch (Exception e){
+            System.err.println("Invalid "+fileName);
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -559,6 +583,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkUnaryExprType(u.getValue(),ExpressionType.UMINUS);
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: tipo non compatibile con l'operando -starting at:" +u.getValue().toString());
             System.exit(1);
         }else{
@@ -579,6 +604,7 @@ public class SemanticVisitor implements Visitor {
         }
 
         if(!Checks.checkDeclaration(v)){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: Nell'inizializzazione il numero delle costanti deve essere pari al numero degli id ");
             System.exit(1);
         }
@@ -594,6 +620,7 @@ public class SemanticVisitor implements Visitor {
 
         Type t = TypeCheck.checkWhileStatement(w.getExpression().getType(), w.getBody().getType());
         if(t==Type.ERROR){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: condizione o tipo non compatibile nel corpo del while");
             System.exit(1);
         }else{
@@ -654,6 +681,7 @@ public class SemanticVisitor implements Visitor {
         try {
             Checks.checkIOArg(i);
         }catch (Exception e){
+            System.err.println("Invalid "+fileName);
             System.err.println(e.getMessage());
             System.exit(1);
         }
@@ -686,6 +714,7 @@ public class SemanticVisitor implements Visitor {
         Symbol s = symbolTableStack.lookup(p.getIdentifier().getName(),Kind.METHOD);
 
         if(s==null){
+            System.err.println("Invalid "+fileName);
             System.err.println(">Semantic error: chiamata ad una procedura non definita : "+ p.getIdentifier().getName());
             System.exit(1);
         }else{
@@ -696,6 +725,7 @@ public class SemanticVisitor implements Visitor {
             ArrayList<ProcFunParamOp> definitionParameters = s.getParameters();
 
             if(definitionParameters==null){//Si è verificato errore, probabilmente è stata chiamata una funzione che in realtà è stata presa dal parser come procedura
+                System.err.println("Invalid "+fileName);
                 System.err.println(">Semantic error: errore nella chiamata a procedura : "+ p.getIdentifier().getName());
                 System.exit(1);
             }
@@ -706,22 +736,26 @@ public class SemanticVisitor implements Visitor {
 
                 if(arguments.get(i).isReference()) {//se è per riferimento, questo argomento è per forza un identificatore
                     if(definitionParameterTypes.get(i) != arguments.get(i).getIdentifier().getType()){
+                        System.err.println("Invalid "+fileName);
                         System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " tipo dell' argomento: " +arguments.get(i).getIdentifier().getType()+" tipo atteso: "+definitionParameterTypes.get(i));
                         System.exit(1);
                     }
                     //Controllo sul passaggio per riferimento
                     if(definitionParameters.get(i).getIdentifier().getQualifier() != Qualifier.OUT){
+                        System.err.println("Invalid "+fileName);
                         System.err.println(">Semantic error: Passaggio per riferimento non consentito nella definizione della funzione - at: "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression());
                         System.exit(1);
                     }
                 }
                 else{ //è un espressione qualsiasi, senza il riferimento
                     if(definitionParameterTypes.get(i) != arguments.get(i).getExpression().getType()){
+                        System.err.println("Invalid "+fileName);
                         System.err.println(">Semantic error: Tipo degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName() + " tipo dell' argomento: " +arguments.get(i).getExpression().getType()+" tipo atteso: "+definitionParameterTypes.get(i));
                         System.exit(1);
                     }
                     //Controllo sul passaggio per riferimento, che dovrebbe essere lo stesso della definizione
                     if(definitionParameters.get(i).getIdentifier().getQualifier() == Qualifier.OUT){
+                        System.err.println("Invalid "+fileName);
                         //non sono entrato nell'if precedente isReference, quindi è errore
                         System.err.println(">Semantic error: Passaggio per riferimento necessario nella chiamata a funzione - at: "+ p.getIdentifier().getName() + " argomento: " +arguments.get(i).getExpression());
                         System.exit(1);
@@ -730,6 +764,7 @@ public class SemanticVisitor implements Visitor {
             }
 
             if(i < definitionParameterTypes.size() || i < arguments.size()){
+                System.err.println("Invalid "+fileName);
                 System.err.println(">Semantic error: Numero degli argomenti non compatibile con la definizione della procedura : "+ p.getIdentifier().getName());
                 System.exit(1);
             }

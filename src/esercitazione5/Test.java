@@ -36,16 +36,17 @@ public class Test {
             treeVisitor.visit(program);
             treeVisitor.dispose();
 
-            ScopeVisitor scopeVisitor = new ScopeVisitor();
+            String fileName = args[0].substring(args[0].lastIndexOf("/")+1);
+
+            ScopeVisitor scopeVisitor = new ScopeVisitor(fileName);
             scopeVisitor.visit(program);
 
-            SemanticVisitor semanticVisitor = new SemanticVisitor();
+            SemanticVisitor semanticVisitor = new SemanticVisitor(fileName);
             semanticVisitor.visit(program);
 
             Toy2ToCVisitor toy2ToCVisitor = new Toy2ToCVisitor();
             String cFile = (String) toy2ToCVisitor.visit(program);
 
-            String fileName = args[0].substring(args[0].lastIndexOf("/")+1);
             fileName = fileName.replace(".txt",".c");
 
             File cFilePath = new File("test_files"+File.separator+"c_out"+ File.separator + fileName);

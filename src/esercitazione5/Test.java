@@ -9,6 +9,8 @@ import visitors.Toy2ToCVisitor;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Test {
     public static void main(String[] args){
@@ -59,6 +61,13 @@ public class Test {
 
             out.write(cFile);
             out.flush();
+
+            String filePath = cFilePath.getPath();
+            filePath = filePath.replace(".c","");
+
+            if(System.getProperty("os.name").contains("Win"))
+                Runtime.getRuntime().exec("cmd /k start cmd.exe /k  " +
+                        "\"gcc \"" + filePath + ".c\" && a.exe && del a.exe\"" );
 
         }catch(Exception e){
             e.printStackTrace();

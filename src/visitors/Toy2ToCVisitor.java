@@ -720,6 +720,7 @@ public class Toy2ToCVisitor implements Visitor{
         ArrayList<Expression> expressions = r.getExpressions();
 
         int flag = 0;
+        boolean printSomething = false;
 
         for (int i= 0; i<expressions.size();i++) {
             IOArg ioArg = (IOArg)expressions.get(i);
@@ -729,12 +730,13 @@ public class Toy2ToCVisitor implements Visitor{
                 result += getPrintfScanfType(ioArgExpressionType);
             }else{
                 //solo stampa
+                printSomething=true;
                 toPrint += ((String)ioArg.accept(this)).replace("\"","");
             }
 
         }
 
-        toPrint += "\");\n";
+        toPrint += "\\n\");\n";
         if(flag==1){
             result += "\",";
             for (int i= 0; i<expressions.size();i++) {
@@ -761,8 +763,10 @@ public class Toy2ToCVisitor implements Visitor{
         }
         result += ");\n";
         toPrint += result;
-
-        return toPrint;
+        if(printSomething)
+            return toPrint;
+        else
+            return result;
     }
 
     @Override

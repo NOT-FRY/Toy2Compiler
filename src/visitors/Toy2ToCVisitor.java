@@ -31,7 +31,7 @@ public class Toy2ToCVisitor implements Visitor{
         result += "#include<stdlib.h>\n";
         result += "#include<string.h>\n";
         result += "#include <stdbool.h>\n";
-        result += "#define MAX 512\n";
+        result += "#define MAX 255\n";
 
 
         //array per consentire la restituzione di valori multipli nelle funzioni
@@ -81,7 +81,7 @@ public class Toy2ToCVisitor implements Visitor{
                 "}\n";
 
         result+="char * concatString(char* str1 , char* str2) {\n" +
-                "   char *out= malloc(strlen(str1)+strlen(str2));\n" +
+                "   char *out= malloc((strlen(str1)+strlen(str2)+1)*sizeof(char));\n" +
                 "   strcpy(out,str1);\n" +
                 "   strcat(out , str2);\n" +
                 "   return out;\n" +
